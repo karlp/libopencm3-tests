@@ -1,0 +1,10 @@
+Code in _this_ repository should be considered under your choice of:
+
+* Apache 2.0
+* BSD 2 clause
+* ISC
+* MIT
+* X11
+* LGPL3+
+
+libopencm3 itself has it's own license.  (LGPL3+ at time of writing)
