@@ -32,7 +32,7 @@ INCLUDES += $(patsubst %,-I%, . $(SHARED_DIR))
 OPENCM3_DIR=../../libopencm3/
 
 ### This section can go to an arch shared rules eventually...
-LDSCRIPT = ../../../libopencm3/lib/stm32/f4/stm32f405x6.ld
+LDSCRIPT = $(OPENCM3_DIR)/lib/stm32/f4/stm32f405x6.ld
 OPENCM3_LIB = opencm3_stm32f4
 OPENCM3_DEFS = -DSTM32F4
 FP_FLAGS ?= -mfloat-abi=hard -mfpu=fpv4-sp-d16
