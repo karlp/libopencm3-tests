@@ -9,11 +9,11 @@ cross target testing, with the aim of making them as automated as possible.
 
 General plan is something like....
 
-# make -C libopencm3 clean all -j8
-# make -C tests/xxx clean all flash test V=1
-# cd libopencm3
-# git checkout proposed-new-code
-# return to step 1
+1. make -C libopencm3 clean all -j8
+2. make -C tests/xxx clean all flash test V=1
+3. cd libopencm3
+4. git checkout proposed-new-code
+5. return to step 1
 
 Mileage _will_ vary.
 
