@@ -8,6 +8,7 @@
 #include <libopencm3/cm3/nvic.h>
 #include <libopencm3/stm32/adc.h>
 #include <libopencm3/stm32/dac.h>
+#include <libopencm3/stm32/flash.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/usart.h>
@@ -15,35 +16,110 @@
 #include "trace.h"
 #include "adc-power.h"
 
-#define LED_DISCO_GREEN_PORT GPIOD
-#define LED_DISCO_GREEN_PIN GPIO12
+/* f3 pll setup, based on l1/f4*/
+
+typedef struct {
+	uint8_t pll_mul;
+	uint8_t pll_div;
+	uint8_t pll_source;
+	uint32_t flash_config;
+	uint8_t hpre;
+	uint8_t ppre1;
+	uint8_t ppre2;
+	uint32_t apb1_frequency;
+	uint32_t apb2_frequency;
+} rcc_clock_scale_t;
+
+static void rcc_clock_setup_pll_f3_special(const rcc_clock_scale_t *clock)
+{
+	/* Turn on the appropriate source for the PLL */
+	// TODO, some f3's have extra bits here
+	enum osc my_osc;
+	if (clock->pll_source == RCC_CFGR_PLLSRC_HSE_PREDIV) {
+		my_osc = HSE;
+	} else {
+		my_osc = HSI;
+	}
+	rcc_osc_on(my_osc);
+	while (!rcc_is_osc_ready(my_osc));
+
+	/* Configure flash settings. */
+	flash_set_ws(clock->flash_config);
+
+	/*
+	 * Set prescalers for AHB, ADC, ABP1, ABP2.
+	 * Do this before touching the PLL (TODO: why?).
+	 */
+	rcc_set_hpre(clock->hpre);
+	rcc_set_ppre1(clock->ppre1);
+	rcc_set_ppre2(clock->ppre2);
+
+	rcc_osc_off(PLL);
+	while (rcc_is_osc_ready(PLL));
+	rcc_set_pll_source(clock->pll_source);
+	rcc_set_pll_multiplier(clock->pll_mul);
+	// TODO - iff pll_div != 0, then maybe we're on a target that 
+	// has the dividers?
+
+	/* Enable PLL oscillator and wait for it to stabilize. */
+	rcc_osc_on(PLL);
+	while (!rcc_is_osc_ready(PLL));
+
+	/* Select PLL as SYSCLK source. */
+	rcc_set_sysclk_source(RCC_CFGR_SW_PLL);
+	rcc_wait_for_sysclk_status(PLL);
+
+	/* Set the peripheral clock frequencies used. */
+	rcc_apb1_frequency = clock->apb1_frequency;
+	rcc_apb2_frequency = clock->apb2_frequency;
+}
+
+static void setup_clocks(void)
+{
+	rcc_clock_scale_t clock_full_hse8mhz ={
+		.pll_mul = RCC_CFGR_PLLMUL_PLL_IN_CLK_X9,
+		.pll_source = RCC_CFGR_PLLSRC_HSE_PREDIV,
+		.hpre = RCC_CFGR_HPRE_DIV_NONE,
+		.ppre1 = RCC_CFGR_PPRE1_DIV_2,
+		.ppre2 = RCC_CFGR_PPRE2_DIV_NONE,
+		.flash_config = FLASH_ACR_PRFTBE | FLASH_ACR_LATENCY_2WS,
+		.apb1_frequency = 36000000,
+		.apb2_frequency = 72000000,
+	};
+
+	rcc_clock_setup_pll_f3_special(&clock_full_hse8mhz);
+}
 
 int main(void)
 {
 	int i;
 	int j = 0;
-	rcc_clock_setup_hse_3v3(&hse_8mhz_3v3[CLOCK_3V3_168MHZ]);
-	rcc_periph_clock_enable(RCC_GPIOD);
+	setup_clocks();
+	/* Board led */
+	rcc_periph_clock_enable(RCC_GPIOE);
+	gpio_mode_setup(GPIOE, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO8);
+	gpio_set(GPIOE, GPIO8);
 	printf("hi guys!\n");
-	/* green led for ticking */
-	gpio_mode_setup(LED_DISCO_GREEN_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
-			LED_DISCO_GREEN_PIN);
 
 	rcc_periph_clock_enable(RCC_GPIOA);
 	gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO0);
 	gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO1);
 
 	adc_power_init();
+	for (i = 0; i < 0x1000; i++) { /* need as much as 10 usecs for vreg */
+		__asm__("NOP");
+	}
 	while (1) {
 		adc_power_task_up();
-		gpio_toggle(LED_DISCO_GREEN_PORT, LED_DISCO_GREEN_PIN);
+		gpio_toggle(GPIOE, GPIO8);
 
-		for (i = 0; i < 0x1000000; i++) { /* Wait a bit. */
+		for (i = 0; i < 0x800000; i++) { /* Wait a bit. */
 			__asm__("NOP");
 		}
+		printf("tick...\n");
 		adc_power_task_down();
-		gpio_toggle(LED_DISCO_GREEN_PORT, LED_DISCO_GREEN_PIN);
-		for (i = 0; i < 0x1000000; i++) { /* Wait a bit. */
+		gpio_toggle(GPIOE, GPIO8);
+		for (i = 0; i < 0x800000; i++) { /* Wait a bit. */
 			__asm__("NOP");
 		}
 	}
