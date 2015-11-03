@@ -102,8 +102,8 @@ int main(void)
 	printf("hi guys!\n");
 
 	rcc_periph_clock_enable(RCC_GPIOA);
-	gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO0);
 	gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO1);
+	gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO5);
 
 	adc_power_init();
 	for (i = 0; i < 0x1000; i++) { /* need as much as 10 usecs for vreg */
@@ -113,13 +113,13 @@ int main(void)
 		adc_power_task_up();
 		gpio_toggle(GPIOE, GPIO8);
 
-		for (i = 0; i < 0x800000; i++) { /* Wait a bit. */
+		for (i = 0; i < 0x100000; i++) { /* Wait a bit. */
 			__asm__("NOP");
 		}
 		printf("tick...\n");
 		adc_power_task_down();
 		gpio_toggle(GPIOE, GPIO8);
-		for (i = 0; i < 0x800000; i++) { /* Wait a bit. */
+		for (i = 0; i < 0x100000; i++) { /* Wait a bit. */
 			__asm__("NOP");
 		}
 	}

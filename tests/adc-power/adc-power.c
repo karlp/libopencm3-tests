@@ -21,10 +21,12 @@
 
 // Still have some bad shit to deal with...
 #if defined(STM32F3)
-#define SAMPLE_TIME_BASIC ADC_SMPR1_SMP_19DOT5CYC
+#define SAMPLE_TIME_BASIC ADC_SMPR1_SMP_181DOT5CYC
+#define SAMPLE_TIME_TEMP ADC_SMPR1_SMP_601DOT5CYC // 2.2usecs or more
+#define SAMPLE_TIME_VREF SAMPLE_TIME_TEMP
 #elif defined(STM32F4)
 #define SAMPLE_TIME_BASIC ADC_SMPR_SMP_28CYC
-#define SAMPLE_TIME_TEMP ADC_SMPR_SMP_144CYC
+#define SAMPLE_TIME_TEMP ADC_SMPR_SMP_144CYC // 10 usecs or more, in theory needs 840cycles!
 #define SAMPLE_TIME_VREF SAMPLE_TIME_TEMP
 #define ADC_CHANNEL_TEMP ADC_CHANNEL_TEMP_F40
 #define SEPARATE_VREF 0
@@ -50,13 +52,8 @@ void adc_power_init(void)
 	rcc_periph_clock_enable(RCC_ADC12);
 	rcc_adc_prescale(RCC_CFGR2_ADCxPRES_PLL_CLK_DIV_1, RCC_CFGR2_ADCxPRES_PLL_CLK_DIV_1);
 	adc_enable_regulator(ADC1);
-	adc_set_sample_time_on_all_channels(ADC1, ADC_SMPR1_SMP_19DOT5CYC);
 #else
 	rcc_periph_clock_enable(RCC_ADC1);
-	adc_set_sample_time_on_all_channels(ADC1, SAMPLE_TIME_BASIC);
-	adc_set_sample_time(ADC1, ADC_CHANNEL_TEMP, SAMPLE_TIME_TEMP);
-	adc_set_sample_time(ADC1, ADC_CHANNEL_TEMP, SAMPLE_TIME_VREF);
-
 #if 0
 	// DANGER DANGER! doing this without DMA is dum.
 	// but... we're busy polling, we should be right... right?
@@ -68,6 +65,9 @@ void adc_power_init(void)
 #endif
 	
 #endif
+	adc_set_sample_time_on_all_channels(ADC1, SAMPLE_TIME_BASIC);
+	adc_set_sample_time(ADC1, ADC_CHANNEL_TEMP, SAMPLE_TIME_TEMP);
+	adc_set_sample_time(ADC1, ADC_CHANNEL_TEMP, SAMPLE_TIME_VREF);
 	adc_enable_temperature_sensor();
 #if (SEPARATE_VREF == 1)
 	adc_enable_vrefint();
