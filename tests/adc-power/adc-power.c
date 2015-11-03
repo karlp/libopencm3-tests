@@ -19,6 +19,28 @@
 // TODO - stick this in libopencm3?
 #define	ARRAY_SIZE(a)	(sizeof((a)) / sizeof((a)[0]))
 
+// Still have some bad shit to deal with...
+#if defined(STM32F3)
+#define SAMPLE_TIME_BASIC ADC_SMPR1_SMP_19DOT5CYC
+#elif defined(STM32F4)
+#define SAMPLE_TIME_BASIC ADC_SMPR_SMP_28CYC
+#define SAMPLE_TIME_TEMP ADC_SMPR_SMP_144CYC
+#define SAMPLE_TIME_VREF SAMPLE_TIME_TEMP
+#define ADC_CHANNEL_TEMP ADC_CHANNEL_TEMP_F40
+#define SEPARATE_VREF 0
+#elif defined(STM32L1)
+#define SAMPLE_TIME_BASIC ADC_SMPR_SMP_24CYC
+#define SAMPLE_TIME_TEMP ADC_SMPR_SMP_192CYC
+#define SAMPLE_TIME_VREF SAMPLE_TIME_TEMP
+#define SEPARATE_VREF 0
+#else
+#error "no sample time for your target yet?!"
+#endif
+
+#ifndef SEPARATE_VREF
+#define SEPARATE_VREF 1
+#endif
+
 
 void adc_power_init(void)
 {
@@ -29,10 +51,12 @@ void adc_power_init(void)
 	rcc_adc_prescale(RCC_CFGR2_ADCxPRES_PLL_CLK_DIV_1, RCC_CFGR2_ADCxPRES_PLL_CLK_DIV_1);
 	adc_enable_regulator(ADC1);
 	adc_set_sample_time_on_all_channels(ADC1, ADC_SMPR1_SMP_19DOT5CYC);
-	adc_set_sample_time(ADC1, ADC_CHANNEL_TEMP, ADC_SMPR1_SMP_181DOT5CYC);
 #else
 	rcc_periph_clock_enable(RCC_ADC1);
-	adc_set_sample_time_on_all_channels(ADC1, ADC_SMPR_SMP_28CYC);
+	adc_set_sample_time_on_all_channels(ADC1, SAMPLE_TIME_BASIC);
+	adc_set_sample_time(ADC1, ADC_CHANNEL_TEMP, SAMPLE_TIME_TEMP);
+	adc_set_sample_time(ADC1, ADC_CHANNEL_TEMP, SAMPLE_TIME_VREF);
+
 #if 0
 	// DANGER DANGER! doing this without DMA is dum.
 	// but... we're busy polling, we should be right... right?
@@ -45,7 +69,10 @@ void adc_power_init(void)
 	
 #endif
 	adc_enable_temperature_sensor();
+#if (SEPARATE_VREF == 1)
 	adc_enable_vrefint();
+#endif
+
 	/*
 	 * We're going to setup a timer to run at top speed, so... "fast" 
 	 * but we don't actually care about the rate itself.  We just 
@@ -68,28 +95,16 @@ static uint16_t read_adc_naiive(uint8_t channel)
 	return adc_read_regular(ADC1);
 }
 
-static uint16_t compensate_vref(uint16_t adc_count, uint16_t vref_count) {
-	uint32_t ret = adc_count * ST_VREFINT_CAL;
-	return (ret / vref_count);
+static float adc_calc_tempf(unsigned int ts_v, unsigned int vref) {
+	float adjusted_vtemp = ts_v * ST_VREFINT_CAL * 1.0 / vref * 1.0;
+	float slope = (110-30) * 1.0 / (ST_TSENSE_CAL2_110C - ST_TSENSE_CAL1_30C) * 1.0;
+	return slope * (adjusted_vtemp - ST_TSENSE_CAL1_30C) + 30;
 }
 
-static int work_temp(unsigned int ts_v, unsigned int vref) {
-	// This is important! as the calibration values are give us a slope in mv/C
-	int raw_temp_mv = compensate_vref(ts_v, vref);
-	// millivolts gives millcentigrade
-	float slope = raw_temp_mv - (ST_TSENSE_CAL1_30C * 1.0) / (ST_TSENSE_CAL2_110 * 1.0) - ST_TSENSE_CAL1_30C;
-	int temp_mc = (110 - 30) * slope + 30.0;
-	return temp_mc / 10;
-}
-
-static float adc_calculate_temp(unsigned int ts_v) {
-#if 0
-	float factor = (110-30) / ((ST_TSENSE_CAL1_30C * 1.0) - (ST_TSENSE_CAL2_110 * 1.0));
-	return (factor * (ts_v - ST_TSENSE_CAL2_110)) + 30.0;
-#else
-	float factor = (110-30) / ((ST_TSENSE_CAL2_110 * 1.0) - (ST_TSENSE_CAL1_30C * 1.0));
-	return (factor * (ts_v - ST_TSENSE_CAL1_30C)) + 30.0;
-#endif
+static float adc_calc_tempi(uint16_t ts, uint16_t vref) {
+	int adjusted_vtemp = ts * ST_VREFINT_CAL / vref;
+	int slope = (110-30) / (ST_TSENSE_CAL2_110C - ST_TSENSE_CAL1_30C);
+	return slope * (adjusted_vtemp - ST_TSENSE_CAL1_30C) + 30;
 }
 
 void adc_power_task_up(void) {
@@ -100,30 +115,23 @@ void adc_power_task_up(void) {
 	/* just for kicks, let's time some sequences too....
 	 * I mean, we're going to do some conversions right? */
 	adc_set_single_conversion_mode(ADC1);
-#if 0
-	uint8_t channels[2] = { 0, 1 };
-	adc_set_regular_sequence(ADC1, ARRAY_SIZE(channels), channels);
-	TIM_CNT(TIMER) = 0;
-	adc_start_conversion_regular(ADC1);
-	while (!adc_eoc(ADC1));
-	unsigned int v1 = adc_read_regular(ADC1);
-	while (!adc_eoc(ADC1));
-	unsigned int v2 = adc_read_regular(ADC1);
-	unsigned int tconv = TIM_CNT(TIMER);
-#else
 	TIM_CNT(TIMER) = 0;
 	unsigned int v1 = read_adc_naiive(1);
 	unsigned int v5 = read_adc_naiive(5);
 	unsigned int temp_adc = read_adc_naiive(ADC_CHANNEL_TEMP);
 	unsigned int vref_adc = read_adc_naiive(ADC_CHANNEL_VREF);
-	// TODO  - use vref to adjust temp_adc for non-3v readings!
-	float temp = adc_calculate_temp(temp_adc);
-	int tempi = 100 * temp;
 	unsigned int tconv = TIM_CNT(TIMER);
-#endif
+	TIM_CNT(TIMER) = 0;
+	float tempf = adc_calc_tempf(temp_adc, vref_adc);
+	int tconvf = TIM_CNT(TIMER);
+	TIM_CNT(TIMER) = 0;
+	int tempi = adc_calc_tempi(temp_adc, vref_adc);
+	int tconvi = TIM_CNT(TIMER);
 	
 	printf("ton: %u, tconv: %u, ch1: %u, ch5: %u\n", td, tconv, v1, v5);
-	printf("\tTemperature: %f (raw count: %u)\n", temp, temp_adc);
+	printf("\tTemperature: %f (tc %d) or %d (tc %d) (raw ts: %d, raw vref: %d)\n",
+		tempf, tconvf, tempi, tconvi, temp_adc, vref_adc);
+	//printf("\tT1-30 %d, t2-110 %d, vrefcal: %d\n", ST_TSENSE_CAL1_30C, ST_TSENSE_CAL2_110C, ST_VREFINT_CAL);
 }
 
 void adc_power_task_down()

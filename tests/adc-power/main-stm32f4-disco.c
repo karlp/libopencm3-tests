@@ -31,19 +31,19 @@ int main(void)
 
 	rcc_periph_clock_enable(RCC_GPIOA);
 	gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO0);
-	gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO1);
+	gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO5);
 
 	adc_power_init();
 	while (1) {
 		adc_power_task_up();
 		gpio_toggle(LED_DISCO_GREEN_PORT, LED_DISCO_GREEN_PIN);
 
-		for (i = 0; i < 0x1000000; i++) { /* Wait a bit. */
+		for (i = 0; i < 0x800000; i++) { /* Wait a bit. */
 			__asm__("NOP");
 		}
 		adc_power_task_down();
 		gpio_toggle(LED_DISCO_GREEN_PORT, LED_DISCO_GREEN_PIN);
-		for (i = 0; i < 0x1000000; i++) { /* Wait a bit. */
+		for (i = 0; i < 0x800000; i++) { /* Wait a bit. */
 			__asm__("NOP");
 		}
 	}
