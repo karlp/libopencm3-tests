@@ -20,7 +20,10 @@
 #define	ARRAY_SIZE(a)	(sizeof((a)) / sizeof((a)[0]))
 
 // Still have some bad shit to deal with...
-#if defined(STM32F3)
+#if defined(STM32F0)
+#define SEPARATE_ADC_SAMPLING 0
+#define SAMPLE_TIME_BASIC ADC_SMPR_SMP_239DOT5
+#elif defined(STM32F3)
 #define SAMPLE_TIME_BASIC ADC_SMPR1_SMP_181DOT5CYC
 #define SAMPLE_TIME_TEMP ADC_SMPR1_SMP_601DOT5CYC // 2.2usecs or more
 #define SAMPLE_TIME_VREF SAMPLE_TIME_TEMP
@@ -41,6 +44,9 @@
 
 #ifndef SEPARATE_VREF
 #define SEPARATE_VREF 1
+#endif
+#ifndef SEPARATE_ADC_SAMPLING
+#define SEPARATE_ADC_SAMPLING 1
 #endif
 
 
@@ -65,9 +71,13 @@ void adc_power_init(void)
 #endif
 	
 #endif
+#if (SEPARATE_ADC_SAMPLING == 1)
 	adc_set_sample_time_on_all_channels(ADC1, SAMPLE_TIME_BASIC);
 	adc_set_sample_time(ADC1, ADC_CHANNEL_TEMP, SAMPLE_TIME_TEMP);
 	adc_set_sample_time(ADC1, ADC_CHANNEL_TEMP, SAMPLE_TIME_VREF);
+#else
+	adc_set_sample_time_on_all_channels(ADC1, SAMPLE_TIME_BASIC);
+#endif
 	adc_enable_temperature_sensor();
 #if (SEPARATE_VREF == 1)
 	adc_enable_vrefint();
