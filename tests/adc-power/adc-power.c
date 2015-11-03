@@ -22,7 +22,7 @@
 // Still have some bad shit to deal with...
 #if defined(STM32F0)
 #define SEPARATE_ADC_SAMPLING 0
-#define SAMPLE_TIME_BASIC ADC_SMPR_SMP_239DOT5
+#define SAMPLE_TIME_BASIC ADC_SMPR_SMP_239DOT5 // 4usec or more for tempsensor
 #elif defined(STM32F3)
 #define SAMPLE_TIME_BASIC ADC_SMPR1_SMP_181DOT5CYC
 #define SAMPLE_TIME_TEMP ADC_SMPR1_SMP_601DOT5CYC // 2.2usecs or more
@@ -67,7 +67,7 @@ void adc_power_init(void)
 	adc_enable_scan_mode(ADC1);
 	ADC_CR2 |= ADC_CR2_EOCS; // FIXME
 #else
-	adc_disable_scan_mode(ADC1);
+	// FIXME - f0!  adc_disable_scan_mode(ADC1);
 #endif
 	
 #endif

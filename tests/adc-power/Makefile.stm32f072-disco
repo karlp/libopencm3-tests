@@ -1,0 +1,19 @@
+BOARD = stm32f072-disco
+PROJECT = adc-power-$(BOARD)
+BUILD_DIR = bin-$(BOARD)
+
+SHARED_DIR = ../../shared
+
+CFILES = main-$(BOARD).c
+CFILES += adc-power.c
+# No trace on cm0!
+#CFILES += trace.c trace_stdio.c
+CFILES += usart_stdio.c
+
+VPATH += $(SHARED_DIR)
+
+INCLUDES += $(patsubst %,-I%, . $(SHARED_DIR))
+
+OPENCM3_DIR=../../libopencm3
+include ../../rules.stm32f0.mk
+include ../../rules.mk
