@@ -1,0 +1,33 @@
+
+BOARD = stm32l4-disco
+PROJECT = adc-power-$(BOARD)
+BUILD_DIR = bin-$(BOARD)
+
+SHARED_DIR = ../../shared
+
+CFILES = main-$(BOARD).c
+# hah, not yet!
+#CFILES += adc-power.c
+#CFILES += trace.c trace_stdio.c
+
+VPATH += $(SHARED_DIR)
+
+INCLUDES += $(patsubst %,-I%, . $(SHARED_DIR))
+
+OPENCM3_DIR=../../libopencm3/
+
+### This section can go to an arch shared rules eventually...
+#DEVICE=stm32l476vgt6
+#SRCLIBDIR=$(OPENCM3_DIR)
+#include $(OPENCM3_DIR)/ld/Makefile.linker
+LDSCRIPT=$(OPENCM3_DIR)/lib/stm32/l4/stm32l4xxg.ld
+
+OPENCM3_LIB = opencm3_stm32l4
+OPENCM3_DEFS = -DSTM32L4
+FP_FLAGS ?= -mfloat-abi=hard -mfpu=fpv4-sp-d16
+ARCH_FLAGS = -mthumb -mcpu=cortex-m4 $(FP_FLAGS)
+#OOCD_INTERFACE = stlink-v2-1
+#OOCD_TARGET = stm32l4x
+OOCD_FILE = ../../openocd/openocd.stm32l4-disco.cfg
+
+include ../../rules.mk
