@@ -5,5 +5,5 @@ OPENCM3_DEFS = -DSTM32F0
 ARCH_FLAGS = -mthumb -mcpu=cortex-m0 $(FP_FLAGS)
 #OOCD_INTERFACE = stlink-v2
 #OOCD_TARGET = stm32f4x
-OOCD_FILE = openocd.stm32f072disco.cfg
+OOCD_FILE = ../../openocd/openocd.stm32f072-disco.cfg
 
