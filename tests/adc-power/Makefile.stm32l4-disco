@@ -6,9 +6,8 @@ BUILD_DIR = bin-$(BOARD)
 SHARED_DIR = ../../shared
 
 CFILES = main-$(BOARD).c
-# hah, not yet!
-#CFILES += adc-power.c
-#CFILES += trace.c trace_stdio.c
+CFILES += adc-power.c
+CFILES += trace.c trace_stdio.c
 
 VPATH += $(SHARED_DIR)
 

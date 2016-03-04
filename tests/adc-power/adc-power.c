@@ -62,6 +62,12 @@ void adc_power_init(void)
 	rcc_periph_clock_enable(RCC_ADC12);
 	rcc_adc_prescale(RCC_CFGR2_ADCxPRES_PLL_CLK_DIV_1, RCC_CFGR2_ADCxPRES_PLL_CLK_DIV_1);
 	adc_enable_regulator(ADC1);
+#elif defined (STM32L4)
+	/* same same but different */
+	rcc_periph_clock_enable(RCC_ADC1);
+	ADC_CR(ADC1) &= ~ADC_CR_DEEPPWD;
+	adc_enable_regulator(ADC1);
+
 #else
 	rcc_periph_clock_enable(RCC_ADC1);
 #if 0

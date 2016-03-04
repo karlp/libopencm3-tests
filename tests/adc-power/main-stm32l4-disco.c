@@ -10,6 +10,9 @@
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
 
+#include "trace.h"
+#include "adc-power.h"
+
 #define LED_DISCO_RED_PORT GPIOB
 #define LED_DISCO_RED_PIN GPIO2
 #define LED_DISCO_GREEN_PORT GPIOE
@@ -20,20 +23,30 @@ int main(void)
 {
 	int i;
 	int j = 0;
-	rcc_periph_clock_enable(RCC_GPIOB);
-	rcc_periph_clock_enable(RCC_GPIOE);
+	rcc_periph_clock_enable(RCC_GPIOB); // led
+	rcc_periph_clock_enable(RCC_GPIOE); // led
+	rcc_periph_clock_enable(RCC_GPIOA); // adcs
+	rcc_periph_clock_enable(RCC_GPIOC); // adcs
+	printf("hi guys!\n");
 	/* green led for ticking */
 	gpio_mode_setup(LED_DISCO_GREEN_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
 			LED_DISCO_GREEN_PIN);
 	gpio_mode_setup(LED_DISCO_RED_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
 			LED_DISCO_RED_PIN);
 
+	/* ADC 1 channels 1 and 5 */
+	gpio_mode_setup(GPIOC, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO0);
+	gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO5);
+
+	adc_power_init();
 	while (1) {
+		adc_power_task_up();
 		gpio_toggle(LED_DISCO_GREEN_PORT, LED_DISCO_GREEN_PIN);
 
 		for (i = 0; i < 0x10000; i++) { /* Wait a bit. */
 			__asm__("NOP");
 		}
+		adc_power_task_down();
 		gpio_toggle(LED_DISCO_RED_PORT, LED_DISCO_RED_PIN);
 		for (i = 0; i < 0x10000; i++) { /* Wait a bit. */
 			__asm__("NOP");
