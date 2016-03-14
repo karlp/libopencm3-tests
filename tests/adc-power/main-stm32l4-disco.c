@@ -7,7 +7,9 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <libopencm3/cm3/nvic.h>
+#include <libopencm3/stm32/flash.h>
 #include <libopencm3/stm32/gpio.h>
+#include <libopencm3/stm32/pwr.h>
 #include <libopencm3/stm32/rcc.h>
 
 #include "trace.h"
@@ -18,6 +20,12 @@
 #define LED_DISCO_GREEN_PORT GPIOE
 #define LED_DISCO_GREEN_PIN GPIO8
 
+int hack(void) {
+	pwr_set_vos_scale(PWR_SCALE1);
+	flash_set_ws(FLASH_ACR_LATENCY_2WS);
+	rcc_set_msi_range(RCC_CR_MSIRANGE_48MHZ);
+	return 0;
+}
 
 int main(void)
 {
@@ -27,6 +35,8 @@ int main(void)
 	rcc_periph_clock_enable(RCC_GPIOE); // led
 	rcc_periph_clock_enable(RCC_GPIOA); // adcs
 	rcc_periph_clock_enable(RCC_GPIOC); // adcs
+	rcc_periph_clock_enable(RCC_PWR);
+	hack();
 	printf("hi guys!\n");
 	/* green led for ticking */
 	gpio_mode_setup(LED_DISCO_GREEN_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,

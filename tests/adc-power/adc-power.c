@@ -66,6 +66,7 @@ void adc_power_init(void)
 	/* same same but different */
 	rcc_periph_clock_enable(RCC_ADC1);
 	ADC_CR(ADC1) &= ~ADC_CR_DEEPPWD;
+	RCC_CCIPR |= 3 << 28; // system clock as adc clock.  (with CKMODE == 0)
 	adc_enable_regulator(ADC1);
 
 #else
