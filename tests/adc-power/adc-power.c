@@ -39,7 +39,7 @@
 #define SAMPLE_TIME_VREF SAMPLE_TIME_TEMP
 #define SEPARATE_VREF 0
 #elif defined(STM32L4)
-#define SAMPLE_TIME_BASIC ADC_SMPR_SMP_47DOT5CYC
+#define SAMPLE_TIME_BASIC ADC_SMPR_SMP_247DOT5CYC
 #define SAMPLE_TIME_TEMP ADC_SMPR_SMP_247DOT5CYC
 #define SAMPLE_TIME_VREF SAMPLE_TIME_TEMP
 #else
@@ -68,6 +68,11 @@ void adc_power_init(void)
 	ADC_CR(ADC1) &= ~ADC_CR_DEEPPWD;
 	RCC_CCIPR |= 3 << 28; // system clock as adc clock.  (with CKMODE == 0)
 	adc_enable_regulator(ADC1);
+	
+	ADC_CR(ADC1) &= ~ADC_CR_ADCALDIF;
+	ADC_CR(ADC1) |= ADC_CR_ADCAL;
+	while (ADC_CR(ADC1) & ADC_CR_ADCAL);
+	
 
 #else
 	rcc_periph_clock_enable(RCC_ADC1);
@@ -137,7 +142,7 @@ void adc_power_task_up(void) {
 	 * I mean, we're going to do some conversions right? */
 	adc_set_single_conversion_mode(ADC1);
 	TIM_CNT(TIMER) = 0;
-	unsigned int v1 = read_adc_naiive(1);
+	unsigned int v1 = read_adc_naiive(1); // 8 for l4!
 	unsigned int v5 = read_adc_naiive(5);
 	unsigned int temp_adc = read_adc_naiive(ADC_CHANNEL_TEMP);
 	unsigned int vref_adc = read_adc_naiive(ADC_CHANNEL_VREF);

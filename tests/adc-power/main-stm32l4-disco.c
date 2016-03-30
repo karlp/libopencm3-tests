@@ -45,8 +45,15 @@ int main(void)
 			LED_DISCO_RED_PIN);
 
 	/* ADC 1 channels 1 and 5 */
-	gpio_mode_setup(GPIOC, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO0);
+	// This is the reset state, so not really necessary.
+	gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO0);
+	gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO1);
+	gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO2);
+	gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO3);
 	gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO5);
+
+	// This is NOT the reset state! very important!
+	GPIO_ASCR(GPIOA) |= GPIO0 | GPIO1 | GPIO2 | GPIO3 | GPIO5;
 
 	adc_power_init();
 	while (1) {
