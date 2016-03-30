@@ -152,12 +152,14 @@ $(PROJECT).elf: $(OBJS) $(LDSCRIPT)
 %.flash: %.elf
 	@printf "  FLASH\t$<\n"
 ifeq (,$(OOCD_FILE))
-	$(Q)$(OOCD) -f interface/$(OOCD_INTERFACE).cfg \
+	$(Q)(echo "halt; program $(*).elf verify reset" | nc -4 localhost 4444 ) || \
+		$(OOCD) -f interface/$(OOCD_INTERFACE).cfg \
 		-f target/$(OOCD_TARGET).cfg \
 		-c "program $(*).elf verify reset exit" \
 		$(NULL)
 else
-	$(Q)$(OOCD) -f $(OOCD_FILE) \
+	$(Q)(echo "halt; program $(*).elf verify reset" | nc -4 localhost 4444 ) || \
+		$(OOCD) -f $(OOCD_FILE) \
 		-c "program $(*).elf verify reset exit" \
 		$(NULL)
 endif
