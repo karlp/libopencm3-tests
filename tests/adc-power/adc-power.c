@@ -117,12 +117,12 @@ static uint16_t read_adc_naiive(uint8_t channel)
 }
 
 static float adc_calc_tempf(unsigned int ts_v, unsigned int vref) {
-	float adjusted_vtemp = ts_v * ST_VREFINT_CAL * 1.0 / vref * 1.0;
-	float slope = (110-30) * 1.0 / (ST_TSENSE_CAL2_110C - ST_TSENSE_CAL1_30C) * 1.0;
+	float adjusted_vtemp = ts_v * ST_VREFINT_CAL * 1.0f / vref * 1.0f;
+	float slope = (110-30) * 1.0f / (ST_TSENSE_CAL2_110C - ST_TSENSE_CAL1_30C) * 1.0f;
 	return slope * (adjusted_vtemp - ST_TSENSE_CAL1_30C) + 30;
 }
 
-static float adc_calc_tempi(uint16_t ts, uint16_t vref) {
+static int adc_calc_tempi(unsigned int ts, unsigned int vref) {
 	int adjusted_vtemp = ts * ST_VREFINT_CAL / vref;
 	int slope = (110-30) / (ST_TSENSE_CAL2_110C - ST_TSENSE_CAL1_30C);
 	return slope * (adjusted_vtemp - ST_TSENSE_CAL1_30C) + 30;
