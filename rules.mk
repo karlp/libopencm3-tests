@@ -18,14 +18,20 @@
 # This version of rules.mk expects the following to be defined before
 # inclusion..
 ### REQUIRED ###
+# DEVICE=xxxx - this tree uses the genlink-config.mk and genlink-rules.mk!
 # OPENCM3_DIR - duh
-# OPENCM3_LIB - the basename, eg: opencm3_stm32f4
-# OPENCM3_DEFS - the target define eg: -DSTM32F4
-# ARCH_FLAGS - eg, -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16
-#    (ie, the full set of cpu arch flags, _none_ are defined in this file)
 # PROJECT - will be the basename of the output elf, eg usb-gadget0-stm32f4disco
 # CFILES - basenames only, eg main.c blah.c
-# LDSCRIPT - full path, eg ../../examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
+#  The follow vars are assumed to have been created via genlink.mk
+# xOPENCM3_LIB - the basename, eg: opencm3_stm32f4
+#    SOURCED VIA devices.data!
+# xOPENCM3_DEFS - the target define eg: -DSTM32F4
+#    SOURCED VIA devices.data!
+# xARCH_FLAGS - eg, -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16
+#    (ie, the full set of cpu arch flags, _none_ are defined in this file)
+#    SOURCED VIA devices.data!
+# xLDSCRIPT - full path, eg ../../examples/stm32/f4/stm32f4-discovery/stm32f4-discovery.ld
+#    SOURCED VIA devices.data!
 #
 ### OPTIONAL ###
 # INCLUDES - fully formed -I paths, if you want extra, eg -I../shared
@@ -65,16 +71,14 @@ OBJCOPY	= $(PREFIX)objcopy
 OBJDUMP	= $(PREFIX)objdump
 OOCD	?= openocd
 
-OPENCM3_INC = $(OPENCM3_DIR)/include
-
 # Inclusion of library header files
-INCLUDES += $(patsubst %,-I%, . $(OPENCM3_INC) )
+include $(OPENCM3_DIR)/mk/genlink-config.mk
 
 OBJS = $(CFILES:%.c=$(BUILD_DIR)/%.o)
 
 TGT_CPPFLAGS += -MD
-TGT_CPPFLAGS += -Wall -Wundef $(INCLUDES)
-TGT_CPPFLAGS += $(INCLUDES) $(OPENCM3_DEFS)
+TGT_CPPFLAGS += -Wall -Wundef
+TGT_CPPFLAGS += $(INCLUDES)
 
 TGT_CFLAGS += $(OPT) $(CSTD) -ggdb3
 TGT_CFLAGS += $(ARCH_FLAGS)
@@ -100,7 +104,6 @@ ifeq ($(V),99)
 TGT_LDFLAGS += -Wl,--print-gc-sections
 endif
 
-LDLIBS += -l$(OPENCM3_LIB)
 # nosys is only in newer gcc-arm-embedded...
 LDLIBS += -specs=nosys.specs
 #LDLIBS += -Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group
@@ -118,11 +121,6 @@ LDLIBS += -specs=nosys.specs
 
 all: $(PROJECT).elf $(PROJECT).bin
 flash: $(PROJECT).flash
-
-$(LDSCRIPT):
-ifeq (,$(wildcard $(LDSCRIPT)))
-    $(error Unable to find specified linker script: $(LDSCRIPT))
-endif
 
 # Need a special rule to have a bin dir
 $(BUILD_DIR)/%.o: %.c
@@ -165,7 +163,9 @@ else
 endif
 
 clean:
-	rm -rf $(BUILD_DIR) $(PROJECT).{elf,bin} $(PROJECT).{list,lss,map}
+	rm -rf $(BUILD_DIR) $(PROJECT).{elf,bin} $(PROJECT).{list,lss,map} $(LDSCRIPT)
+
+include $(OPENCM3_DIR)/mk/genlink-rules.mk
 
 .PHONY: all clean flash
 -include $(OBJS:.o=.d)

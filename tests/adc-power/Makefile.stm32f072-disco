@@ -15,5 +15,9 @@ VPATH += $(SHARED_DIR)
 INCLUDES += $(patsubst %,-I%, . $(SHARED_DIR))
 
 OPENCM3_DIR=../../libopencm3
-include ../../rules.stm32f0.mk
+DEVICE=stm32f072rb
+#OOCD_INTERFACE = stlink-v2
+#OOCD_TARGET = stm32f0x
+OOCD_FILE = ../../openocd/openocd.stm32f072-disco.cfg
+
 include ../../rules.mk
