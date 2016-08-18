@@ -2,6 +2,7 @@
 BOARD = stm32l1-generic
 PROJECT = rcc-legal-ranges-$(BOARD)
 BUILD_DIR = bin-$(BOARD)
+OPT=-O0
 
 SHARED_DIR = ../../shared
 

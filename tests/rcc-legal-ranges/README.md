@@ -5,8 +5,9 @@ turning on and selecting different clocks, power ranges and flash
 wait state configuration are robust enough.
 
 ## PASSING
-The board should issue a series of blinks at various rates before
-settling on a steady rate
+On boot you should get two slow blinks.
+After boot, you should get continuous 5/2 fast/slow blinks as it
+continuously shuffles and resets clock configurations.
 
 ## FAILING
 The board stops blinking at any point in the sequence
