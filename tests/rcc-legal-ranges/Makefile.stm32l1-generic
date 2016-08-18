@@ -1,0 +1,27 @@
+
+BOARD = stm32l1-generic
+PROJECT = rcc-legal-ranges-$(BOARD)
+BUILD_DIR = bin-$(BOARD)
+
+SHARED_DIR = ../../shared
+
+CFILES = main-$(BOARD).c
+#CFILES += trace.c trace_stdio.c
+
+VPATH += $(SHARED_DIR)
+
+INCLUDES += $(patsubst %,-I%, . $(SHARED_DIR))
+
+OPENCM3_DIR=../../libopencm3/
+
+### This section can go to an arch shared rules eventually...
+LDSCRIPT = $(OPENCM3_DIR)/lib/stm32/l1/stm32l15xx6.ld # pessimistic ;)
+OPENCM3_LIB = opencm3_stm32l1
+OPENCM3_DEFS = -DSTM32L1
+FP_FLAGS ?=
+ARCH_FLAGS = -mthumb -mcpu=cortex-m3 $(FP_FLAGS)
+# Use the base targets, as we're playing with clocking too much for swo
+OOCD_INTERFACE = stlink-v2
+OOCD_TARGET = stm32l1
+
+include ../../rules.mk
