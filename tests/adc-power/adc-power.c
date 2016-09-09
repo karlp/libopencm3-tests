@@ -164,6 +164,8 @@ void adc_power_task_down()
 {
 	TIM_CNT(TIMER) = 0;
 	adc_power_off(ADC1);
+	/* double power off should be safe */
+	adc_power_off(ADC1);
 	unsigned int td = TIM_CNT(TIMER);
 	printf("toff in: %u\n", td);
 }
