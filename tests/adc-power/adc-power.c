@@ -23,10 +23,18 @@
 #if defined(STM32F0)
 #define SEPARATE_ADC_SAMPLING 0
 #define SAMPLE_TIME_BASIC ADC_SMPR_SMP_239DOT5 // 4usec or more for tempsensor
+#define HAS_CALIBRATION 1
+#elif defined(STM32F1)
+#define SEPARATE_ADC_SAMPLING 0
+#define SAMPLE_TIME_BASIC ADC_SMPR_SMP_28DOT5CYC // 17usecs or more. >~15cycles at 9Mhz
+#define SEPARATE_VREF 0
+#define HAS_CALIBRATION 1
+#define HAS_ROM_CALIBRATION 0
 #elif defined(STM32F3)
 #define SAMPLE_TIME_BASIC ADC_SMPR_SMP_181DOT5CYC
 #define SAMPLE_TIME_TEMP ADC_SMPR_SMP_601DOT5CYC // 2.2usecs or more
 #define SAMPLE_TIME_VREF SAMPLE_TIME_TEMP
+#define HAS_CALIBRATION 1
 #elif defined(STM32F4)
 #define SAMPLE_TIME_BASIC ADC_SMPR_SMP_28CYC
 #define SAMPLE_TIME_TEMP ADC_SMPR_SMP_144CYC // 10 usecs or more, in theory needs 840cycles!
@@ -42,6 +50,7 @@
 #define SAMPLE_TIME_BASIC ADC_SMPR_SMP_247DOT5CYC
 #define SAMPLE_TIME_TEMP ADC_SMPR_SMP_247DOT5CYC
 #define SAMPLE_TIME_VREF SAMPLE_TIME_TEMP
+#define HAS_CALIBRATION 1
 #else
 #error "no sample time for your target yet?!"
 #endif
@@ -51,6 +60,12 @@
 #endif
 #ifndef SEPARATE_ADC_SAMPLING
 #define SEPARATE_ADC_SAMPLING 1
+#endif
+#ifndef HAS_CALIBRATION
+#define HAS_CALIBRATION 0
+#endif
+#ifndef HAS_ROM_CALIBRATION
+#define HAS_ROM_CALIBRATION 1
 #endif
 
 
@@ -116,25 +131,48 @@ static uint16_t read_adc_naiive(uint8_t channel)
 	uint8_t channel_array[16];
 	channel_array[0] = channel;
 	adc_set_regular_sequence(ADC1, 1, channel_array);
+	// FIXME - use a trigger, see f1 notes!
+#if defined (STM32F1)
+	adc_start_conversion_direct(ADC1);
+#else
 	adc_start_conversion_regular(ADC1);
+#endif
 	while (!adc_eoc(ADC1));
 	return adc_read_regular(ADC1);
 }
 
 static float adc_calc_tempf(unsigned int ts_v, unsigned int vref) {
+#if (HAS_ROM_CALIBRATION == 1)
 	float adjusted_vtemp = ts_v * ST_VREFINT_CAL * 1.0f / vref * 1.0f;
 	float slope = (110-30) * 1.0f / (ST_TSENSE_CAL2_110C - ST_TSENSE_CAL1_30C) * 1.0f;
 	return slope * (adjusted_vtemp - ST_TSENSE_CAL1_30C) + 30;
+#else
+	return ts_v * 1.0;
+#endif
 }
 
 static int adc_calc_tempi(unsigned int ts, unsigned int vref) {
+#if (HAS_ROM_CALIBRATION == 1)
 	int adjusted_vtemp = ts * ST_VREFINT_CAL / vref;
 	int slope = (110-30) / (ST_TSENSE_CAL2_110C - ST_TSENSE_CAL1_30C);
 	return slope * (adjusted_vtemp - ST_TSENSE_CAL1_30C) + 30;
+#else
+	return ts * 1.00;
+#endif
 }
 
 void adc_power_task_up(void) {
 	TIM_CNT(TIMER) = 0;
+	// Welcome to f1 world.
+#if defined (STM32F1)
+	adc_power_on(ADC1);
+	for (int i = 0; i < 0x80000; i++) { /* Wait a bit. */
+		__asm__("NOP");
+	}
+#endif
+#if (HAS_CALIBRATION == 1)
+	adc_calibrate(ADC1);
+#endif
 	adc_power_on(ADC1);
 	unsigned int td = TIM_CNT(TIMER);
 	
