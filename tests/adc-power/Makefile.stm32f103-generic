@@ -34,5 +34,5 @@ OPENCM3_DIR=../../libopencm3
 DEVICE=stm32f103x8
 #OOCD_INTERFACE = jlink
 #OOCD_TARGET = stm32f1x
-OOCD_FILE = openocd.stm32f103-generic.cfg
+OOCD_FILE = ../../openocd/openocd.stm32f103-generic.cfg
 include ../../rules.mk
