@@ -32,18 +32,36 @@ extern "C" {
 #include <libopencm3/usb/usbd.h>
 #include <libopencm3/usb/cdc.h>
 
-	void usb_cdcacm_init(usbd_device **usb_dev);
+	enum cdcacm_pin {
+		CDCACM_PIN_NONE,
+		CDCACM_PIN_LED_TX,
+		CDCACM_PIN_LED_RX,
+		CDCACM_PIN_RS485DE,
+	};
+
+	usbd_device * usb_cdcacm_init(const usbd_driver *driver, const char *userserial);
 	void usb_cdcacm_setup_pre_arch(void);
-	void usb_cdcacm_setup_post_arch(void);
-	void cdcacm_send_data(uint8_t *buf, uint16_t len);
+	void usb_cdcacm_setup_post_arch(usbd_device *dev);
+	void usb_cdcacm_poll(usbd_device *usbd_dev);
 	void cdcacm_line_state_changed_cb(uint8_t linemask);
 
-	/* Call this if you have data to send to the usb host */
-	void glue_data_received_cb(uint8_t *buf, uint16_t len);
-	/* These will be called by usb_cdcacm code */
-	void glue_send_data_cb(uint8_t *buf, uint16_t len);
+	/**
+	 * Called by the cdcacm core to toggle pins as need be
+	 * @param port which serial port, 0 normally
+	 * @param pin logical pin 
+	 * @param set set or clear
+	 */
+	void cdcacm_arch_pin(int port, enum cdcacm_pin pin, bool set);
 
-	void glue_set_line_state_cb(uint8_t dtr, uint8_t rts);
+	/**
+	 * enable the tx emmpty irq for the logical port
+	 * @param port
+	 * @param set
+	 */
+	void cdcacm_arch_txirq(int port, bool set);
+
+	void cdcacm_arch_set_line_state(int port, uint8_t dtr, uint8_t rts);
+
 	int glue_set_line_coding_cb(uint32_t baud, uint8_t databits,
 		enum usb_cdc_line_coding_bParityType cdc_parity,
 		enum usb_cdc_line_coding_bCharFormat cdc_stopbits);

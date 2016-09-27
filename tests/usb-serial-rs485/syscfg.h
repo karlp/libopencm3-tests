@@ -24,7 +24,20 @@
 extern "C" {
 #endif
 
+#define STIMULUS_RING_DRAIN 2
+#define STIMULUS_RING_PUSH 3
+#define STIMULUS_TXC 4
+#define STIMULUS_TX 5
+
+#if defined STM32F1
+#define LED_RX_PORT GPIOC
+#define LED_RX_PIN GPIO13
+#define LED_TX_PORT GPIOC
+#define LED_TX_PIN GPIO13
+#define RS485DE_PORT GPIOB
+#define RS485DE_PIN GPIO9 // FIXME? (disconnected, just a pin))
 /* TODO: should really make a stm32f4discovery.h file... */
+#elif defined STM32F4
 
 #define LED_RX_PORT	GPIOD
 #define LED_RX_PIN	GPIO15  /* Blue, but you won't see this one much */
@@ -35,11 +48,7 @@ extern "C" {
 #define RS485DE_PIN	GPIO14  /* red */
 
 #define STREAM_USART2_TX 6
-
-#define STIMULUS_RING_DRAIN 2
-#define STIMULUS_RING_PUSH 3
-#define STIMULUS_TXC 4
-#define STIMULUS_TX 5
+#endif
 
 
 #ifdef	__cplusplus

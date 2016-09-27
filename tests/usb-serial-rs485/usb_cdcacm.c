@@ -29,7 +29,9 @@
 #include <libopencm3/usb/usbd.h>
 #include <libopencm3/usb/cdc.h>
 #include <libopencm3/cm3/scb.h>
+// NOTHING ELSE! this file _does_ not know about part specifics!
 
+#include "syscfg.h"
 #include "ringb.h"
 
 #define ER_DEBUG
@@ -42,10 +44,8 @@
 #endif
 
 
-uint8_t usbd_control_buffer[128];
-usbd_device *acm_dev;
-
-bool out_in_progress;
+static uint8_t usbd_control_buffer[128];
+static usbd_device *acm_dev;
 
 static const struct usb_device_descriptor dev = {
 	.bLength = USB_DT_DEVICE_SIZE,
@@ -181,12 +181,20 @@ static const struct usb_config_descriptor config = {
 	.interface = ifaces,
 };
 
+static char serial[] = "none";
 static const char *usb_strings[] = {
 	"libopencm3",
 	"usb_to_serial_cdcacm",
-	"none",
+	serial,
 	"DEMO",
 };
+
+struct ringb rx_ring;
+static uint8_t rx_ring_data[64];
+struct ringb tx_ring;
+static uint8_t tx_ring_data[128];
+bool nakked = false;
+
 
 static int cdcacm_control_request(usbd_device *usbd_dev,
 	struct usb_setup_data *req, uint8_t **buf,
@@ -212,9 +220,10 @@ static int cdcacm_control_request(usbd_device *usbd_dev,
 
 		dtr = (req->wValue & (1 << 0)) ? 1 : 0;
 		rts = (req->wValue & (1 << 1)) ? 1 : 0;
-		ER_DPRINTF("CTRLRQ: Set Line state: dtr:%d rts: %d\n", dtr, rts);
+		ER_DPRINTF("CTRLRQ:%d Set Line state: dtr:%d rts: %d\n", req->wIndex, dtr, rts);
 
-		glue_set_line_state_cb(dtr, rts);
+		// FIXME - need to get port based on wIndex I believe?
+		cdcacm_arch_set_line_state(0, dtr, rts);
 
 		return 1;
 	}
@@ -237,8 +246,6 @@ static int cdcacm_control_request(usbd_device *usbd_dev,
 	return 0;
 }
 
-extern bool nakked;
-extern struct ringb tx_ring;
 static void cdcacm_data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
 {
 	uint8_t buf[64];
@@ -246,8 +253,18 @@ static void cdcacm_data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
 	usbd_ep_nak_set(usbd_dev, ep, 1);
 	int len = usbd_ep_read_packet(usbd_dev, ep, buf, 64);
 	ER_DPRINTF("Hrx%db\n", len);
-	// push all of what we got into our outbound fifo
-	glue_send_data_cb(buf, len);
+	cdcacm_arch_pin(0, CDCACM_PIN_LED_TX, 1);
+	cdcacm_arch_pin(0, CDCACM_PIN_RS485DE, 1);
+	for (int x = 0; x < len; x++) {
+		if (!ringb_put(&tx_ring, buf[x])) {
+			// failed to process usb traffic properly.
+			// should _never_ happen, means we failed to nak in time.
+			// this is _never_recoverable beyond watchdog reset.
+			while(1);
+		}
+		// look up port to suart mapping which side?
+		cdcacm_arch_txirq(0, 1);
+	}
 	if (ringb_depth(&tx_ring) < 64) {
 		ER_DPRINTF("ACK\n");
 		usbd_ep_nak_set(usbd_dev, ep, 0);
@@ -291,20 +308,55 @@ void cdcacm_line_state_changed_cb(uint8_t linemask)
 	while (usbd_ep_write_packet(acm_dev, 0x83, buf, size) == size);
 }
 
-void glue_data_received_cb(uint8_t *buf, uint16_t len)
-{
-	ER_DPRINTF("Drx %db\n", len);
-	usbd_ep_write_packet(acm_dev, 0x82, buf, len);
+
+/* Y0, moron, nothing's stopping rx irqs from happening, have fun when you overflow temp buffer! */
+static void task_drain_rx(struct ringb *r) {
+	uint8_t zero_copy_is_for_losers[sizeof(rx_ring_data)];
+	int zci = 0;
+	int c = ringb_get(r);
+	while (c >= 0) {
+		zero_copy_is_for_losers[zci++] = c;
+		c = ringb_get(r);
+	}
+	if (zci) {
+		trace_send16(STIMULUS_RING_DRAIN, zci);
+		ER_DPRINTF("Drx %db\n", zci);
+		usbd_ep_write_packet(acm_dev, 0x82, zero_copy_is_for_losers, zci);
+	}
 }
 
-void usb_cdcacm_init(usbd_device **usbd_dev)
+
+usbd_device * usb_cdcacm_init(const usbd_driver *driver, const char *userserial)
 {
-	usb_cdcacm_setup_pre_arch();
+	ringb_init(&rx_ring, rx_ring_data, sizeof(rx_ring_data));
+	ringb_init(&tx_ring, tx_ring_data, sizeof(tx_ring_data));
+	if (userserial) {
+                usb_strings[2] = userserial;
+        }
 
-	*usbd_dev = usbd_init(&otgfs_usb_driver, &dev, &config, usb_strings, 4,
+	acm_dev = usbd_init(driver, &dev, &config, usb_strings, 4,
 		usbd_control_buffer, sizeof (usbd_control_buffer));
-	acm_dev = *usbd_dev;
 	usbd_register_set_config_callback(acm_dev, cdcacm_set_config);
+	return acm_dev;
+}
 
-	usb_cdcacm_setup_post_arch();
+
+void usb_cdcacm_poll(usbd_device *usbd_dev) // FIXME -drop to acm_dev internal
+{
+	// Originally, calling this every 50 times caused some rx character droppage,
+	// and every 500 times caused _none_.  _probably_ needs to be tied to
+	// a timer and something like the current baud rate and the inter character time
+	static int i = 0;
+	if (i++ > 500) {
+		// hacktastic
+		if (ringb_depth(&tx_ring) < 64 && nakked) {
+			usbd_ep_nak_set(usbd_dev, 1, 0);
+			nakked = false;
+		}
+
+		task_drain_rx(&rx_ring);
+		i = 0;
+	}
+
+	
 }

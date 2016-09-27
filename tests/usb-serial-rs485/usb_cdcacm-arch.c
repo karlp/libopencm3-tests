@@ -27,49 +27,7 @@
 #include "syscfg.h"
 #include "ringb.h"
 
-extern bool out_in_progress;
 
-void usb_cdcacm_setup_pre_arch(void)
-{
-	rcc_periph_clock_enable(RCC_GPIOA);
-	rcc_periph_clock_enable(RCC_OTGFS);
-
-	gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE,
-		GPIO9 | GPIO11 | GPIO12);
-	gpio_set_af(GPIOA, GPIO_AF10, GPIO9 | GPIO11 | GPIO12);
-
-}
-
-void usb_cdcacm_setup_post_arch(void)
-{
-}
-
-// hacktastic
-extern struct ringb tx_ring;
-void glue_send_data_cb(uint8_t *buf, uint16_t len)
-{
-	if (len == 0) {
-		return;
-	}
-	gpio_set(LED_TX_PORT, LED_TX_PIN);
-	gpio_set(RS485DE_PORT, RS485DE_PIN);
-	for (int x = 0; x < len; x++) {
-		if (!ringb_put(&tx_ring, buf[x])) {
-			// failed to process usb traffic properly.
-			// should _never_ happen, means we failed to nak in time.
-			// this is _never_recoverable beyond watchdog reset.
-			while(1);
-		}
-		usart_enable_tx_interrupt(USART2);
-	}
-}
-
-void glue_set_line_state_cb(uint8_t dtr, uint8_t rts)
-{
-	(void) dtr;
-	(void) rts;
-	// LM4f has an implementation of this if you're keen
-}
 
 int glue_set_line_coding_cb(uint32_t baud, uint8_t databits,
 	enum usb_cdc_line_coding_bParityType cdc_parity,
