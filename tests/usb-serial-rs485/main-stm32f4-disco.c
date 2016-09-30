@@ -37,6 +37,11 @@
     do { } while (0)
 #endif
 
+static inline void gpio_really(uint32_t port, uint16_t pin, const bool set)
+{
+	int shift = set ? 0 : 16;
+	GPIO_BSRR(port) = pin << shift;
+}
 
 extern struct ringb rx_ring, tx_ring;
 static void usart_setup(void)
@@ -69,6 +74,7 @@ static void usart_setup(void)
 
 void usart2_isr(void)
 {
+	gpio_really(GPIOA, GPIO5, 1);
 	// usbser-rxne()
 	/* Check if we were called because of RXNE. */
 	if (usart_get_interrupt_source(USART2, USART_SR_RXNE)) {
@@ -107,6 +113,7 @@ void usart2_isr(void)
 //		gpio_clear(LED_TX_PORT, LED_TX_PIN);
 //		gpio_clear(RS485DE_PORT, RS485DE_PIN);
 //	}
+	gpio_really(GPIOA, GPIO5, 0);
 }
 
 void usb_cdcacm_setup_pre_arch(void)
@@ -122,6 +129,43 @@ void usb_cdcacm_setup_pre_arch(void)
 
 void usb_cdcacm_setup_post_arch(usbd_device *dev)
 {
+	(void)dev;
+}
+
+
+void cdcacm_arch_pin(int port, enum cdcacm_pin pin, bool set)
+{
+	(void)port; // TODO if you want to handle multiple ports
+	switch (pin) {
+		case CDCACM_PIN_LED_TX:
+			gpio_really(LED_TX_PORT, LED_TX_PIN, set);
+			break;
+		case CDCACM_PIN_LED_RX:
+			gpio_really(LED_RX_PORT, LED_RX_PIN, set);
+			break;
+		case CDCACM_PIN_RS485DE:
+			gpio_really(RS485DE_PORT, RS485DE_PIN, set);
+			break;
+		default:
+			break;
+	}
+}
+
+void cdcacm_arch_txirq(int port, bool set) {
+	(void)port; //FIXME if you make this multi port
+	if (set) {
+		usart_enable_tx_interrupt(USART2);
+	} else {
+		usart_disable_tx_interrupt(USART2);
+	}
+}
+
+void cdcacm_arch_set_line_state(int port, uint8_t dtr, uint8_t rts)
+{
+	(void)port; // FIXME if you want multiple ports
+	(void) dtr;
+	(void) rts;
+	// LM4f has an implementation of this if you're keen
 }
 
 
@@ -136,7 +180,8 @@ int main(void)
 	gpio_mode_setup(RS485DE_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
 		RS485DE_PIN);
 
-	
+	rcc_periph_clock_enable(RCC_GPIOA);
+	gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO5);
 
 	usart_setup();
 	usb_cdcacm_setup_pre_arch();

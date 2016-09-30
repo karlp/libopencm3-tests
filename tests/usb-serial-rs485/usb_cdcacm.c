@@ -315,11 +315,12 @@ static void task_drain_rx(struct ringb *r) {
 	int zci = 0;
 	int c = ringb_get(r);
 	while (c >= 0) {
+		//trace_send8(STIMULUS_RING_DRAIN, c);
 		zero_copy_is_for_losers[zci++] = c;
 		c = ringb_get(r);
 	}
 	if (zci) {
-		trace_send16(STIMULUS_RING_DRAIN, zci);
+		//trace_send16(STIMULUS_RING_DRAIN, zci);
 		ER_DPRINTF("Drx %db\n", zci);
 		usbd_ep_write_packet(acm_dev, 0x82, zero_copy_is_for_losers, zci);
 	}
