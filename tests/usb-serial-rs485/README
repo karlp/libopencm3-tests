@@ -2,6 +2,15 @@
 README
 ------------------------------------------------------------------------------
 
+current status:
+f1: frootloop3 gets corrupt data in rx path, _after_ serial rx,
+but the usb in packets (wireshark) show the corruption. (LA on serial lines is clean)
+f4: frootloop3 tests clean
+=> suspect libopecm3 usb bug?
+
+
+
+
 This implements a USB CDC-ACM device, connected to USART2 (PA2-tx/PA3-rx)
 An interrupt driven tx ring buffer is used for usb->serial, and a similar
 interrupt driven rx ring buffer is used for serial->usb.
