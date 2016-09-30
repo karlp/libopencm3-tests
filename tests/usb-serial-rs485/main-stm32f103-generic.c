@@ -92,6 +92,7 @@ void usart2_isr(void)
 			ER_DPRINTF("rx buffer full\n");
 			while(1);
 		}
+		trace_send8(STIMULUS_RING_PUSH, c);
 		gpio_clear(LED_RX_PORT, LED_RX_PIN);
 	}
 	// usbser-irq-txe()
