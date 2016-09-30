@@ -119,7 +119,7 @@ LDLIBS += -specs=nosys.specs
 %: s.%
 %: SCCS/s.%
 
-all: $(PROJECT).elf $(PROJECT).bin
+all: $(PROJECT).elf #$(PROJECT).bin
 flash: $(PROJECT).flash
 
 # Need a special rule to have a bin dir
