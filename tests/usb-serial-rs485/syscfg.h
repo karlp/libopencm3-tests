@@ -34,8 +34,8 @@ extern "C" {
 #define LED_RX_PIN GPIO13
 #define LED_TX_PORT GPIOC
 #define LED_TX_PIN GPIO13
-#define RS485DE_PORT GPIOB
-#define RS485DE_PIN GPIO9 // FIXME? (disconnected, just a pin))
+#define RS485DE_PORT GPIOA
+#define RS485DE_PIN GPIO8
 /* TODO: should really make a stm32f4discovery.h file... */
 #elif defined STM32F4
 

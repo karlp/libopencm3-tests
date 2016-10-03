@@ -99,24 +99,23 @@ void usart2_isr(void)
 	if (usart_get_interrupt_source(USART2, USART_SR_TXE)) {
 		if (ringb_depth(&tx_ring) == 0) {
 			// turn off tx empty interrupts, nothing left to send
-			usart_disable_tx_interrupt(USART2);
+			cdcacm_arch_txirq(0, 0);
 			ER_DPRINTF("OFF\n");
 			// Turn on tx complete interrupts, for rs485 de
-//			USART_CR1(USART2) |= ~USART_CR1_TCIE;
+			USART_CR1(USART2) |= USART_CR1_TCIE;
 		} else {
 			int c = ringb_get(&tx_ring);
 			usart_send(USART2, c);
 		}
 	}
 	// usbser-irq-txc?  rs485 is auto on some devices, but can be emulated anyway
-//	if (usart_get_interrupt_source(USART2, USART_SR_TC)) {
-//		ER_DPRINTF("TC");
-//		// turn off the complete irqs, we're done now.
-//		USART_SR(USART2) &= ~USART_SR_TC;
-//		USART_CR1(USART2) &= ~USART_CR1_TCIE;
-//		gpio_clear(LED_TX_PORT, LED_TX_PIN);
-//		gpio_clear(RS485DE_PORT, RS485DE_PIN);
-//	}
+	if (usart_get_interrupt_source(USART2, USART_SR_TC)) {
+		ER_DPRINTF("TC");
+		// turn off the complete irqs, we're done now.
+		USART_CR1(USART2) &= ~USART_CR1_TCIE;
+		USART_SR(USART2) &= ~USART_SR_TC;
+		cdcacm_arch_pin(0, CDCACM_PIN_RS485DE, 0);
+	}
 	gpio_really(GPIOA, GPIO5, 0);
 }
 
@@ -185,10 +184,7 @@ int main(void)
 	// IRQ timing
 	rcc_periph_clock_enable(RCC_GPIOA);
 	gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, GPIO5);
-
-
-//	gpio_mode_setup(RS485DE_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
-//		RS485DE_PIN);
+	gpio_set_mode(RS485DE_PORT, GPIO_MODE_OUTPUT_50_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, RS485DE_PIN);
 
 	usart_setup();
 	
