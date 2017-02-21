@@ -77,7 +77,7 @@ void usart2_isr(void)
 	gpio_really(GPIOA, GPIO5, 1);
 	// usbser-rxne()
 	/* Check if we were called because of RXNE. */
-	if (usart_get_interrupt_source(USART2, USART_SR_RXNE)) {
+	if (usart_get_flag(USART2, USART_SR_RXNE)) {
 		gpio_set(LED_RX_PORT, LED_RX_PIN);
 		uint8_t c = usart_recv(USART2);
 		if (ringb_put(&rx_ring, c)) {
@@ -92,7 +92,7 @@ void usart2_isr(void)
 		gpio_clear(LED_RX_PORT, LED_RX_PIN);
 	}
 	// usbser-irq-txe()
-	if (usart_get_interrupt_source(USART2, USART_SR_TXE)) {
+	if (usart_get_flag(USART2, USART_SR_TXE)) {
 		if (ringb_depth(&tx_ring) == 0) {
 			// turn off tx empty interrupts, nothing left to send
 			usart_disable_tx_interrupt(USART2);
@@ -105,7 +105,7 @@ void usart2_isr(void)
 		}
 	}
 	// usbser-irq-txc?  rs485 is auto on some devices, but can be emulated anyway
-//	if (usart_get_interrupt_source(USART2, USART_SR_TC)) {
+//	if (usart_get_flag(USART2, USART_SR_TC)) {
 //		ER_DPRINTF("TC");
 //		// turn off the complete irqs, we're done now.
 //		USART_SR(USART2) &= ~USART_SR_TC;

@@ -121,14 +121,13 @@ void usart2_isr(void)
 
 void usb_cdcacm_setup_pre_arch(void)
 {
+	// Hack to reenumerate
 	gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_2_MHZ,
                 GPIO_CNF_OUTPUT_PUSHPULL, GPIO12);
         gpio_clear(GPIOA, GPIO12);
         for (unsigned int i = 0; i < 800000; i++) {
                 __asm__("nop");
         }
-
-        rcc_periph_clock_enable(RCC_OTGFS);
 }
 
 void usb_cdcacm_setup_post_arch(usbd_device *dev)
