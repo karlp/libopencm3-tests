@@ -8,6 +8,7 @@ but the usb in packets (wireshark) show the corruption. (LA on serial lines is c
 f4: frootloop3 tests clean
 => suspect libopecm3 usb bug?
 
+frootloop3: github.com/karlp/frootloop3
 
 
 
@@ -28,3 +29,5 @@ you won't really see it without heavy data rates.
 
 This example is heavily based on the existing usb_cdcacm and usart demos.
 
+
+KARL - check https://github.com/dhylands/libopencm3-usb-serial/blob/master/usb.c to see if it passes the same tests or not
