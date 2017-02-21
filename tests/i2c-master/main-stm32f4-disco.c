@@ -12,10 +12,23 @@
 
 #include "trace.h"
 
+#include "hw.h"
+#include "i2c-master.h"
+
 #define LED_DISCO_GREEN_PORT GPIOD
 #define LED_DISCO_GREEN_PIN GPIO12
 
 #define CODEC_ADDRESS 0x4a
+
+
+struct hw_detail hw_details = {
+	.periph = I2C1,
+	.periph_rcc = RCC_I2C1,
+	.periph_rst = RST_I2C1,
+	.pins = GPIO6 | GPIO9, /* FIXME - only for onboard! */
+	.port = GPIOB,
+	.port_rcc = RCC_GPIOB,
+};
 
 
 static void codec_gpio_init(void)
@@ -31,22 +44,6 @@ static void codec_gpio_init(void)
 	gpio_set_af(GPIOB, GPIO_AF4, GPIO6 | GPIO9);
 }
 
-static void codec_i2c_init(void)
-{
-	rcc_periph_clock_enable(RCC_I2C1);
-	i2c_peripheral_disable(I2C1);
-	i2c_reset(I2C1);
-	i2c_set_standard_mode(I2C1);
-	i2c_enable_ack(I2C1);
-	i2c_set_dutycycle(I2C1, I2C_CCR_DUTY_DIV2); /* default, no need to do this really */
-	i2c_set_clock_frequency(I2C1, I2C_CR2_FREQ_42MHZ);
-	/* 42MHz / (100kHz * 2) */
-	i2c_set_ccr(I2C1, 210);
-	/* standard mode, freqMhz+1*/
-	i2c_set_trise(I2C1, 43);
-	i2c_peripheral_enable(I2C1);
-}
-
 static void codec_init(void)
 {
 	int i;
@@ -60,7 +57,7 @@ static void codec_init(void)
 	}
 	gpio_set(GPIOD, GPIO4);
 
-	codec_i2c_init();
+	i2cm_init();
 }
 
 static int codec_write_reg(uint8_t reg, uint8_t val)

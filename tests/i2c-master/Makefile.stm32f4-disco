@@ -22,7 +22,7 @@ BUILD_DIR = bin-$(BOARD)
 SHARED_DIR = ../../shared
 
 CFILES = main-$(BOARD).c
-#CFILES += adc-power.c
+CFILES += i2c-master.c
 CFILES += trace.c trace_stdio.c
 
 VPATH += $(SHARED_DIR)
