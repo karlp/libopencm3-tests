@@ -18,142 +18,47 @@
 #define LED_DISCO_GREEN_PORT GPIOD
 #define LED_DISCO_GREEN_PIN GPIO12
 
-#define CODEC_ADDRESS 0x4a
-
 
 struct hw_detail hw_details = {
 	.periph = I2C1,
 	.periph_rcc = RCC_I2C1,
 	.periph_rst = RST_I2C1,
-	.pins = GPIO6 | GPIO9, /* FIXME - only for onboard! */
+//	.pins = GPIO6 | GPIO9, /* FIXME - only for onboard! */
+	.pins = GPIO8 | GPIO9, /* For SHT21 on I2c1 */
 	.port = GPIOB,
 	.port_rcc = RCC_GPIOB,
 };
 
 
-static void codec_gpio_init(void)
+static void setup_i2c_gpio(void)
 {
 	/* reset pin */
-	rcc_periph_clock_enable(RCC_GPIOD);
-	gpio_mode_setup(GPIOD, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO4);
+//	rcc_periph_clock_enable(RCC_GPIOD);
+//	gpio_mode_setup(GPIOD, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO4);
 
 	/* i2c control lines */
-	rcc_periph_clock_enable(RCC_GPIOB);
-	gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO6 | GPIO9);
-	gpio_set_output_options(GPIOB, GPIO_OTYPE_OD, GPIO_OSPEED_50MHZ, GPIO6 | GPIO9);
-	gpio_set_af(GPIOB, GPIO_AF4, GPIO6 | GPIO9);
+	rcc_periph_clock_enable(hw_details.port_rcc);
+	gpio_mode_setup(hw_details.port, GPIO_MODE_AF, GPIO_PUPD_NONE, hw_details.pins);
+	gpio_set_output_options(hw_details.port, GPIO_OTYPE_OD, GPIO_OSPEED_50MHZ, hw_details.pins);
+	gpio_set_af(hw_details.port, GPIO_AF4, hw_details.pins);
 }
 
 static void codec_init(void)
 {
 	int i;
 	/* Configure the Codec related IOs */
-	codec_gpio_init();
+	setup_i2c_gpio();
 
 	/* reset the codec */
-	gpio_clear(GPIOD, GPIO4);
+//	gpio_clear(GPIOD, GPIO4);
 	for (i = 0; i < 1000000; i++) { /* Wait a bit. */
 		__asm__("NOP");
 	}
-	gpio_set(GPIOD, GPIO4);
+//	gpio_set(GPIOD, GPIO4);
 
 	i2cm_init();
 }
 
-static int codec_write_reg(uint8_t reg, uint8_t val)
-{
-	uint32_t i2c = I2C1;
-
-	while ((I2C_SR2(i2c) & I2C_SR2_BUSY)) {
-	}
-
-	i2c_send_start(i2c);
-
-	/* Wait for master mode selected */
-	while (!((I2C_SR1(i2c) & I2C_SR1_SB)
-		& (I2C_SR2(i2c) & (I2C_SR2_MSL | I2C_SR2_BUSY))));
-
-	i2c_send_7bit_address(i2c, CODEC_ADDRESS, I2C_WRITE);
-
-	/* Waiting for address is transferred. */
-	while (!(I2C_SR1(i2c) & I2C_SR1_ADDR));
-
-	/* Cleaning ADDR condition sequence. */
-	uint32_t reg32 = I2C_SR2(i2c);
-	(void) reg32; /* unused */
-
-	/* Common above here */
-
-	/* Sending the data. */
-	i2c_send_data(i2c, reg);
-	while (!(I2C_SR1(i2c) & (I2C_SR1_BTF)));
-	i2c_send_data(i2c, val);
-	while (!(I2C_SR1(i2c) & (I2C_SR1_BTF | I2C_SR1_TxE)));
-
-	/* Send STOP condition. */
-	i2c_send_stop(i2c);
-	return 0;
-}
-
-static uint32_t codec_read_reg(uint8_t reg)
-{
-	uint32_t i2c = I2C1;
-
-	while ((I2C_SR2(i2c) & I2C_SR2_BUSY)) {
-	}
-
-	i2c_send_start(i2c);
-
-	/* Wait for master mode selected */
-	while (!((I2C_SR1(i2c) & I2C_SR1_SB)
-		& (I2C_SR2(i2c) & (I2C_SR2_MSL | I2C_SR2_BUSY))));
-
-	i2c_send_7bit_address(i2c, CODEC_ADDRESS, I2C_WRITE);
-
-	/* Waiting for address is transferred. */
-	while (!(I2C_SR1(i2c) & I2C_SR1_ADDR));
-
-	/* Cleaning ADDR condition sequence. */
-	uint32_t reg32 = I2C_SR2(i2c);
-	(void) reg32; /* unused */
-
-	/*  Common stuff ABOVE HERE     */
-
-	i2c_send_data(i2c, reg);
-	while (!(I2C_SR1(i2c) & (I2C_SR1_BTF)));
-
-	i2c_send_start(i2c);
-
-	/* Wait for master mode selected */
-	while (!((I2C_SR1(i2c) & I2C_SR1_SB)
-		& (I2C_SR2(i2c) & (I2C_SR2_MSL | I2C_SR2_BUSY))));
-
-	i2c_send_7bit_address(i2c, CODEC_ADDRESS, I2C_READ);
-
-	/* Waiting for address is transferred. */
-	while (!(I2C_SR1(i2c) & I2C_SR1_ADDR));
-
-	i2c_disable_ack(i2c);
-
-	/* Cleaning ADDR condition sequence. */
-	reg32 = I2C_SR2(i2c);
-	(void) reg32; /* unused */
-
-	i2c_send_stop(i2c);
-
-	while (!(I2C_SR1(i2c) & I2C_SR1_RxNE));
-	uint32_t result = i2c_get_data(i2c);
-
-	i2c_enable_ack(i2c);
-	I2C_SR1(i2c) &= ~I2C_SR1_AF;
-	return result;
-}
-
-static void codec_readid(void)
-{
-	uint8_t res = codec_read_reg(0x01);
-	printf("raw res = %#x Codec is %#x (should be 0x1c), revision %d\n", res, res >> 3, res & 0x7);
-}
 
 int main(void)
 {
@@ -165,22 +70,13 @@ int main(void)
 		LED_DISCO_GREEN_PIN);
 	printf("hi guys!\n");
 	codec_init();
-	codec_readid();
 
-	codec_write_reg(0x14, 0xff);
-	for (i = 0; i < 8; i++) {
-		uint8_t pass_vol_a = codec_read_reg(0x14);
-		printf("Passthrough vol A was: %#x\n", pass_vol_a);
-		codec_write_reg(0x14, pass_vol_a >> 1);
-		gpio_toggle(LED_DISCO_GREEN_PORT, LED_DISCO_GREEN_PIN);
-		for (j = 0; j < 100000; j++) { /* Wait a bit. */
-			__asm__("NOP");
-		}
-	}
-
-	/* Nothing else to do */;
 	while (1) {
-		;
+		i2cm_task();
+		gpio_toggle(LED_DISCO_GREEN_PORT, LED_DISCO_GREEN_PIN);
+		for (i = 0; i < 0x800000; i++) { /* Wait a bit. */
+                        __asm__("NOP");
+                }
 	}
 	return 0;
 }

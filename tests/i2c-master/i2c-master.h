@@ -19,6 +19,7 @@ extern "C" {
 
 
 	void i2cm_init(void);
+	void i2cm_task(void);
 
 #ifdef __cplusplus
 }
