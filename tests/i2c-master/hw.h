@@ -18,6 +18,7 @@ struct hw_detail
        uint32_t trigger_rcc;
        uint32_t trigger_port;
        uint32_t trigger_pin;
+       int i2c_clock_megahz; /* eg 42 for APB1 on an F4@168Mhz */
 };
 
 extern struct hw_detail hw_details;

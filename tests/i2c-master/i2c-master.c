@@ -33,14 +33,11 @@ void i2cm_init(void)
 	//	i2c_enable_ack(hw_details.periph); /* NO ACK FOR SHT21! */
 	//i2c_set_dutycycle(hw_details.periph, I2C_CCR_DUTY_DIV2); /* default, no need to do this really */
 
-	/* --------- board specific settings!  */
-	// TODO - rcc_apb2_clock / 1000000 and rounded somehow nicely?
-	i2c_set_clock_frequency(hw_details.periph, I2C_CR2_FREQ_42MHZ);
-	/* 42MHz / (100kHz * 2) */
-	i2c_set_ccr(hw_details.periph, 210);
-	/* standard mode, freqMhz+1*/
-	i2c_set_trise(hw_details.periph, 43);
-	/* --------- end of board specific settings!*/
+	i2c_set_clock_frequency(hw_details.periph, hw_details.i2c_clock_megahz);
+	/* x Mhz / (100kHz * 2) */
+	i2c_set_ccr(hw_details.periph, hw_details.i2c_clock_megahz * 5);
+	/* Sm mode, (100kHz) freqMhz + 1 */
+	i2c_set_trise(hw_details.periph, hw_details.i2c_clock_megahz + 1);
 
 	i2c_peripheral_enable(hw_details.periph);
 }
