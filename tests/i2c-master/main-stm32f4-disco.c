@@ -23,18 +23,25 @@ struct hw_detail hw_details = {
 	.periph = I2C1,
 	.periph_rcc = RCC_I2C1,
 	.periph_rst = RST_I2C1,
-//	.pins = GPIO6 | GPIO9, /* FIXME - only for onboard! */
-	.pins = GPIO8 | GPIO9, /* For SHT21 on I2c1 */
+	.pins = GPIO8 | GPIO9, /* our external i2c device on I2c1 */
 	.port = GPIOB,
 	.port_rcc = RCC_GPIOB,
+	.trigger_rcc = RCC_GPIOB,
+	.trigger_port = GPIOB,
+	.trigger_pin = GPIO13,
 };
 
 
-static void setup_i2c_gpio(void)
+/* provided in board files please*/
+/**
+ * Setup any gpios or anything hardware specific.
+ * Should _only_ be things that can't be done in shared i2cm_init!
+ */
+static void i2cm_hw_init(void)
 {
-	/* reset pin */
-//	rcc_periph_clock_enable(RCC_GPIOD);
-//	gpio_mode_setup(GPIOD, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO4);
+	/* trigger pin gpio */
+	rcc_periph_clock_enable(hw_details.trigger_rcc);
+	gpio_mode_setup(hw_details.trigger_port, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, hw_details.trigger_pin);
 
 	/* i2c control lines */
 	rcc_periph_clock_enable(hw_details.port_rcc);
@@ -43,19 +50,10 @@ static void setup_i2c_gpio(void)
 	gpio_set_af(hw_details.port, GPIO_AF4, hw_details.pins);
 }
 
-static void codec_init(void)
+static void setup(void)
 {
-	int i;
-	/* Configure the Codec related IOs */
-	setup_i2c_gpio();
-
-	/* reset the codec */
-//	gpio_clear(GPIOD, GPIO4);
-	for (i = 0; i < 1000000; i++) { /* Wait a bit. */
-		__asm__("NOP");
-	}
-//	gpio_set(GPIOD, GPIO4);
-
+	printf("hi guys!\n");
+	i2cm_hw_init();
 	i2cm_init();
 }
 
@@ -68,8 +66,7 @@ int main(void)
 	rcc_periph_clock_enable(RCC_GPIOD);
 	gpio_mode_setup(LED_DISCO_GREEN_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
 		LED_DISCO_GREEN_PIN);
-	printf("hi guys!\n");
-	codec_init();
+	setup();
 
 	while (1) {
 		i2cm_task();

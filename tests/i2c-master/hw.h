@@ -15,6 +15,9 @@ struct hw_detail
        uint32_t pins; /* eg: GPIO8 | GPIO9 */ /* ASSUMES SAME PORT*/
        uint32_t port; /* eg GPIOB */
        uint32_t port_rcc; /* eg RCC_GPIOB */
+       uint32_t trigger_rcc;
+       uint32_t trigger_port;
+       uint32_t trigger_pin;
 };
 
 extern struct hw_detail hw_details;

@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <libopencm3/stm32/i2c.h>
+#include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
 #include "trace.h"
 #include "hw.h"
@@ -33,6 +34,7 @@ void i2cm_init(void)
 	//i2c_set_dutycycle(hw_details.periph, I2C_CCR_DUTY_DIV2); /* default, no need to do this really */
 
 	/* --------- board specific settings!  */
+	// TODO - rcc_apb2_clock / 1000000 and rounded somehow nicely?
 	i2c_set_clock_frequency(hw_details.periph, I2C_CR2_FREQ_42MHZ);
 	/* 42MHz / (100kHz * 2) */
 	i2c_set_ccr(hw_details.periph, 210);
@@ -174,7 +176,7 @@ static float sht21_read_humi_hold(uint32_t i2c)
 static void sht21_readid(void)
 {
 	sht21_send_cmd(I2C1, SHT21_CMD_READ_REG);
-	uint8_t raw;
+	uint8_t raw = 0;
 	sht21_readn(I2C1, 1, &raw);
 	printf("raw user reg = %#x\n", raw);
 	int resolution = ((raw & 0x80) >> 6) | (raw & 1);
@@ -196,9 +198,11 @@ static void sht21_readid(void)
 
 void i2cm_task(void)
 {
+	gpio_set(hw_details.trigger_port, hw_details.trigger_pin);
 	sht21_readid();
 	float temp = sht21_read_temp_hold(I2C1);
 	float humi = sht21_read_humi_hold(I2C1);
+	gpio_clear(hw_details.trigger_port, hw_details.trigger_pin);
 	printf("Temp: %f C, RH: %f\n", temp, humi);
 
 }
