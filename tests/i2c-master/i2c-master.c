@@ -29,19 +29,30 @@ void i2cm_init(void)
 {
 	rcc_periph_clock_enable(hw_details.periph_rcc);
 	rcc_periph_reset_pulse(hw_details.periph_rst);
-	i2c_set_standard_mode(hw_details.periph);
 	//	i2c_enable_ack(hw_details.periph); /* NO ACK FOR SHT21! */
 	//i2c_set_dutycycle(hw_details.periph, I2C_CCR_DUTY_DIV2); /* default, no need to do this really */
 
+#if defined I2C_SR2
 	i2c_set_clock_frequency(hw_details.periph, hw_details.i2c_clock_megahz);
+	i2c_set_standard_mode(hw_details.periph);
 	/* x Mhz / (100kHz * 2) */
 	i2c_set_ccr(hw_details.periph, hw_details.i2c_clock_megahz * 5);
 	/* Sm mode, (100kHz) freqMhz + 1 */
 	i2c_set_trise(hw_details.periph, hw_details.i2c_clock_megahz + 1);
+#else
+	// V2 periph
+	// See Table 85. Examples of timings settings for f I2CCLK = 48 MHz
+	i2c_set_prescaler(hw_details.periph, 0xb); // 11 +1 = 2, so 4Mhz input
+	i2c_set_scl_low_period(hw_details.periph, 0x13);
+	i2c_set_scl_high_period(hw_details.periph, 0xF);
+	i2c_set_data_hold_time(hw_details.periph, 0x2);
+	i2c_set_data_setup_time(hw_details.periph, 0x4);
+#endif
 
 	i2c_peripheral_enable(hw_details.periph);
 }
 
+#if defined I2C_SR2
 static void sht21_send_data(uint32_t i2c, size_t n, uint8_t *data)
 {
 	while ((I2C_SR2(i2c) & I2C_SR2_BUSY)) {
@@ -124,6 +135,7 @@ static void sht21_readn(uint32_t i2c, int n, uint8_t *res)
 
 	return;
 }
+#endif
 
 static float sht21_convert_temp(uint16_t raw)
 {
@@ -141,6 +153,7 @@ static float sht21_convert_humi(uint16_t raw)
 	return tf;
 }
 
+#if 0
 static float sht21_read_temp_hold(uint32_t i2c)
 {
 	//        gpio_set(LED_DISCO_BLUE_PORT, LED_DISCO_BLUE_PIN);
@@ -169,18 +182,24 @@ static float sht21_read_humi_hold(uint32_t i2c)
 	//        gpio_clear(LED_DISCO_BLUE_PORT, LED_DISCO_BLUE_PIN);
 	return sht21_convert_humi(left);
 }
+#endif
 
 static void sht21_readid(void)
 {
-	sht21_send_cmd(I2C1, SHT21_CMD_READ_REG);
 	uint8_t raw = 0;
+#if defined I2C_SR2
+	sht21_send_cmd(I2C1, SHT21_CMD_READ_REG);
 	sht21_readn(I2C1, 1, &raw);
+#else
+	read_i2c(hw_details.periph, SENSOR_ADDRESS, SHT21_CMD_READ_REG, 1, &raw);
+#endif
 	printf("raw user reg = %#x\n", raw);
 	int resolution = ((raw & 0x80) >> 6) | (raw & 1);
 	printf("temp resolution is in %d bits\n", 14 - resolution);
 	printf("battery status: %s\n", (raw & (1 << 6) ? "failing" : "good"));
 	printf("On chip heater: %s\n", (raw & 0x2) ? "on" : "off");
 
+#if 0
 	uint8_t req1[] = {0xfa, 0x0f};
 	uint8_t res[8];
 	sht21_send_data(I2C1, 2, req1);
@@ -191,15 +210,16 @@ static void sht21_readid(void)
 	sht21_readn(I2C1, sizeof(res), res2);
 	printf("Serial = %02x%02x %02x%02x %02x%02x %02x%02x\n",
 		res2[3], res2[4], res[0], res[2], res[4], res[6], res2[0], res2[1]);
+#endif
 }
 
 void i2cm_task(void)
 {
 	gpio_set(hw_details.trigger_port, hw_details.trigger_pin);
 	sht21_readid();
-	float temp = sht21_read_temp_hold(I2C1);
-	float humi = sht21_read_humi_hold(I2C1);
+//	float temp = sht21_read_temp_hold(I2C1);
+//	float humi = sht21_read_humi_hold(I2C1);
 	gpio_clear(hw_details.trigger_port, hw_details.trigger_pin);
-	printf("Temp: %f C, RH: %f\n", temp, humi);
+//	printf("Temp: %f C, RH: %f\n", temp, humi);
 
 }
