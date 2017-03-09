@@ -25,29 +25,35 @@ enum sht21_cmd_e {
 	/* 0xfa, 0x0f to read serial */
 };
 
+/* requires clock to be a multiple of 2 ! */
+// TODO - plausible to pull up to library, with extraction of 100k param too?
+static void i2c_set_speed_100k(uint32_t p, uint32_t clock_megahz)
+{
+#if defined I2C_SR2
+	/* target 2Mhz input, so tpresc = 500ns */
+	int prescaler = clock_megahz / 2 - 1;
+	i2c_set_prescaler(p, prescaler);
+	i2c_set_scl_low_period(p, 9); // 5usecs
+	i2c_set_scl_high_period(p, 7); // 4usecs
+	i2c_set_data_hold_time(p, 1); // 0.5usecs
+	i2c_set_data_setup_time(p, 2); // 1.25usecs
+#else
+	i2c_set_clock_frequency(p, clock_megahz);
+	i2c_set_standard_mode(p);
+	/* x Mhz / (100kHz * 2) */
+	i2c_set_ccr(p, clock_megahz * 5);
+	/* Sm mode, (100kHz) freqMhz + 1 */
+	i2c_set_trise(p, clock_megahz + 1);
+#endif
+}
+
 void i2cm_init(void)
 {
 	rcc_periph_clock_enable(hw_details.periph_rcc);
 	rcc_periph_reset_pulse(hw_details.periph_rst);
 	//	i2c_enable_ack(hw_details.periph); /* NO ACK FOR SHT21! */
-	//i2c_set_dutycycle(hw_details.periph, I2C_CCR_DUTY_DIV2); /* default, no need to do this really */
 
-#if defined I2C_SR2
-	i2c_set_clock_frequency(hw_details.periph, hw_details.i2c_clock_megahz);
-	i2c_set_standard_mode(hw_details.periph);
-	/* x Mhz / (100kHz * 2) */
-	i2c_set_ccr(hw_details.periph, hw_details.i2c_clock_megahz * 5);
-	/* Sm mode, (100kHz) freqMhz + 1 */
-	i2c_set_trise(hw_details.periph, hw_details.i2c_clock_megahz + 1);
-#else
-	// V2 periph
-	// See Table 85. Examples of timings settings for f I2CCLK = 48 MHz
-	i2c_set_prescaler(hw_details.periph, 0xb); // 11 +1 = 2, so 4Mhz input
-	i2c_set_scl_low_period(hw_details.periph, 0x13);
-	i2c_set_scl_high_period(hw_details.periph, 0xF);
-	i2c_set_data_hold_time(hw_details.periph, 0x2);
-	i2c_set_data_setup_time(hw_details.periph, 0x4);
-#endif
+	i2c_set_speed_100k(hw_details.periph, hw_details.i2c_clock_megahz);
 
 	i2c_peripheral_enable(hw_details.periph);
 }
