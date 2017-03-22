@@ -117,7 +117,11 @@ void i2c_transfer7(uint32_t i2c, uint8_t addr, uint8_t *w, size_t wn, uint8_t *r
 		i2c_set_7bit_address(i2c, addr);
 		i2c_set_write_transfer_dir(i2c);
 		i2c_set_bytes_to_transfer(i2c, wn);
-		i2c_disable_autoend(i2c);
+		if (rn) {
+			i2c_disable_autoend(i2c);
+		} else {
+			i2c_enable_autoend(i2c);
+		}
 		i2c_send_start(i2c);
 
 		while (wn--) {
@@ -133,7 +137,9 @@ void i2c_transfer7(uint32_t i2c, uint8_t addr, uint8_t *w, size_t wn, uint8_t *r
 		/* not entirely sure this is really necessary.
 		 * RM implies it will stall until it can write out the later bits
 		 */
-		while (!i2c_transfer_complete(i2c));
+		if (rn) {
+			while (!i2c_transfer_complete(i2c));
+		}
 	}
 
 	if (rn) {
@@ -335,36 +341,38 @@ static float sht21_convert_humi(uint16_t raw)
 	return tf;
 }
 
-#if 0
 static float sht21_read_temp_hold(uint32_t i2c)
 {
-	//        gpio_set(LED_DISCO_BLUE_PORT, LED_DISCO_BLUE_PIN);
-	sht21_send_cmd(i2c, SHT21_CMD_TEMP_HOLD);
-
 	uint8_t data[3];
+#if 0
+	sht21_send_cmd(i2c, SHT21_CMD_TEMP_HOLD);
 	sht21_readn(i2c, 2, data);
+#endif
+	uint8_t cmd = SHT21_CMD_TEMP_HOLD;
+	i2c_transfer7(i2c, SENSOR_ADDRESS, &cmd, 1, data, sizeof(data));
 	uint8_t crc = data[2];
 	uint16_t temp = data[0] << 8 | data[1];
+	// TODO - calcualte CRC and check!
 	printf("CRC=%#x, data0=%#x, data1=%#x\n", crc, data[0], data[1]);
-	//        gpio_clear(LED_DISCO_BLUE_PORT, LED_DISCO_BLUE_PIN);
 	return sht21_convert_temp(temp);
 }
 
 static float sht21_read_humi_hold(uint32_t i2c)
 {
-	//        gpio_set(LED_DISCO_BLUE_PORT, LED_DISCO_BLUE_PIN);
-	sht21_send_cmd(i2c, SHT21_CMD_HUMIDITY_HOLD);
-
 	uint8_t data[3];
+#if 0
+	sht21_send_cmd(i2c, SHT21_CMD_HUMIDITY_HOLD);
 	sht21_readn(i2c, 2, data);
+#endif
+	uint8_t cmd = SHT21_CMD_HUMIDITY_HOLD;
+	i2c_transfer7(i2c, SENSOR_ADDRESS, &cmd, 1, data, sizeof(data));
+
 	uint8_t crc = data[2];
 	uint16_t left = data[0] << 8 | data[1];
+	// TODO - calcualte CRC and check!
 	printf("CRC=%#x, data0=%#x, data1=%#x\n", crc, data[0], data[1]);
-
-	//        gpio_clear(LED_DISCO_BLUE_PORT, LED_DISCO_BLUE_PIN);
 	return sht21_convert_humi(left);
 }
-#endif
 
 static void sht21_readid(void)
 {
@@ -373,12 +381,14 @@ static void sht21_readid(void)
 	sht21_send_cmd(I2C1, SHT21_CMD_READ_REG);
 	sht21_readn(I2C1, 1, &raw);
 #else
-	//read_i2c(hw_details.periph, SENSOR_ADDRESS, SHT21_CMD_READ_REG, 1, &raw);
 	uint8_t cmd = SHT21_CMD_READ_REG;
-//	i2c_write_bytes7(hw_details.periph, SENSOR_ADDRESS, &cmd, 1, false);
-//	i2c_read_bytes7(hw_details.periph, SENSOR_ADDRESS, &raw, 1, true);
+	printf("RP...");
 	i2c_transfer7(hw_details.periph, SENSOR_ADDRESS, &cmd, 1, &raw, 1);
-	//read_i2c(hw_details.periph, SENSOR_ADDRESS, SHT21_CMD_READ_REG, 1, &raw);
+	printf("..S/S\n");
+	// or, with stop/start
+	i2c_transfer7(hw_details.periph, SENSOR_ADDRESS, &cmd, 1, 0, 0);
+	i2c_transfer7(hw_details.periph, SENSOR_ADDRESS, 0, 0, &raw, 1);
+
 #endif
 	printf("raw user reg = %#x\n", raw);
 	int resolution = ((raw & 0x80) >> 6) | (raw & 1);
@@ -391,15 +401,11 @@ static void sht21_readid(void)
 //	sht21_send_data(I2C1, 2, req1);
 //	sht21_readn(I2C1, sizeof(res), res);
 	i2c_transfer7(hw_details.periph, SENSOR_ADDRESS, req1, sizeof(req1), res, 8);
-//	i2c_write_bytes7(hw_details.periph, SENSOR_ADDRESS, req1, 2, false);
-//	i2c_read_bytes7(hw_details.periph, SENSOR_ADDRESS, res, 8, true);
 	uint8_t req2[] = {0xfc, 0xc9};
 	uint8_t res2[8];
 //	sht21_send_data(I2C1, 2, req2);
 //	sht21_readn(I2C1, sizeof(res), res2);
 	i2c_transfer7(hw_details.periph, SENSOR_ADDRESS, req1, sizeof(req1), res2, 8);
-//	i2c_write_bytes7(hw_details.periph, SENSOR_ADDRESS, req2, 2, false);
-//	i2c_read_bytes7(hw_details.periph, SENSOR_ADDRESS, res2, 8, true);
 
 	printf("Serial = %02x%02x %02x%02x %02x%02x %02x%02x\n",
 		res2[3], res2[4], res[0], res[2], res[4], res[6], res2[0], res2[1]);
@@ -407,11 +413,13 @@ static void sht21_readid(void)
 
 void i2cm_task(void)
 {
+	static int i = 1;
+	printf("Starting iteration %d\n", i++);
 	gpio_set(hw_details.trigger_port, hw_details.trigger_pin);
 	sht21_readid();
-//	float temp = sht21_read_temp_hold(I2C1);
-//	float humi = sht21_read_humi_hold(I2C1);
+	float temp = sht21_read_temp_hold(hw_details.periph);
+	float humi = sht21_read_humi_hold(hw_details.periph);
 	gpio_clear(hw_details.trigger_port, hw_details.trigger_pin);
-//	printf("Temp: %f C, RH: %f\n", temp, humi);
+	printf("Temp: %f C, RH: %f\n", temp, humi);
 
 }
