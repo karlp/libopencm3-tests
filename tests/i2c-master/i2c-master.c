@@ -25,27 +25,202 @@ enum sht21_cmd_e {
 	/* 0xfa, 0x0f to read serial */
 };
 
-/* requires clock to be a multiple of 2 ! */
-// TODO - plausible to pull up to library, with extraction of 100k param too?
-static void i2c_set_speed_100k(uint32_t p, uint32_t clock_megahz)
+// ------------------ section proposed to go up to libopencm3
+
+enum i2c_speeds {
+	i2c_speed_sm_100k,
+	i2c_speed_fm_400k,
+	i2c_speed_fmp_1m,
+	i2c_speed_unknown
+};
+
+/* to go to i2c-v1 impl file, with common name.... */
+static void i2c_set_speed_v1(uint32_t p, enum i2c_speeds speed, uint32_t clock_megahz)
 {
-#if defined I2C_SR2
-	/* target 2Mhz input, so tpresc = 500ns */
-	int prescaler = clock_megahz / 2 - 1;
-	i2c_set_prescaler(p, prescaler);
-	i2c_set_scl_low_period(p, 9); // 5usecs
-	i2c_set_scl_high_period(p, 7); // 4usecs
-	i2c_set_data_hold_time(p, 1); // 0.5usecs
-	i2c_set_data_setup_time(p, 2); // 1.25usecs
+#if defined(I2C_SR2)
+	switch(speed) {
+	case i2c_speed_fm_400k:
+		// FIXME
+		printf("oops, haven't gotten 400k yet!, grab chucks code from pr470!");
+		break;
+	default:
+		/* fall back to standard mode */
+	case i2c_speed_sm_100k:
+		i2c_set_clock_frequency(p, clock_megahz);
+		i2c_set_standard_mode(p);
+		/* x Mhz / (100kHz * 2) */
+		i2c_set_ccr(p, clock_megahz * 5);
+		/* Sm mode, (100kHz) freqMhz + 1 */
+		i2c_set_trise(p, clock_megahz + 1);
+		break;
+	}
 #else
-	i2c_set_clock_frequency(p, clock_megahz);
-	i2c_set_standard_mode(p);
-	/* x Mhz / (100kHz * 2) */
-	i2c_set_ccr(p, clock_megahz * 5);
-	/* Sm mode, (100kHz) freqMhz + 1 */
-	i2c_set_trise(p, clock_megahz + 1);
+	(void)p;
+	(void)speed;
+	(void)clock_megahz;
 #endif
 }
+
+/* to go to i2c-v2 impl file, with common name.... */
+static void i2c_set_speed_v2(uint32_t p, enum i2c_speeds speed, uint32_t clock_megahz)
+{
+#if !defined(I2C_SR2)
+	int prescaler;
+	switch(speed) {
+	case i2c_speed_fmp_1m:
+	case i2c_speed_fm_400k:
+		// FIXME
+		printf("oops, haven't gotten to those speeds yet!");
+		break;
+	default:
+		/* fall back to standard mode */
+	case i2c_speed_sm_100k:
+		/* target 2Mhz input, so tpresc = 500ns */
+		prescaler = clock_megahz / 2 - 1;
+		i2c_set_prescaler(p, prescaler);
+		i2c_set_scl_low_period(p, 9); // 5usecs
+		i2c_set_scl_high_period(p, 7); // 4usecs
+		i2c_set_data_hold_time(p, 1); // 0.5usecs
+		i2c_set_data_setup_time(p, 2); // 1.25usecs
+		break;
+	}
+#endif
+}
+
+
+/* requires clock to be a multiple of 2 ! */
+/**
+ * Set the i2c line speed as optimally as possible
+ * @param p
+ * @param speed
+ * @param clock_megahz  _normally_ provide: rcc_apb1_frequency / 1000000 here
+ * TODO: clock must be a multiple of 2meg for -v2 at least, improve docs here!
+ */
+static void i2c_set_speed(uint32_t p, enum i2c_speeds speed, uint32_t clock_megahz)
+{
+#if defined I2C_SR2
+	i2c_set_speed_v1(p, speed, clock_megahz);
+#else
+	i2c_set_speed_v2(p, speed, clock_megahz);
+#endif
+}
+
+// read/write are almost identical!
+//static void i2c__transfer_helper(uint32_p, uint8_t addr, uint8_t *buf)
+static
+void i2c_transfer7(uint32_t i2c, uint8_t addr, uint8_t *w, size_t wn, uint8_t *r, size_t rn)
+{
+	int wait;
+	size_t i;
+	/*  waiting for busy is unnecessary. read the RM */
+	if (wn) {
+		i2c_set_7bit_address(i2c, addr);
+		i2c_set_write_transfer_dir(i2c);
+		i2c_set_bytes_to_transfer(i2c, wn);
+		i2c_disable_autoend(i2c);
+		i2c_send_start(i2c);
+
+		while (wn--) {
+			wait = true;
+			while (wait) {
+				if (i2c_transmit_int_status(i2c)) {
+					wait = false;
+				}
+				while (i2c_nack(i2c)); /* FIXME Some error */
+			}
+			i2c_send_data(i2c, *w++);
+		}
+		/* not entirely sure this is really necessary.
+		 * RM implies it will stall until it can write out the later bits
+		 */
+		while (!i2c_transfer_complete(i2c));
+	}
+
+	if (rn) {
+		/*Setting transfer properties*/
+		i2c_set_7bit_address(i2c, addr);
+		i2c_set_read_transfer_dir(i2c);
+		i2c_set_bytes_to_transfer(i2c, rn);
+		/*start transfer*/
+		i2c_send_start(i2c);
+		/* important to do it afterwards to do a proper repeated start! */
+		i2c_enable_autoend(i2c);
+
+		for (i = 0; i < rn; i++) {
+			while (i2c_received_data(i2c) == 0);
+			r[i] = i2c_get_data(i2c);
+		}
+	}
+
+}
+
+/**
+ * Write bytes to a 7bit address
+ * @param p i2c peripheral of interest
+ * @param addr 7bit i2c slave address (unshifted)
+ * @param buf data to send
+ * @param count how many bytes to send
+ * @param end true if you wish to send a stop bit. false if you intend to
+ * continue sending data with a repeated start
+ */
+static
+void i2c_write_bytes7(uint32_t p, uint8_t addr, uint8_t *buf, size_t count, bool end)
+{
+	bool wait;
+	size_t i;
+	/* start transfer */
+	i2c_send_start(p);
+	while (i2c_busy(p) == 1);
+//	while (i2c_is_start(p) == 1);
+	/* Setting transfer properties */
+	i2c_set_bytes_to_transfer(p, count);
+	i2c_set_7bit_address(p, addr);
+	i2c_set_write_transfer_dir(p);
+	if (end) {
+		i2c_enable_autoend(p);
+	} else {
+		i2c_disable_autoend(p);
+	}
+
+	for (i = 0; i < count; i++) {
+		wait = true;
+		while (wait) {
+			if (i2c_transmit_int_status(p)) {
+				wait = false;
+			}
+			while (i2c_nack(p));
+		}
+		i2c_send_data(p, buf[i]);
+	}
+}
+
+static
+void i2c_read_bytes7(uint32_t p, uint8_t addr, uint8_t *buf, size_t count, bool end)
+{
+	bool wait;
+	size_t i;
+	//while (i2c_busy(p) == 1);  // FIXME - repeated start vs not
+	//while (i2c_is_start(p) == 1);
+	/* Setting transfer properties */
+	i2c_set_bytes_to_transfer(p, 1);
+	i2c_set_7bit_address(p, addr);
+	i2c_set_read_transfer_dir(p);
+	if (end) {
+		i2c_enable_autoend(p);
+	} else {
+		i2c_disable_autoend(p);
+	}
+	/* start transfer */
+	i2c_send_start(p);
+
+	for (i = 0; i < count; i++) {
+		while (i2c_received_data(p) == 0);
+		buf[i] = i2c_get_data(p);
+	}
+}
+
+
+// --------------- end of upstream planned section
 
 void i2cm_init(void)
 {
@@ -53,7 +228,7 @@ void i2cm_init(void)
 	rcc_periph_reset_pulse(hw_details.periph_rst);
 	//	i2c_enable_ack(hw_details.periph); /* NO ACK FOR SHT21! */
 
-	i2c_set_speed_100k(hw_details.periph, hw_details.i2c_clock_megahz);
+	i2c_set_speed(hw_details.periph, i2c_speed_sm_100k, hw_details.i2c_clock_megahz);
 
 	i2c_peripheral_enable(hw_details.periph);
 }
@@ -86,16 +261,17 @@ static void sht21_send_data(uint32_t i2c, size_t n, uint8_t *data)
 	}
 }
 
+// FIXME - this is dumb, just need send_data with len==1!
 static void sht21_send_cmd(uint32_t i2c, uint8_t cmd)
 {
 	while ((I2C_SR2(i2c) & I2C_SR2_BUSY)) {
-	}
+	}   // wait for not busy!
 
 	i2c_send_start(i2c);
 
 	/* Wait for master mode selected */
-	while (!((I2C_SR1(i2c) & I2C_SR1_SB)
-		& (I2C_SR2(i2c) & (I2C_SR2_MSL | I2C_SR2_BUSY))));
+	while (!((I2C_SR1(i2c) & I2C_SR1_SB)  // waiting for start bit to hav ebeen sent
+		& (I2C_SR2(i2c) & (I2C_SR2_MSL | I2C_SR2_BUSY))));  // and waiting for no longer busy again
 
 	i2c_send_7bit_address(i2c, SENSOR_ADDRESS, I2C_WRITE);
 
@@ -197,7 +373,12 @@ static void sht21_readid(void)
 	sht21_send_cmd(I2C1, SHT21_CMD_READ_REG);
 	sht21_readn(I2C1, 1, &raw);
 #else
-	read_i2c(hw_details.periph, SENSOR_ADDRESS, SHT21_CMD_READ_REG, 1, &raw);
+	//read_i2c(hw_details.periph, SENSOR_ADDRESS, SHT21_CMD_READ_REG, 1, &raw);
+	uint8_t cmd = SHT21_CMD_READ_REG;
+//	i2c_write_bytes7(hw_details.periph, SENSOR_ADDRESS, &cmd, 1, false);
+//	i2c_read_bytes7(hw_details.periph, SENSOR_ADDRESS, &raw, 1, true);
+	i2c_transfer7(hw_details.periph, SENSOR_ADDRESS, &cmd, 1, &raw, 1);
+	//read_i2c(hw_details.periph, SENSOR_ADDRESS, SHT21_CMD_READ_REG, 1, &raw);
 #endif
 	printf("raw user reg = %#x\n", raw);
 	int resolution = ((raw & 0x80) >> 6) | (raw & 1);
@@ -205,18 +386,21 @@ static void sht21_readid(void)
 	printf("battery status: %s\n", (raw & (1 << 6) ? "failing" : "good"));
 	printf("On chip heater: %s\n", (raw & 0x2) ? "on" : "off");
 
-#if 0
 	uint8_t req1[] = {0xfa, 0x0f};
 	uint8_t res[8];
-	sht21_send_data(I2C1, 2, req1);
-	sht21_readn(I2C1, sizeof(res), res);
+//	sht21_send_data(I2C1, 2, req1);
+//	sht21_readn(I2C1, sizeof(res), res);
+	i2c_write_bytes7(hw_details.periph, SENSOR_ADDRESS, req1, 2, false);
+	i2c_read_bytes7(hw_details.periph, SENSOR_ADDRESS, res, 8, true);
 	uint8_t req2[] = {0xfc, 0xc9};
 	uint8_t res2[8];
-	sht21_send_data(I2C1, 2, req2);
-	sht21_readn(I2C1, sizeof(res), res2);
+//	sht21_send_data(I2C1, 2, req2);
+//	sht21_readn(I2C1, sizeof(res), res2);
+	i2c_write_bytes7(hw_details.periph, SENSOR_ADDRESS, req2, 2, false);
+	i2c_read_bytes7(hw_details.periph, SENSOR_ADDRESS, res2, 8, true);
+
 	printf("Serial = %02x%02x %02x%02x %02x%02x %02x%02x\n",
 		res2[3], res2[4], res[0], res[2], res[4], res[6], res2[0], res2[1]);
-#endif
 }
 
 void i2cm_task(void)
