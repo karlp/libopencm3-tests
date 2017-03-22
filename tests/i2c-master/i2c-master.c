@@ -390,14 +390,16 @@ static void sht21_readid(void)
 	uint8_t res[8];
 //	sht21_send_data(I2C1, 2, req1);
 //	sht21_readn(I2C1, sizeof(res), res);
-	i2c_write_bytes7(hw_details.periph, SENSOR_ADDRESS, req1, 2, false);
-	i2c_read_bytes7(hw_details.periph, SENSOR_ADDRESS, res, 8, true);
+	i2c_transfer7(hw_details.periph, SENSOR_ADDRESS, req1, sizeof(req1), res, 8);
+//	i2c_write_bytes7(hw_details.periph, SENSOR_ADDRESS, req1, 2, false);
+//	i2c_read_bytes7(hw_details.periph, SENSOR_ADDRESS, res, 8, true);
 	uint8_t req2[] = {0xfc, 0xc9};
 	uint8_t res2[8];
 //	sht21_send_data(I2C1, 2, req2);
 //	sht21_readn(I2C1, sizeof(res), res2);
-	i2c_write_bytes7(hw_details.periph, SENSOR_ADDRESS, req2, 2, false);
-	i2c_read_bytes7(hw_details.periph, SENSOR_ADDRESS, res2, 8, true);
+	i2c_transfer7(hw_details.periph, SENSOR_ADDRESS, req1, sizeof(req1), res2, 8);
+//	i2c_write_bytes7(hw_details.periph, SENSOR_ADDRESS, req2, 2, false);
+//	i2c_read_bytes7(hw_details.periph, SENSOR_ADDRESS, res2, 8, true);
 
 	printf("Serial = %02x%02x %02x%02x %02x%02x %02x%02x\n",
 		res2[3], res2[4], res[0], res[2], res[4], res[6], res2[0], res2[1]);
