@@ -28,7 +28,7 @@ struct hw_detail hw_details = {
 	.trigger_rcc = RCC_GPIOB,
 	.trigger_port = GPIOB,
 	.trigger_pin = GPIO12,
-	.i2c_clock_megahz = 48, // FIXME
+	.i2c_clock_megahz = 48,
 };
 
 
@@ -67,6 +67,9 @@ static void i2cm_hw_init(void)
 	gpio_mode_setup(hw_details.port, GPIO_MODE_AF, GPIO_PUPD_NONE, hw_details.pins);
 	gpio_set_output_options(hw_details.port, GPIO_OTYPE_OD, GPIO_OSPEED_HIGH, hw_details.pins);
 	gpio_set_af(hw_details.port, GPIO_AF1, hw_details.pins);
+
+	/* select sysclk as i2c clock! */
+	RCC_CFGR3 |= RCC_CFGR3_I2C1SW;
 }
 
 

@@ -27,6 +27,9 @@ enum sht21_cmd_e {
 
 // ------------------ section proposed to go up to libopencm3
 
+/**
+ * I2C speed modes.
+ */
 enum i2c_speeds {
 	i2c_speed_sm_100k,
 	i2c_speed_fm_400k,
@@ -35,18 +38,24 @@ enum i2c_speeds {
 };
 
 /* to go to i2c-v1 impl file, with common name.... */
+/**
+ * Set the i2c communicaton speed.
+ * @param p i2c peripheral, eg I2C1
+ * @param speed one of the listed speed modes @ref i2c_speeds
+ * @param clock_megahz i2c peripheral clock speed in MHz. Usually, rcc_apb1_frequency / 1e6
+ */
 static void i2c_set_speed_v1(uint32_t p, enum i2c_speeds speed, uint32_t clock_megahz)
 {
-#if defined(I2C_SR2)
+	i2c_set_clock_frequency(p, clock_megahz);
 	switch(speed) {
 	case i2c_speed_fm_400k:
-		// FIXME
-		printf("oops, haven't gotten 400k yet!, grab chucks code from pr470!");
+		i2c_set_fast_mode(p);
+		i2c_set_ccr(p, clock_megahz * 5 / 6);
+		i2c_set_trise(p, clock_megahz + 1);
 		break;
 	default:
 		/* fall back to standard mode */
 	case i2c_speed_sm_100k:
-		i2c_set_clock_frequency(p, clock_megahz);
 		i2c_set_standard_mode(p);
 		/* x Mhz / (100kHz * 2) */
 		i2c_set_ccr(p, clock_megahz * 5);
@@ -54,37 +63,45 @@ static void i2c_set_speed_v1(uint32_t p, enum i2c_speeds speed, uint32_t clock_m
 		i2c_set_trise(p, clock_megahz + 1);
 		break;
 	}
-#else
-	(void)p;
-	(void)speed;
-	(void)clock_megahz;
-#endif
 }
 
 /* to go to i2c-v2 impl file, with common name.... */
+/**
+ * Set the i2c communicaton speed.
+ * NOTE: 1MHz mode not yet implemented!
+ * Min clock speed: 8MHz for FM, 2Mhz for SM,
+ * @param p i2c peripheral, eg I2C1
+ * @param speed one of the listed speed modes @ref i2c_speeds
+ * @param clock_megahz i2c peripheral clock speed in MHz. Usually, rcc_apb1_frequency / 1e6
+ */
 static void i2c_set_speed_v2(uint32_t p, enum i2c_speeds speed, uint32_t clock_megahz)
 {
-#if !defined(I2C_SR2)
 	int prescaler;
 	switch(speed) {
 	case i2c_speed_fmp_1m:
+		/* FIXME - add support for this mode! */
+		break;
 	case i2c_speed_fm_400k:
-		// FIXME
-		printf("oops, haven't gotten to those speeds yet!");
+		/* target 8Mhz input, so tpresc = 125ns */
+		prescaler = clock_megahz / 8 - 1;
+		i2c_set_prescaler(p, prescaler);
+		i2c_set_scl_low_period(p, 0x9); // 1250ns
+		i2c_set_scl_high_period(p, 3); // 500ns
+		i2c_set_data_hold_time(p, 2); // 250ns
+		i2c_set_data_setup_time(p, 2); // 375ns
 		break;
 	default:
 		/* fall back to standard mode */
 	case i2c_speed_sm_100k:
 		/* target 2Mhz input, so tpresc = 500ns */
-		prescaler = clock_megahz / 2 - 1;
+		prescaler = clock_megahz / 4 - 1;
 		i2c_set_prescaler(p, prescaler);
-		i2c_set_scl_low_period(p, 9); // 5usecs
-		i2c_set_scl_high_period(p, 7); // 4usecs
-		i2c_set_data_hold_time(p, 1); // 0.5usecs
-		i2c_set_data_setup_time(p, 2); // 1.25usecs
+		i2c_set_scl_low_period(p, 0x13); // 5usecs
+		i2c_set_scl_high_period(p, 0xf); // 4usecs
+		i2c_set_data_hold_time(p, 2); // 0.5usecs
+		i2c_set_data_setup_time(p, 4); // 1.25usecs
 		break;
 	}
-#endif
 }
 
 
@@ -108,6 +125,7 @@ static void i2c_set_speed(uint32_t p, enum i2c_speeds speed, uint32_t clock_mega
 
 static void i2c_write7_v1(uint32_t i2c, int addr, uint8_t *data, size_t n)
 {
+#if defined(I2C_SR1)
 	while ((I2C_SR2(i2c) & I2C_SR2_BUSY)) {
 	}
 
@@ -131,10 +149,12 @@ static void i2c_write7_v1(uint32_t i2c, int addr, uint8_t *data, size_t n)
 		i2c_send_data(i2c, data[i]);
 		while (!(I2C_SR1(i2c) & (I2C_SR1_BTF)));
 	}
+#endif
 }
 
 static void i2c_read7_v1(uint32_t i2c, int addr, uint8_t *res, int n)
 {
+#if defined(I2C_SR1)
 	i2c_send_start(i2c);
 	i2c_enable_ack(i2c);
 
@@ -161,6 +181,7 @@ static void i2c_read7_v1(uint32_t i2c, int addr, uint8_t *res, int n)
 	i2c_send_stop(i2c);
 
 	return;
+#endif
 }
 
 /* v1 isn't handling stop/start vs repeated start very well yet */
@@ -247,9 +268,9 @@ void i2cm_init(void)
 {
 	rcc_periph_clock_enable(hw_details.periph_rcc);
 	rcc_periph_reset_pulse(hw_details.periph_rst);
-	//	i2c_enable_ack(hw_details.periph); /* NO ACK FOR SHT21! */
 
 	i2c_set_speed(hw_details.periph, i2c_speed_sm_100k, hw_details.i2c_clock_megahz);
+	//i2c_set_speed(hw_details.periph, i2c_speed_fm_400k, hw_details.i2c_clock_megahz);
 
 	i2c_peripheral_enable(hw_details.periph);
 }
