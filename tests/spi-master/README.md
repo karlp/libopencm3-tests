@@ -22,4 +22,4 @@ l1-disco	PB13	PB14	PB15	PB12	spi2	PB11
 
 
 Notes for monitoring with sigrok:
-$ sigrok-cli -d fx2lafw -C D0=TRIG,D1=CS,D2=CLK,D3=MISO,D4=MOSI -c samplerate=12Mhz:captureratio=4 --time=150ms  -t TRIG=r -P spi:clk=CLK:miso=MISO:mosi=MOSI -l 4 2>/dev/null | grep -- -data
+$ sigrok-cli -d fx2lafw -C D0=TRIG,D1=CS,D2=CLK,D3=MISO,D4=MOSI -c samplerate=12Mhz:captureratio=4 --time=150ms  -t TRIG=r -P spi:clk=CLK:miso=MISO:mosi=MOSI -A spi=mosi-data
