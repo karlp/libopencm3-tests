@@ -19,6 +19,7 @@ Pinouts: (External PullUps REQUIRED!)
 board		SCLK	SDA	i2cperiph	trigger
 f4-disco	PB8	PB9	i2c1		PB13
 l1-disco	PB8	PB9	i2c1		PB13
+f072-disco	PB8	PB9	i2c1		PB12
 
 
 Notes for monitoring with sigrok:
