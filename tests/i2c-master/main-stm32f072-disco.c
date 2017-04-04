@@ -87,8 +87,8 @@ int main(void)
 	rcc_clock_setup_in_hsi48_out_48mhz();
 	/* green led for ticking */
 	rcc_periph_clock_enable(RCC_GPIOC);
-	gpio_mode_setup(LED_DISCO_GREEN_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, LED_DISCO_GREEN_PORT);
-	gpio_set(LED_DISCO_GREEN_PORT, LED_DISCO_GREEN_PORT);
+	gpio_mode_setup(LED_DISCO_GREEN_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, LED_DISCO_GREEN_PIN);
+	gpio_set(LED_DISCO_GREEN_PORT, LED_DISCO_GREEN_PIN);
 
 	setup();
 
