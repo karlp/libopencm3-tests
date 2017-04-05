@@ -12,14 +12,14 @@ the "trigger" pin is bounced when each iteration of the test code starts,
 allowing synchronization with a sigrok script that helps assure that
 results are as expected.
 
-Debug is via SWO wherever possible, PA2 (tx only) on less capable cores
+Debug is via SWO wherever possible, uart (tx only) on less capable cores
 
 Pinouts: (External PullUps REQUIRED!)
 
-board		SCLK	SDA	i2cperiph	trigger
+board		SCLK	SDA	i2cperiph	trigger	uart
 f4-disco	PB8	PB9	i2c1		PB13
 l1-disco	PB8	PB9	i2c1		PB13
-f072-disco	PB8	PB9	i2c1		PB12
+f072-disco	PB8	PB9	i2c1		PB12	PA9!
 
 
 Notes for monitoring with sigrok:
