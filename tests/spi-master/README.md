@@ -16,7 +16,7 @@ Debug is via SWO wherever possible, PA2 (tx only) on less capable cores
 
 Pinouts:
 		(red)  (orange) (yellow)(brown)		(black)
-board		SCK	MISO	MOSI	CS	periph	trigger
+board		CLK	MISO	MOSI	CS	periph	trigger
 f4-disco	PB13	PB14	PB15	PB12	spi2	PB11
 l1-disco	PB13	PB14	PB15	PB12	spi2	PB11
 
