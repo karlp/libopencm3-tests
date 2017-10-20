@@ -1,0 +1,29 @@
+# This is just a makefile.
+# Consider it released into the public domain, or, where not available,
+# available under your choice of BSD2clause, MIT, X11, ISC or Apache2 licenses
+# Karl Palsson <karlp@tweak.net.au>
+BOARD = stm32f3-disco
+PROJECT = uart-basic-$(BOARD)
+BUILD_DIR = bin-$(BOARD)
+
+SHARED_DIR = ../../shared
+
+CFILES = main-$(BOARD).c
+CFILES += uart-basic.c
+# No trace, we're using the uart explicitly here, deliberately.
+# Perhaps later we'll use trace differently, or with different files
+#CFILES += trace.c trace_stdio.c
+
+VPATH += $(SHARED_DIR)
+
+INCLUDES += $(patsubst %,-I%, . $(SHARED_DIR))
+
+OPENCM3_DIR=../../libopencm3/
+
+### This section can go to an arch shared rules eventually...
+DEVICE=stm32f303vct6
+#OOCD_INTERFACE = stlink-v2
+#OOCD_TARGET = stm32f3x
+OOCD_FILE = ../../openocd/openocd.stm32f3-disco.cfg
+
+include ../../rules.mk
