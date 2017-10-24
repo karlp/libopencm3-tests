@@ -65,7 +65,7 @@ void ub_task(void)
 
 void ub_irq_handler(void)
 {
-	if (usart_get_flag(ub->uart, USART_SR_RXNE)) {
+	if (usart_get_flag(ub->uart, USART_FLAG_RXNE)) {
 		last_rxb = usart_recv(ub->uart);
 	}
 }
