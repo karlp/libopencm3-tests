@@ -157,7 +157,7 @@ ifeq (,$(OOCD_FILE))
 		$(NULL)
 else
 	$(Q)(echo "halt; program $(realpath $(*).elf) verify reset" | nc -4 localhost 4444 2>/dev/null) || \
-		$(OOCD) -f $(OOCD_FILE) \
+		$(OOCD) -s ../../openocd/ -f $(OOCD_FILE) \
 		-c "program $(*).elf verify reset exit" \
 		$(NULL)
 endif
