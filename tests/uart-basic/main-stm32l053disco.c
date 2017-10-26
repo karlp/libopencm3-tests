@@ -30,18 +30,6 @@ static void setup_rcc_hack(void)
 	rcc_wait_for_osc_ready(RCC_HSI16);
 	rcc_set_sysclk_source(RCC_HSI16);
 
-	/* HSI48 needs the vrefint turned on */
-	rcc_periph_clock_enable(RCC_SYSCFG);
-	SYSCFG_CFGR3 |= SYSCFG_CFGR3_ENREF_HSI48 | SYSCFG_CFGR3_EN_VREFINT;
-	while (!(SYSCFG_CFGR3 & SYSCFG_CFGR3_REF_HSI48_RDYF));
-
-	/* For USB, but can't use HSI48 as a sysclock on L0 */
-	crs_autotrim_usb_enable();
-	rcc_set_hsi48_source_rc48();
-
-	rcc_osc_on(RCC_HSI48);
-	rcc_wait_for_osc_ready(RCC_HSI48);
-
 	/* ok, we manually poked around, let the lib know */
 	rcc_apb1_frequency = rcc_apb2_frequency = 16e6;
 }
@@ -76,12 +64,12 @@ int main(void)
 	while (1) {
 		gpio_toggle(LED_DISCO_GREEN_PORT, LED_DISCO_GREEN_PIN);
 
-		for (i = 0; i < 0xa0000; i++) { /* Wait a bit. */
+		for (i = 0; i < 0x40000; i++) { /* Wait a bit. */
 			__asm__("NOP");
 		}
 		ub_task();
 		gpio_toggle(LED_DISCO_GREEN_PORT, LED_DISCO_GREEN_PIN);
-		for (i = 0; i < 0xa0000; i++) { /* Wait a bit. */
+		for (i = 0; i < 0x40000; i++) { /* Wait a bit. */
 			__asm__("NOP");
 		}
 	}
