@@ -361,9 +361,7 @@ Wire Wire Line
 Wire Wire Line
 	9400 2000 8600 2000
 Wire Wire Line
-	8850 2100 9300 2100
-Wire Wire Line
-	9300 2100 9400 2100
+	8850 2100 9400 2100
 Connection ~ 9300 2100
 Wire Wire Line
 	8600 2000 8600 1450
@@ -430,13 +428,7 @@ Wire Notes Line
 Wire Wire Line
 	4500 2450 4500 2350
 Wire Wire Line
-	4350 2450 4450 2450
-Wire Wire Line
-	4450 2450 4500 2450
-Wire Wire Line
-	4500 2450 4550 2450
-Wire Wire Line
-	4550 2450 4650 2450
+	4350 2450 4650 2450
 Wire Wire Line
 	4350 2450 4350 2550
 Wire Wire Line
@@ -451,15 +443,9 @@ Connection ~ 4550 2450
 Wire Wire Line
 	4350 6150 4350 6250
 Wire Wire Line
-	4350 6250 4450 6250
+	4350 6250 4650 6250
 Wire Wire Line
-	4450 6250 4550 6250
-Wire Wire Line
-	4550 6250 4650 6250
-Wire Wire Line
-	4450 6150 4450 6250
-Wire Wire Line
-	4450 6250 4450 6300
+	4450 6150 4450 6300
 Connection ~ 4450 6250
 Wire Wire Line
 	4550 6250 4550 6150
@@ -556,24 +542,12 @@ $EndComp
 Wire Wire Line
 	2050 6850 2050 6650
 Wire Wire Line
-	1500 6850 1850 6850
-Wire Wire Line
-	1850 6850 2050 6850
-Wire Wire Line
-	2050 6850 2250 6850
-Wire Wire Line
-	2250 6850 2600 6850
+	1500 6850 2600 6850
 Connection ~ 1850 6850
 Connection ~ 2050 6850
 Connection ~ 2250 6850
 Wire Wire Line
-	1500 7150 1850 7150
-Wire Wire Line
-	1850 7150 2050 7150
-Wire Wire Line
-	2050 7150 2250 7150
-Wire Wire Line
-	2250 7150 2600 7150
+	1500 7150 2600 7150
 Connection ~ 2250 7150
 Connection ~ 1850 7150
 Wire Wire Line
@@ -755,15 +729,9 @@ F 3 "" H 5400 7550 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	5800 7000 6100 7000
+	5800 7000 6150 7000
 Wire Wire Line
-	6100 7000 6100 7000
-Wire Wire Line
-	6100 7000 6150 7000
-Wire Wire Line
-	4850 7000 4900 7000
-Wire Wire Line
-	4900 7000 5000 7000
+	4850 7000 5000 7000
 Wire Wire Line
 	3150 1600 3450 1600
 Wire Wire Line
@@ -771,9 +739,7 @@ Wire Wire Line
 Wire Wire Line
 	3150 1600 3150 1550
 Wire Wire Line
-	5400 7400 5400 7500
-Wire Wire Line
-	5400 7500 5400 7550
+	5400 7400 5400 7550
 $Comp
 L +5V #PWR016
 U 1 1 59F7C40C
@@ -1001,10 +967,10 @@ Don't place this\nI dont' think we need it
 Text Notes 9000 3300 0    60   ~ 0
 TODO\n[ ] Route all spare pins to _something_?
 $Comp
-L C C?
+L C C8
 U 1 1 5A0FC660
 P 6100 7350
-F 0 "C?" H 6125 7450 50  0000 L CNN
+F 0 "C8" H 6125 7450 50  0000 L CNN
 F 1 "1u" H 6125 7250 50  0000 L CNN
 F 2 "Capacitors_SMD:C_0603_HandSoldering" H 6138 7200 50  0000 C CNN
 F 3 "" H 6100 7350 50  0000 C CNN
@@ -1012,10 +978,10 @@ F 3 "" H 6100 7350 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L C C?
+L C C7
 U 1 1 5A0FC76D
 P 4900 7350
-F 0 "C?" H 4925 7450 50  0000 L CNN
+F 0 "C7" H 4925 7450 50  0000 L CNN
 F 1 "1u" H 4925 7250 50  0000 L CNN
 F 2 "Capacitors_SMD:C_0603_HandSoldering" H 4938 7200 50  0000 C CNN
 F 3 "" H 4900 7350 50  0000 C CNN
@@ -1023,9 +989,7 @@ F 3 "" H 4900 7350 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	4900 7500 5400 7500
-Wire Wire Line
-	5400 7500 6100 7500
+	4900 7500 6100 7500
 Connection ~ 5400 7500
 Wire Wire Line
 	6100 7200 6100 7000
