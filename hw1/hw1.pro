@@ -1,4 +1,4 @@
-update=Thu 28 Sep 2017 08:28:19 PM GMT
+update=Fri 17 Nov 2017 10:53:59 PM GMT
 version=1
 last_client=kicad
 [pcbnew]
@@ -60,3 +60,14 @@ LibName28=atmel
 LibName29=contrib
 LibName30=valves
 LibName31=stm32
+LibName32=karlp-klibs
+[schematic_editor]
+version=1
+PageLayoutDescrFile=
+PlotDirectoryName=
+SubpartIdSeparator=0
+SubpartFirstId=65
+NetFmtName=Pcbnew
+SpiceForceRefPrefix=0
+SpiceUseNetNumbers=0
+LabSize=60

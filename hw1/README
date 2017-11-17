@@ -1,0 +1,8 @@
+This is a board designed to receive nucleo64 (and maybe 32) boards
+to be test TARGETS.  The stm32l1 on _this_ board is reprogrammed via
+one of the debug connectors, with appropriate software to be
+master/slave/etc to correspond with the DUT.  All (most) communication
+lines between the two boards are tapped to a 10 pin connector matching
+cheap FX2based logic analysers, allowing automatic tests to be written
+that use sigrok to check that the signals on the wire match expectations.
+

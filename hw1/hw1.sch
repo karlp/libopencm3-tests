@@ -30,41 +30,42 @@ LIBS:atmel
 LIBS:contrib
 LIBS:valves
 LIBS:stm32
+LIBS:karlp-klibs
 LIBS:hw1-cache
 EELAYER 25 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
-Title ""
-Date "lun. 30 mars 2015"
+Title "test host"
+Date "Autumn 2017"
 Rev ""
-Comp ""
+Comp "libopencm3"
 Comment1 ""
 Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
-Text Label 8950 1450 1    60   ~ 0
+Text Label 9300 2300 2    60   ~ 0
 Vin
-Text Label 9300 1450 1    60   ~ 0
+Text Label 9300 1700 2    60   ~ 0
 IOREF
-Text Label 8900 2500 0    60   ~ 0
-DAC1
-Text Label 8900 2600 0    60   ~ 0
-DAC2
-Text Label 8900 2700 0    60   ~ 0
+Text Label 9350 2500 2    60   ~ 0
+DAC1_OUT
+Text Label 9350 2600 2    60   ~ 0
+DAC2_OUT
+Text Label 9350 2700 2    60   ~ 0
 ADC_IN1
 Text Label 8900 2800 0    60   ~ 0
 A3
-Text Label 8900 2900 0    60   ~ 0
+Text Label 9350 2900 2    60   ~ 0
 I2C_SDA
-Text Label 10550 3000 0    60   ~ 0
-UART_TX
+Text Label 10250 3000 0    60   ~ 0
+UART_TX_OUT
 Text Label 10550 2800 0    60   ~ 0
 2
-Text Label 10550 2900 0    60   ~ 0
-UART_RX
+Text Label 10250 2900 0    60   ~ 0
+UART_RX_OUT
 Text Label 10550 2700 0    60   ~ 0
 3(**)
 Text Label 10550 2600 0    60   ~ 0
@@ -79,20 +80,20 @@ Text Label 10550 2100 0    60   ~ 0
 8
 Text Label 10550 2000 0    60   ~ 0
 9(**)
-Text Label 10550 1900 0    60   ~ 0
+Text Label 10350 1900 0    60   ~ 0
 SPI_CS
-Text Label 10550 1800 0    60   ~ 0
+Text Label 10350 1800 0    60   ~ 0
 SPI_MOSI
-Text Label 10550 1700 0    60   ~ 0
+Text Label 10350 1700 0    60   ~ 0
 SPI_MISO
-Text Label 10550 1600 0    60   ~ 0
+Text Label 10350 1600 0    60   ~ 0
 SPI_SCK
-Text Label 10550 1400 0    60   ~ 0
+Text Label 10300 1400 0    60   ~ 0
 AREF
 NoConn ~ 9400 1600
-Text Label 10550 1300 0    60   ~ 0
+Text Label 10300 1300 0    60   ~ 0
 I2C_SDA
-Text Label 10550 1200 0    60   ~ 0
+Text Label 10300 1200 0    60   ~ 0
 I2C_SCL
 Text Notes 10850 1000 0    60   ~ 0
 Holes
@@ -109,50 +110,50 @@ F 3 "" H 9600 1950 50  0000 C CNN
 	1    9600 1950
 	1    0    0    -1  
 $EndComp
-Text Label 8650 1800 0    60   ~ 0
-Reset
+Text Label 9300 1800 2    60   ~ 0
+RESET_OUT
 $Comp
 L +3.3V #PWR01
 U 1 1 56D70538
-P 9150 1450
-F 0 "#PWR01" H 9150 1300 50  0001 C CNN
-F 1 "+3.3V" H 9150 1590 30  0000 C CNN
-F 2 "" H 9150 1450 50  0000 C CNN
-F 3 "" H 9150 1450 50  0000 C CNN
-	1    9150 1450
+P 8700 1450
+F 0 "#PWR01" H 8700 1300 50  0001 C CNN
+F 1 "+3.3V" H 8700 1590 30  0000 C CNN
+F 2 "" H 8700 1450 50  0000 C CNN
+F 3 "" H 8700 1450 50  0000 C CNN
+	1    8700 1450
 	1    0    0    -1  
 $EndComp
 $Comp
 L +5V #PWR02
 U 1 1 56D707BB
-P 9050 1450
-F 0 "#PWR02" H 9050 1300 50  0001 C CNN
-F 1 "+5V" H 9050 1590 30  0000 C CNN
-F 2 "" H 9050 1450 50  0000 C CNN
-F 3 "" H 9050 1450 50  0000 C CNN
-	1    9050 1450
+P 8600 1450
+F 0 "#PWR02" H 8600 1300 50  0001 C CNN
+F 1 "+5V" H 8600 1590 30  0000 C CNN
+F 2 "" H 8600 1450 50  0000 C CNN
+F 3 "" H 8600 1450 50  0000 C CNN
+	1    8600 1450
 	1    0    0    -1  
 $EndComp
 $Comp
 L GND #PWR03
 U 1 1 56D70CC2
-P 9300 3150
-F 0 "#PWR03" H 9300 2900 50  0001 C CNN
-F 1 "GND" H 9300 3000 50  0000 C CNN
-F 2 "" H 9300 3150 50  0000 C CNN
-F 3 "" H 9300 3150 50  0000 C CNN
-	1    9300 3150
+P 8850 2100
+F 0 "#PWR03" H 8850 1850 50  0001 C CNN
+F 1 "GND" H 8850 1950 50  0000 C CNN
+F 2 "" H 8850 2100 50  0000 C CNN
+F 3 "" H 8850 2100 50  0000 C CNN
+	1    8850 2100
 	1    0    0    -1  
 $EndComp
 $Comp
 L GND #PWR04
 U 1 1 56D70CFF
-P 10300 3150
-F 0 "#PWR04" H 10300 2900 50  0001 C CNN
-F 1 "GND" H 10300 3000 50  0000 C CNN
-F 2 "" H 10300 3150 50  0000 C CNN
-F 3 "" H 10300 3150 50  0000 C CNN
-	1    10300 3150
+P 10950 1500
+F 0 "#PWR04" H 10950 1250 50  0001 C CNN
+F 1 "GND" H 10950 1350 50  0000 C CNN
+F 2 "" H 10950 1500 50  0000 C CNN
+F 3 "" H 10950 1500 50  0000 C CNN
+	1    10950 1500
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -244,7 +245,7 @@ U 1 1 58CEFE92
 P 4550 4350
 F 0 "U1" H 1050 6075 50  0000 L BNN
 F 1 "STM32L151C6TxA" H 8050 6075 50  0000 R BNN
-F 2 "LQFP48" H 8050 6025 50  0000 R TNN
+F 2 "Housings_QFP:TQFP-48_7x7mm_Pitch0.5mm" H 8050 6025 50  0000 R TNN
 F 3 "" H 4550 4350 50  0000 C CNN
 	1    4550 4350
 	1    0    0    -1  
@@ -252,12 +253,12 @@ $EndComp
 $Comp
 L CONN_02X05 P9
 U 1 1 58CF048F
-P 1150 1250
-F 0 "P9" H 1150 1550 50  0000 C CNN
-F 1 "FX2LA" H 1150 950 50  0000 C CNN
-F 2 "Connectors:IDC_Header_Straight_10pins" H 1150 50  50  0001 C CNN
-F 3 "" H 1150 50  50  0000 C CNN
-	1    1150 1250
+P 1500 1250
+F 0 "P9" H 1500 1550 50  0000 C CNN
+F 1 "FX2LA" H 1500 950 50  0000 C CNN
+F 2 "Socket_Strips:Socket_Strip_Angled_2x05_Pitch2.54mm" H 1500 50  50  0001 C CNN
+F 3 "" H 1500 50  50  0000 C CNN
+	1    1500 1250
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -285,12 +286,12 @@ $EndComp
 $Comp
 L GND #PWR07
 U 1 1 58CF0E5B
-P 1500 1550
-F 0 "#PWR07" H 1500 1300 50  0001 C CNN
-F 1 "GND" H 1500 1400 50  0000 C CNN
-F 2 "" H 1500 1550 50  0000 C CNN
-F 3 "" H 1500 1550 50  0000 C CNN
-	1    1500 1550
+P 1850 1550
+F 0 "#PWR07" H 1850 1300 50  0001 C CNN
+F 1 "GND" H 1850 1400 50  0000 C CNN
+F 2 "" H 1850 1550 50  0000 C CNN
+F 3 "" H 1850 1550 50  0000 C CNN
+	1    1850 1550
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -315,25 +316,25 @@ F 3 "" H 3850 1650 50  0000 C CNN
 	1    3850 1650
 	1    0    0    -1  
 $EndComp
-Text Label 8300 5350 0    60   ~ 0
+Text Label 8250 5350 0    60   ~ 0
 USB_DM
-Text Label 8300 5450 0    60   ~ 0
+Text Label 8250 5450 0    60   ~ 0
 USB_DP
-Text Label 3550 1900 1    60   ~ 0
+Text Label 3550 1600 3    60   ~ 0
 USB_DM
-Text Label 3650 1900 1    60   ~ 0
+Text Label 3650 1600 3    60   ~ 0
 USB_DP
-Text Label 8450 4650 0    60   ~ 0
-DAC1
-Text Label 8450 4750 0    60   ~ 0
-DAC2
+Text Label 8250 4650 0    60   ~ 0
+DAC1_OUT
+Text Label 8250 4750 0    60   ~ 0
+DAC2_OUT
 Text Label 550  5050 0    60   ~ 0
 I2C_SCL
 Text Label 550  5150 0    60   ~ 0
 I2C_SDA
-Text Notes 3850 750  0    60   ~ 0
-TBD: debug via via 6pin/10x1.27/20x2.54?  (leaning toward 6pin _and_ 10x127 smd)
-Text Label 8900 3000 0    60   ~ 0
+Text Notes 5000 2200 0    60   ~ 0
+[x] debug via via 6pin\n[  ] debug via 10x5x1.27mm cortex SMD\n
+Text Label 9350 3000 2    60   ~ 0
 I2C_SCL
 Text Notes 8500 3000 0    60   ~ 0
 A5 (SCL)
@@ -354,60 +355,52 @@ Wire Notes Line
 Wire Notes Line
 	9925 825  9925 475 
 Wire Wire Line
-	9300 1450 9300 1700
-Wire Wire Line
 	9300 1700 9400 1700
 Wire Wire Line
-	9400 1900 9150 1900
+	9400 1900 8700 1900
 Wire Wire Line
-	9400 2000 9050 2000
+	9400 2000 8600 2000
 Wire Wire Line
-	9400 2300 8950 2300
+	8850 2100 9400 2100
+Connection ~ 9300 2100
 Wire Wire Line
-	9400 2100 9300 2100
+	8600 2000 8600 1450
 Wire Wire Line
-	9400 2200 9300 2200
-Connection ~ 9300 2200
+	8700 1900 8700 1450
 Wire Wire Line
-	8950 2300 8950 1450
+	9400 2500 9350 2500
 Wire Wire Line
-	9050 2000 9050 1450
+	9400 2600 9350 2600
 Wire Wire Line
-	9150 1900 9150 1450
-Wire Wire Line
-	9400 2500 8900 2500
-Wire Wire Line
-	9400 2600 8900 2600
-Wire Wire Line
-	9400 2700 8900 2700
+	9400 2700 9350 2700
 Wire Wire Line
 	9400 2800 8900 2800
 Wire Wire Line
-	9400 2900 8900 2900
+	9400 2900 9350 2900
 Wire Wire Line
-	9400 3000 8900 3000
+	9400 3000 9350 3000
 Wire Wire Line
 	10200 2100 10550 2100
 Wire Wire Line
 	10200 2000 10550 2000
 Wire Wire Line
-	10200 1900 10550 1900
+	10200 1900 10350 1900
 Wire Wire Line
-	10200 1800 10550 1800
+	10200 1800 10350 1800
 Wire Wire Line
-	10200 1700 10550 1700
+	10200 1700 10350 1700
 Wire Wire Line
-	10200 1600 10550 1600
+	10200 1600 10350 1600
 Wire Wire Line
-	10200 1400 10550 1400
+	10200 1400 10300 1400
 Wire Wire Line
-	10200 1300 10550 1300
+	10200 1300 10300 1300
 Wire Wire Line
-	10200 1200 10550 1200
+	10200 1200 10300 1200
 Wire Wire Line
-	10200 3000 10550 3000
+	10200 3000 10250 3000
 Wire Wire Line
-	10200 2900 10550 2900
+	10200 2900 10250 2900
 Wire Wire Line
 	10200 2800 10550 2800
 Wire Wire Line
@@ -421,17 +414,13 @@ Wire Wire Line
 Wire Wire Line
 	10200 2300 10550 2300
 Wire Wire Line
-	10200 1500 10300 1500
-Wire Wire Line
-	10300 1500 10300 3150
-Wire Wire Line
-	9300 2100 9300 3150
+	10200 1500 10950 1500
 Wire Notes Line
 	8500 500  8500 3450
 Wire Notes Line
 	8500 3450 11200 3450
 Wire Wire Line
-	9400 1800 8650 1800
+	9400 1800 9300 1800
 Wire Notes Line
 	11200 1000 10700 1000
 Wire Notes Line
@@ -464,60 +453,58 @@ Wire Wire Line
 	4650 6250 4650 6150
 Connection ~ 4550 6250
 Wire Wire Line
-	1400 1450 1500 1450
+	1750 1450 1850 1450
 Wire Wire Line
-	1500 1450 1500 1550
+	1850 1450 1850 1550
 Wire Wire Line
 	3850 1550 3850 1650
 Wire Wire Line
-	8150 5350 8450 5350
+	8150 5350 8250 5350
 Wire Wire Line
-	8150 5450 8450 5450
+	8150 5450 8250 5450
 Wire Wire Line
-	3550 1550 3550 1900
+	3550 1550 3550 1600
 Wire Wire Line
-	3650 1550 3650 1900
+	3650 1550 3650 1600
 Wire Wire Line
-	8150 4650 8700 4650
+	8150 4650 8250 4650
 Wire Wire Line
-	8150 4750 8700 4750
+	8150 4750 8250 4750
 Wire Wire Line
 	550  5150 950  5150
 Wire Wire Line
 	950  5050 550  5050
 Wire Wire Line
-	1400 1050 2000 1050
+	1750 1050 1800 1050
 Wire Wire Line
-	1400 1150 2000 1150
+	1750 1150 1800 1150
 Wire Wire Line
-	1400 1250 2000 1250
+	1750 1250 1800 1250
 Wire Wire Line
-	1400 1350 2000 1350
+	1750 1350 1800 1350
 Wire Wire Line
-	900  1050 500  1050
+	1250 1050 1200 1050
 Wire Wire Line
-	900  1150 500  1150
+	1250 1150 1200 1150
 Wire Wire Line
-	900  1250 500  1250
+	1250 1250 1200 1250
 Wire Wire Line
-	900  1350 500  1350
-Text Label 500  1050 0    60   ~ 0
+	1250 1350 1200 1350
+Text Label 1200 1050 2    60   ~ 0
 I2C_SCL
-Text Label 1500 1050 0    60   ~ 0
+Text Label 1800 1050 0    60   ~ 0
 I2C_SDA
-Text Label 500  1150 0    60   ~ 0
+Text Label 1200 1150 2    60   ~ 0
 SPI_SCK
-Text Label 500  1250 0    60   ~ 0
+Text Label 1200 1250 2    60   ~ 0
 SPI_MOSI
-Text Label 1500 1150 0    60   ~ 0
+Text Label 1800 1150 0    60   ~ 0
 SPI_MISO
-Text Label 1500 1250 0    60   ~ 0
+Text Label 1800 1250 0    60   ~ 0
 SPI_CS
-Text Label 500  1350 0    60   ~ 0
-UART_RX
-Text Label 1500 1350 0    60   ~ 0
-UART_TX
-Text Notes 450  2100 0    60   Italic 0
+Text Label 1200 1350 2    60   ~ 0
+UART_RX_OUT
+Text Notes 500  2100 0    60   Italic 0
 NOTE: this can be freely routed to do whatever's possible!\nPotentially:\nJumpers to select what you're connecting here?\n(but non-ideal)
 $Comp
 L C C2
@@ -603,31 +590,20 @@ Wire Wire Line
 Text Label 550  4550 0    60   Italic 0
 SWO
 Wire Wire Line
-	8150 5550 8450 5550
+	8150 5550 8250 5550
 Wire Wire Line
-	8150 5650 8450 5650
-Text Label 8300 5550 0    60   Italic 0
+	8150 5650 8250 5650
+Text Label 8250 5550 0    60   Italic 0
 SWDIO
-Text Label 8300 5650 0    60   Italic 0
+Text Label 8250 5650 0    60   Italic 0
 SWCLK
 Text Label 650  2950 0    60   Italic 0
 NRST
 $Comp
 L PWR_FLAG #FLG012
-U 1 1 58CF5CCA
-P 3650 7100
-F 0 "#FLG012" H 3650 7195 50  0001 C CNN
-F 1 "PWR_FLAG" H 3650 7280 50  0000 C CNN
-F 2 "" H 3650 7100 50  0000 C CNN
-F 3 "" H 3650 7100 50  0000 C CNN
-	1    3650 7100
-	-1   0    0    1   
-$EndComp
-$Comp
-L PWR_FLAG #FLG013
 U 1 1 58CF5E41
 P 4100 7000
-F 0 "#FLG013" H 4100 7095 50  0001 C CNN
+F 0 "#FLG012" H 4100 7095 50  0001 C CNN
 F 1 "PWR_FLAG" H 4100 7180 50  0000 C CNN
 F 2 "" H 4100 7000 50  0000 C CNN
 F 3 "" H 4100 7000 50  0000 C CNN
@@ -635,34 +611,19 @@ F 3 "" H 4100 7000 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR014
+L GND #PWR013
 U 1 1 58CF5E8B
 P 4100 7100
-F 0 "#PWR014" H 4100 6850 50  0001 C CNN
+F 0 "#PWR013" H 4100 6850 50  0001 C CNN
 F 1 "GND" H 4100 6950 50  0000 C CNN
 F 2 "" H 4100 7100 50  0000 C CNN
 F 3 "" H 4100 7100 50  0000 C CNN
 	1    4100 7100
 	1    0    0    -1  
 $EndComp
-$Comp
-L +3V3 #PWR015
-U 1 1 58CF5ED5
-P 3650 7000
-F 0 "#PWR015" H 3650 6850 50  0001 C CNN
-F 1 "+3V3" H 3650 7140 50  0000 C CNN
-F 2 "" H 3650 7000 50  0000 C CNN
-F 3 "" H 3650 7000 50  0000 C CNN
-	1    3650 7000
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	3650 7000 3650 7100
 Wire Wire Line
 	4100 7000 4100 7100
-Text Notes 4600 7150 0    60   Italic 12
-TODO: VBUS to 3v3 plz!
-Text Notes 5200 1500 0    60   Italic 12
+Text Notes 2400 900  0    60   Italic 12
 ONLY GROUND BETWEEN BOARDS\nBoth will be powered by their own USB.\n(We're not interested in bootloading the target....\nyet...?)
 $Comp
 L C C3
@@ -697,41 +658,318 @@ F 3 "" H 2600 7000 50  0000 C CNN
 	1    2600 7000
 	1    0    0    -1  
 $EndComp
-NoConn ~ 900  1450
-Text Notes 650  1450 0    60   ~ 0
+NoConn ~ 1250 1450
+Text Notes 1000 1450 0    60   ~ 0
 CLK
 Wire Wire Line
-	8150 4450 8700 4450
+	8150 4450 8250 4450
 Wire Wire Line
-	8150 4550 8700 4550
-Text Label 8450 4450 0    60   ~ 0
-UART_TX
-Text Label 8450 4550 0    60   ~ 0
-UART_RX
+	8150 4550 8250 4550
+Text Label 8250 4450 0    60   ~ 0
+UART_TX_OUT
+Text Label 8250 4550 0    60   ~ 0
+UART_RX_OUT
 Wire Wire Line
-	950  5450 600  5450
+	950  5450 550  5450
 Wire Wire Line
-	950  5550 600  5550
+	950  5550 550  5550
 Wire Wire Line
-	950  5650 600  5650
+	950  5650 550  5650
 Wire Wire Line
-	950  5750 600  5750
+	950  5750 550  5750
 Text Label 550  5450 0    60   ~ 0
 SPI_CS
 Text Label 550  5550 0    60   ~ 0
-SPI_CSK
+SPI_SCK
 Text Label 550  5650 0    60   ~ 0
 SPI_MISO
 Text Label 550  5750 0    60   ~ 0
 SPI_MOSI
 Wire Wire Line
-	8150 4850 8700 4850
+	8150 4850 8250 4850
 Wire Wire Line
-	8150 4950 8700 4950
-Text Label 8450 4850 0    60   ~ 0
+	8150 4950 8250 4950
+Text Label 8250 4850 0    60   ~ 0
 ADC_IN1
-Text Label 8450 4950 0    60   ~ 0
+Text Label 8250 4950 0    60   ~ 0
 ADC_IN2
 Text Notes 8500 2700 0    60   ~ 0
 PA4(DAC1)
+$Comp
+L MIC550x-3.3YM5 U2
+U 1 1 59F7B611
+P 5400 7100
+F 0 "U2" H 5150 7300 50  0000 L CNN
+F 1 "MIC550x-3.3YM5" H 6000 7300 50  0000 R CNN
+F 2 "TO_SOT_Packages_SMD:SOT-23-5_HandSoldering" H 6050 6850 50  0001 C CIN
+F 3 "" H 5400 7100 50  0000 C CNN
+	1    5400 7100
+	1    0    0    -1  
+$EndComp
+$Comp
+L +3V3 #PWR014
+U 1 1 59F7B6BD
+P 6150 6800
+F 0 "#PWR014" H 6150 6650 50  0001 C CNN
+F 1 "+3V3" H 6150 6940 50  0000 C CNN
+F 2 "" H 6150 6800 50  0000 C CNN
+F 3 "" H 6150 6800 50  0000 C CNN
+	1    6150 6800
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR015
+U 1 1 59F7B70C
+P 5400 7500
+F 0 "#PWR015" H 5400 7250 50  0001 C CNN
+F 1 "GND" H 5400 7350 50  0000 C CNN
+F 2 "" H 5400 7500 50  0000 C CNN
+F 3 "" H 5400 7500 50  0000 C CNN
+	1    5400 7500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5800 7000 6150 7000
+Wire Wire Line
+	6150 7000 6150 6800
+Wire Wire Line
+	4850 7000 5000 7000
+Wire Wire Line
+	3150 1600 3450 1600
+Wire Wire Line
+	3450 1600 3450 1550
+Wire Wire Line
+	3150 1600 3150 1550
+Text Label 4900 7000 0    60   ~ 0
+VBUS
+Wire Wire Line
+	5400 7400 5400 7500
+$Comp
+L +5V #PWR016
+U 1 1 59F7C40C
+P 3150 1550
+F 0 "#PWR016" H 3150 1400 50  0001 C CNN
+F 1 "+5V" H 3150 1690 50  0000 C CNN
+F 2 "" H 3150 1550 50  0001 C CNN
+F 3 "" H 3150 1550 50  0001 C CNN
+	1    3150 1550
+	1    0    0    -1  
+$EndComp
+Text Label 3150 1550 0    60   ~ 0
+VBUS
+$Comp
+L +5V #PWR017
+U 1 1 59F7C819
+P 4850 7000
+F 0 "#PWR017" H 4850 6850 50  0001 C CNN
+F 1 "+5V" H 4850 7140 50  0000 C CNN
+F 2 "" H 4850 7000 50  0001 C CNN
+F 3 "" H 4850 7000 50  0001 C CNN
+	1    4850 7000
+	1    0    0    -1  
+$EndComp
+NoConn ~ 950  3550
+NoConn ~ 950  3650
+NoConn ~ 3750 1550
+NoConn ~ 4050 1150
+Wire Wire Line
+	5000 7200 4900 7200
+Wire Wire Line
+	4900 7200 4900 7000
+Connection ~ 4900 7000
+$Comp
+L CONN_01X06 J1
+U 1 1 59F7E088
+P 5350 1400
+F 0 "J1" H 5350 1750 50  0000 C CNN
+F 1 "CONN_01X06" V 5450 1400 50  0000 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_1x06_Pitch2.54mm" H 5350 1400 50  0001 C CNN
+F 3 "" H 5350 1400 50  0001 C CNN
+	1    5350 1400
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	5550 1150 6100 1150
+Wire Wire Line
+	5550 1250 5600 1250
+Wire Wire Line
+	5550 1350 6100 1350
+Wire Wire Line
+	5550 1450 5600 1450
+Wire Wire Line
+	5550 1550 5600 1550
+Wire Wire Line
+	5550 1650 5600 1650
+$Comp
+L GND #PWR018
+U 1 1 59F7E9AF
+P 6100 1350
+F 0 "#PWR018" H 6100 1100 50  0001 C CNN
+F 1 "GND" H 6100 1200 50  0000 C CNN
+F 2 "" H 6100 1350 50  0000 C CNN
+F 3 "" H 6100 1350 50  0000 C CNN
+	1    6100 1350
+	1    0    0    -1  
+$EndComp
+$Comp
+L +3V3 #PWR019
+U 1 1 59F7EA7B
+P 6100 1150
+F 0 "#PWR019" H 6100 1000 50  0001 C CNN
+F 1 "+3V3" H 6100 1290 50  0000 C CNN
+F 2 "" H 6100 1150 50  0000 C CNN
+F 3 "" H 6100 1150 50  0000 C CNN
+	1    6100 1150
+	1    0    0    -1  
+$EndComp
+Text Label 5600 1550 0    60   ~ 0
+NRST
+Text Label 5600 1650 0    60   ~ 0
+SWO
+Text Notes 5200 950  0    60   ~ 0
+STLink compatible debug
+NoConn ~ 8150 4250
+NoConn ~ 8150 4350
+NoConn ~ 8150 5050
+NoConn ~ 8150 5150
+NoConn ~ 8150 5250
+NoConn ~ 8150 5750
+NoConn ~ 950  5350
+NoConn ~ 950  5250
+NoConn ~ 950  4950
+NoConn ~ 950  4850
+NoConn ~ 950  4750
+Text Notes -121300 438350 0    60   ~ 0
+IN/OUT from perspective of HOST\nDUT Nucleo is TARGET
+Text Notes 8950 6350 0    60   ~ 0
+IN/OUT is from the perspective of HOST\nDUT Nucleo is TARGET
+Text Label 1800 1350 0    60   ~ 0
+UART_TX_OUT
+Text Label 5600 1250 0    60   ~ 0
+SWCLK
+Text Label 5600 1450 0    60   ~ 0
+SWDIO
+$Comp
+L R R1
+U 1 1 5A0F8D14
+P 9350 4050
+F 0 "R1" V 9430 4050 50  0000 C CNN
+F 1 "4k7" V 9350 4050 50  0000 C CNN
+F 2 "Resistors_SMD:R_0603_HandSoldering" V 9280 4050 50  0001 C CNN
+F 3 "" H 9350 4050 50  0001 C CNN
+	1    9350 4050
+	1    0    0    -1  
+$EndComp
+$Comp
+L R R2
+U 1 1 5A0F8EF5
+P 9650 4050
+F 0 "R2" V 9730 4050 50  0000 C CNN
+F 1 "4k7" V 9650 4050 50  0000 C CNN
+F 2 "Resistors_SMD:R_0603_HandSoldering" V 9580 4050 50  0001 C CNN
+F 3 "" H 9650 4050 50  0001 C CNN
+	1    9650 4050
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9650 3900 9650 3800
+Wire Wire Line
+	9650 3800 9350 3800
+Wire Wire Line
+	9350 3800 9350 3900
+$Comp
+L +3V3 #PWR020
+U 1 1 5A0F90D0
+P 9500 3800
+F 0 "#PWR020" H 9500 3650 50  0001 C CNN
+F 1 "+3V3" H 9500 3940 50  0000 C CNN
+F 2 "" H 9500 3800 50  0000 C CNN
+F 3 "" H 9500 3800 50  0000 C CNN
+	1    9500 3800
+	1    0    0    -1  
+$EndComp
+$Comp
+L Jumper_NC_Small JP1
+U 1 1 5A0F91B9
+P 9350 4350
+F 0 "JP1" H 9350 4430 50  0000 C CNN
+F 1 "Jumper_NC_Small" H 9360 4290 50  0000 C CNN
+F 2 "Socket_Strips:Socket_Strip_Straight_2x01_Pitch2.54mm" H 9350 4350 50  0001 C CNN
+F 3 "" H 9350 4350 50  0001 C CNN
+	1    9350 4350
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Jumper_NC_Small JP2
+U 1 1 5A0F9269
+P 9650 4350
+F 0 "JP2" H 9650 4430 50  0000 C CNN
+F 1 "Jumper_NC_Small" H 9660 4290 50  0000 C CNN
+F 2 "Socket_Strips:Socket_Strip_Straight_2x01_Pitch2.54mm" H 9650 4350 50  0001 C CNN
+F 3 "" H 9650 4350 50  0001 C CNN
+	1    9650 4350
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	9350 4200 9350 4250
+Wire Wire Line
+	9650 4200 9650 4250
+Wire Wire Line
+	9650 4450 9650 4600
+Wire Wire Line
+	9350 4450 9350 4600
+Text Label 9350 4600 3    60   ~ 0
+I2C_SDA
+Text Label 9650 4600 3    60   ~ 0
+I2C_SCL
+Text Notes 600  800  0    60   ~ 0
+Designed for a cheap FX2LA\nto be just "plugged in" for sigrok
+NoConn ~ 10300 1400
+NoConn ~ 9300 1700
+NoConn ~ 9300 1800
+Wire Wire Line
+	9400 2200 9300 2200
+Wire Wire Line
+	9300 2200 9300 2100
+Wire Wire Line
+	9400 2300 9300 2300
+NoConn ~ 9300 2300
+NoConn ~ 950  4450
+NoConn ~ 950  3150
+Text Notes 1350 3150 0    60   ~ 0
+We're using debugger only here
+$Comp
+L C C6
+U 1 1 5A0FB867
+P 700 3800
+F 0 "C6" H 725 3900 50  0000 L CNN
+F 1 "100n" H 725 3700 50  0000 L CNN
+F 2 "Capacitors_SMD:C_0603_HandSoldering" H 738 3650 50  0000 C CNN
+F 3 "" H 700 3800 50  0000 C CNN
+	1    700  3800
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR021
+U 1 1 5A0FB8D8
+P 700 4000
+F 0 "#PWR021" H 700 3750 50  0001 C CNN
+F 1 "GND" H 700 3850 50  0000 C CNN
+F 2 "" H 700 4000 50  0000 C CNN
+F 3 "" H 700 4000 50  0000 C CNN
+	1    700  4000
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	700  3650 800  3650
+Wire Wire Line
+	800  3650 800  3350
+Wire Wire Line
+	800  3350 950  3350
+Wire Wire Line
+	700  3950 700  4000
+Text Notes -500 3850 0    60   ~ 0
+Don't place this\nI dont' think we need it
+Text Notes 9000 3300 0    60   ~ 0
+TODO\n[ ] Route all spare pins to _something_?
 $EndSCHEMATC
