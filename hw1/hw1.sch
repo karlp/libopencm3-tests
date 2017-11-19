@@ -866,9 +866,9 @@ F 3 "" H 9650 4050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	9650 3900 9650 3800
+	9650 3800 9650 3900
 Wire Wire Line
-	9650 3800 9350 3800
+	9350 3800 9650 3800
 Wire Wire Line
 	9350 3800 9350 3900
 $Comp
@@ -955,12 +955,6 @@ F 3 "" H 700 4000 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	700  3650 800  3650
-Wire Wire Line
-	800  3650 800  3350
-Wire Wire Line
-	800  3350 950  3350
-Wire Wire Line
 	700  3950 700  4000
 Text Notes -500 3850 0    60   ~ 0
 Don't place this\nI dont' think we need it
@@ -994,4 +988,11 @@ Connection ~ 5400 7500
 Wire Wire Line
 	6100 7200 6100 7000
 Connection ~ 6100 7000
+Connection ~ 9500 3800
+Wire Wire Line
+	950  3350 700  3350
+Wire Wire Line
+	700  3350 700  3650
+Text Label 950  3350 2    60   ~ 0
+VLCD
 $EndSCHEMATC
