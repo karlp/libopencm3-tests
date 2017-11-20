@@ -6,3 +6,11 @@ lines between the two boards are tapped to a 10 pin connector matching
 cheap FX2based logic analysers, allowing automatic tests to be written
 that use sigrok to check that the signals on the wire match expectations.
 
+
+TODO:
+Check i2c conns to target board! (drop the unused one!)
+VCC routing (and recommended mic5504 routing)
+ground pours in kicad
+reshuffle LA conn
+gerber generation?
+

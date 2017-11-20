@@ -242,12 +242,12 @@ Text Notes 9700 1600 0    60   ~ 0
 $Comp
 L STM32L151C6TxA U1
 U 1 1 58CEFE92
-P 4550 4350
-F 0 "U1" H 1050 6075 50  0000 L BNN
-F 1 "STM32L151C6TxA" H 8050 6075 50  0000 R BNN
-F 2 "Housings_QFP:TQFP-48_7x7mm_Pitch0.5mm" H 8050 6025 50  0000 R TNN
-F 3 "" H 4550 4350 50  0000 C CNN
-	1    4550 4350
+P 4950 4500
+F 0 "U1" H 1450 6225 50  0000 L BNN
+F 1 "STM32L151C6TxA" H 8450 6225 50  0000 R BNN
+F 2 "Housings_QFP:TQFP-48_7x7mm_Pitch0.5mm" H 8450 6175 50  0000 R TNN
+F 3 "" H 4950 4500 50  0000 C CNN
+	1    4950 4500
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -264,23 +264,23 @@ $EndComp
 $Comp
 L +3V3 #PWR05
 U 1 1 58CF063D
-P 4500 2350
-F 0 "#PWR05" H 4500 2200 50  0001 C CNN
-F 1 "+3V3" H 4500 2490 50  0000 C CNN
-F 2 "" H 4500 2350 50  0000 C CNN
-F 3 "" H 4500 2350 50  0000 C CNN
-	1    4500 2350
+P 4900 2500
+F 0 "#PWR05" H 4900 2350 50  0001 C CNN
+F 1 "+3V3" H 4900 2640 50  0000 C CNN
+F 2 "" H 4900 2500 50  0000 C CNN
+F 3 "" H 4900 2500 50  0000 C CNN
+	1    4900 2500
 	1    0    0    -1  
 $EndComp
 $Comp
 L GND #PWR06
 U 1 1 58CF077D
-P 4450 6300
-F 0 "#PWR06" H 4450 6050 50  0001 C CNN
-F 1 "GND" H 4450 6150 50  0000 C CNN
-F 2 "" H 4450 6300 50  0000 C CNN
-F 3 "" H 4450 6300 50  0000 C CNN
-	1    4450 6300
+P 4850 6450
+F 0 "#PWR06" H 4850 6200 50  0001 C CNN
+F 1 "GND" H 4850 6300 50  0000 C CNN
+F 2 "" H 4850 6450 50  0000 C CNN
+F 3 "" H 4850 6450 50  0000 C CNN
+	1    4850 6450
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -316,23 +316,23 @@ F 3 "" H 3850 1650 50  0000 C CNN
 	1    3850 1650
 	1    0    0    -1  
 $EndComp
-Text Label 8250 5350 0    60   ~ 0
+Text Label 8650 5500 0    60   ~ 0
 USB_DM
-Text Label 8250 5450 0    60   ~ 0
+Text Label 8650 5600 0    60   ~ 0
 USB_DP
 Text Label 3550 1600 3    60   ~ 0
 USB_DM
 Text Label 3650 1600 3    60   ~ 0
 USB_DP
-Text Label 8250 4650 0    60   ~ 0
+Text Label 8650 4800 0    60   ~ 0
 DAC1_OUT
-Text Label 8250 4750 0    60   ~ 0
+Text Label 8650 4900 0    60   ~ 0
 DAC2_OUT
-Text Label 550  5050 0    60   ~ 0
+Text Label 950  5200 0    60   ~ 0
 I2C_SCL
-Text Label 550  5150 0    60   ~ 0
+Text Label 950  5300 0    60   ~ 0
 I2C_SDA
-Text Notes 5000 2200 0    60   ~ 0
+Text Notes 5400 2350 0    60   ~ 0
 [x] debug via via 6pin\n[  ] debug via 10x5x1.27mm cortex SMD\n
 Text Label 9350 3000 2    60   ~ 0
 I2C_SCL
@@ -426,32 +426,32 @@ Wire Notes Line
 Wire Notes Line
 	10700 1000 10700 500 
 Wire Wire Line
-	4500 2450 4500 2350
+	4900 2600 4900 2500
 Wire Wire Line
-	4350 2450 4650 2450
+	4750 2600 5050 2600
 Wire Wire Line
-	4350 2450 4350 2550
+	4750 2600 4750 2700
 Wire Wire Line
-	4450 2550 4450 2450
-Connection ~ 4450 2450
+	4850 2700 4850 2600
+Connection ~ 4850 2600
 Wire Wire Line
-	4550 2450 4550 2550
-Connection ~ 4500 2450
+	4950 2600 4950 2700
+Connection ~ 4900 2600
 Wire Wire Line
-	4650 2450 4650 2550
-Connection ~ 4550 2450
+	5050 2600 5050 2700
+Connection ~ 4950 2600
 Wire Wire Line
-	4350 6150 4350 6250
+	4750 6300 4750 6400
 Wire Wire Line
-	4350 6250 4650 6250
+	4750 6400 5050 6400
 Wire Wire Line
-	4450 6150 4450 6300
-Connection ~ 4450 6250
+	4850 6300 4850 6450
+Connection ~ 4850 6400
 Wire Wire Line
-	4550 6250 4550 6150
+	4950 6400 4950 6300
 Wire Wire Line
-	4650 6250 4650 6150
-Connection ~ 4550 6250
+	5050 6400 5050 6300
+Connection ~ 4950 6400
 Wire Wire Line
 	1750 1450 1850 1450
 Wire Wire Line
@@ -459,21 +459,21 @@ Wire Wire Line
 Wire Wire Line
 	3850 1550 3850 1650
 Wire Wire Line
-	8150 5350 8250 5350
+	8550 5500 8650 5500
 Wire Wire Line
-	8150 5450 8250 5450
+	8550 5600 8650 5600
 Wire Wire Line
 	3550 1550 3550 1600
 Wire Wire Line
 	3650 1550 3650 1600
 Wire Wire Line
-	8150 4650 8250 4650
+	8550 4800 8650 4800
 Wire Wire Line
-	8150 4750 8250 4750
+	8550 4900 8650 4900
 Wire Wire Line
-	550  5150 950  5150
+	950  5300 1350 5300
 Wire Wire Line
-	950  5050 550  5050
+	1350 5200 950  5200
 Wire Wire Line
 	1750 1050 1800 1050
 Wire Wire Line
@@ -531,12 +531,12 @@ $EndComp
 $Comp
 L +3V3 #PWR010
 U 1 1 58CF46D6
-P 2050 6650
-F 0 "#PWR010" H 2050 6500 50  0001 C CNN
-F 1 "+3V3" H 2050 6790 50  0000 C CNN
-F 2 "" H 2050 6650 50  0000 C CNN
-F 3 "" H 2050 6650 50  0000 C CNN
-	1    2050 6650
+P 2450 6800
+F 0 "#PWR010" H 2450 6650 50  0001 C CNN
+F 1 "+3V3" H 2450 6940 50  0000 C CNN
+F 2 "" H 2450 6800 50  0000 C CNN
+F 3 "" H 2450 6800 50  0000 C CNN
+	1    2450 6800
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
@@ -556,48 +556,48 @@ Connection ~ 2050 7150
 $Comp
 L C C1
 U 1 1 58CF4B65
-P 600 3100
-F 0 "C1" H 625 3200 50  0000 L CNN
-F 1 "100n" H 625 3000 50  0000 L CNN
-F 2 "Capacitors_SMD:C_0603_HandSoldering" H 638 2950 50  0000 C CNN
-F 3 "" H 600 3100 50  0000 C CNN
-	1    600  3100
+P 600 2900
+F 0 "C1" H 625 3000 50  0000 L CNN
+F 1 "100n" H 625 2800 50  0000 L CNN
+F 2 "Capacitors_SMD:C_0603_HandSoldering" H 638 2750 50  0000 C CNN
+F 3 "" H 600 2900 50  0000 C CNN
+	1    600  2900
 	1    0    0    -1  
 $EndComp
 $Comp
 L GND #PWR011
 U 1 1 58CF4BEA
-P 600 3350
-F 0 "#PWR011" H 600 3100 50  0001 C CNN
-F 1 "GND" H 600 3200 50  0000 C CNN
-F 2 "" H 600 3350 50  0000 C CNN
-F 3 "" H 600 3350 50  0000 C CNN
-	1    600  3350
+P 600 3100
+F 0 "#PWR011" H 600 2850 50  0001 C CNN
+F 1 "GND" H 600 2950 50  0000 C CNN
+F 2 "" H 600 3100 50  0000 C CNN
+F 3 "" H 600 3100 50  0000 C CNN
+	1    600  3100
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	950  2950 600  2950
+	1350 3100 600  2750
 Wire Wire Line
-	600  3250 600  3350
-NoConn ~ 950  4250
-NoConn ~ 950  4350
-NoConn ~ 950  4050
-NoConn ~ 950  3950
-NoConn ~ 950  3850
-NoConn ~ 950  4650
+	600  3050 600  3100
+NoConn ~ 1350 4400
+NoConn ~ 1350 4500
+NoConn ~ 1350 4200
+NoConn ~ 1350 4100
+NoConn ~ 1350 4000
+NoConn ~ 1350 4800
 Wire Wire Line
-	950  4550 550  4550
-Text Label 550  4550 0    60   Italic 0
+	1350 4700 950  4700
+Text Label 950  4700 0    60   Italic 0
 SWO
 Wire Wire Line
-	8150 5550 8250 5550
+	8550 5700 8650 5700
 Wire Wire Line
-	8150 5650 8250 5650
-Text Label 8250 5550 0    60   Italic 0
+	8550 5800 8650 5800
+Text Label 8650 5700 0    60   Italic 0
 SWDIO
-Text Label 8250 5650 0    60   Italic 0
+Text Label 8650 5800 0    60   Italic 0
 SWCLK
-Text Label 650  2950 0    60   Italic 0
+Text Label 600  2750 0    60   Italic 0
 NRST
 $Comp
 L PWR_FLAG #FLG012
@@ -662,36 +662,36 @@ NoConn ~ 1250 1450
 Text Notes 1000 1450 0    60   ~ 0
 CLK
 Wire Wire Line
-	8150 4450 8250 4450
+	8550 4600 8650 4600
 Wire Wire Line
-	8150 4550 8250 4550
-Text Label 8250 4450 0    60   ~ 0
+	8550 4700 8650 4700
+Text Label 8650 4600 0    60   ~ 0
 UART_TX_OUT
-Text Label 8250 4550 0    60   ~ 0
+Text Label 8650 4700 0    60   ~ 0
 UART_RX_OUT
 Wire Wire Line
-	950  5450 550  5450
+	1350 5600 950  5600
 Wire Wire Line
-	950  5550 550  5550
+	1350 5700 950  5700
 Wire Wire Line
-	950  5650 550  5650
+	1350 5800 950  5800
 Wire Wire Line
-	950  5750 550  5750
-Text Label 550  5450 0    60   ~ 0
+	1350 5900 950  5900
+Text Label 950  5600 0    60   ~ 0
 SPI_CS
-Text Label 550  5550 0    60   ~ 0
+Text Label 950  5700 0    60   ~ 0
 SPI_SCK
-Text Label 550  5650 0    60   ~ 0
+Text Label 950  5800 0    60   ~ 0
 SPI_MISO
-Text Label 550  5750 0    60   ~ 0
+Text Label 950  5900 0    60   ~ 0
 SPI_MOSI
 Wire Wire Line
-	8150 4850 8250 4850
+	8550 5000 8650 5000
 Wire Wire Line
-	8150 4950 8250 4950
-Text Label 8250 4850 0    60   ~ 0
+	8550 5100 8650 5100
+Text Label 8650 5000 0    60   ~ 0
 ADC_IN1
-Text Label 8250 4950 0    60   ~ 0
+Text Label 8650 5100 0    60   ~ 0
 ADC_IN2
 Text Notes 8500 2700 0    60   ~ 0
 PA4(DAC1)
@@ -762,8 +762,6 @@ F 3 "" H 4850 7000 50  0001 C CNN
 	1    4850 7000
 	1    0    0    -1  
 $EndComp
-NoConn ~ 950  3550
-NoConn ~ 950  3650
 NoConn ~ 3750 1550
 NoConn ~ 4050 1150
 Wire Wire Line
@@ -822,17 +820,17 @@ Text Label 5600 1650 0    60   ~ 0
 SWO
 Text Notes 5200 950  0    60   ~ 0
 STLink compatible debug
-NoConn ~ 8150 4250
-NoConn ~ 8150 4350
-NoConn ~ 8150 5050
-NoConn ~ 8150 5150
-NoConn ~ 8150 5250
-NoConn ~ 8150 5750
-NoConn ~ 950  5350
-NoConn ~ 950  5250
-NoConn ~ 950  4950
-NoConn ~ 950  4850
-NoConn ~ 950  4750
+NoConn ~ 8550 4400
+NoConn ~ 8550 4500
+NoConn ~ 8550 5200
+NoConn ~ 8550 5300
+NoConn ~ 8550 5400
+NoConn ~ 8550 5900
+NoConn ~ 1350 5500
+NoConn ~ 1350 5400
+NoConn ~ 1350 5100
+NoConn ~ 1350 5000
+NoConn ~ 1350 4900
 Text Notes -121300 438350 0    60   ~ 0
 IN/OUT from perspective of HOST\nDUT Nucleo is TARGET
 Text Notes 8950 6350 0    60   ~ 0
@@ -846,75 +844,75 @@ SWDIO
 $Comp
 L R R1
 U 1 1 5A0F8D14
-P 9350 4050
-F 0 "R1" V 9430 4050 50  0000 C CNN
-F 1 "4k7" V 9350 4050 50  0000 C CNN
-F 2 "Resistors_SMD:R_0603_HandSoldering" V 9280 4050 50  0001 C CNN
-F 3 "" H 9350 4050 50  0001 C CNN
-	1    9350 4050
+P 10500 4050
+F 0 "R1" V 10580 4050 50  0000 C CNN
+F 1 "4k7" V 10500 4050 50  0000 C CNN
+F 2 "Resistors_SMD:R_0603_HandSoldering" V 10430 4050 50  0001 C CNN
+F 3 "" H 10500 4050 50  0001 C CNN
+	1    10500 4050
 	1    0    0    -1  
 $EndComp
 $Comp
 L R R2
 U 1 1 5A0F8EF5
-P 9650 4050
-F 0 "R2" V 9730 4050 50  0000 C CNN
-F 1 "4k7" V 9650 4050 50  0000 C CNN
-F 2 "Resistors_SMD:R_0603_HandSoldering" V 9580 4050 50  0001 C CNN
-F 3 "" H 9650 4050 50  0001 C CNN
-	1    9650 4050
+P 10800 4050
+F 0 "R2" V 10880 4050 50  0000 C CNN
+F 1 "4k7" V 10800 4050 50  0000 C CNN
+F 2 "Resistors_SMD:R_0603_HandSoldering" V 10730 4050 50  0001 C CNN
+F 3 "" H 10800 4050 50  0001 C CNN
+	1    10800 4050
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	9650 3800 9650 3900
+	10800 3800 10800 3900
 Wire Wire Line
-	9350 3800 9650 3800
+	10500 3800 10800 3800
 Wire Wire Line
-	9350 3800 9350 3900
+	10500 3800 10500 3900
 $Comp
 L +3V3 #PWR020
 U 1 1 5A0F90D0
-P 9500 3800
-F 0 "#PWR020" H 9500 3650 50  0001 C CNN
-F 1 "+3V3" H 9500 3940 50  0000 C CNN
-F 2 "" H 9500 3800 50  0000 C CNN
-F 3 "" H 9500 3800 50  0000 C CNN
-	1    9500 3800
+P 10650 3800
+F 0 "#PWR020" H 10650 3650 50  0001 C CNN
+F 1 "+3V3" H 10650 3940 50  0000 C CNN
+F 2 "" H 10650 3800 50  0000 C CNN
+F 3 "" H 10650 3800 50  0000 C CNN
+	1    10650 3800
 	1    0    0    -1  
 $EndComp
 $Comp
 L Jumper_NC_Small JP1
 U 1 1 5A0F91B9
-P 9350 4350
-F 0 "JP1" H 9350 4430 50  0000 C CNN
-F 1 "Jumper_NC_Small" H 9360 4290 50  0000 C CNN
-F 2 "Socket_Strips:Socket_Strip_Straight_2x01_Pitch2.54mm" H 9350 4350 50  0001 C CNN
-F 3 "" H 9350 4350 50  0001 C CNN
-	1    9350 4350
+P 10500 4350
+F 0 "JP1" H 10500 4430 50  0000 C CNN
+F 1 "Jumper_NC_Small" H 10510 4290 50  0000 C CNN
+F 2 "Socket_Strips:Socket_Strip_Straight_2x01_Pitch2.54mm" H 10500 4350 50  0001 C CNN
+F 3 "" H 10500 4350 50  0001 C CNN
+	1    10500 4350
 	0    -1   -1   0   
 $EndComp
 $Comp
 L Jumper_NC_Small JP2
 U 1 1 5A0F9269
-P 9650 4350
-F 0 "JP2" H 9650 4430 50  0000 C CNN
-F 1 "Jumper_NC_Small" H 9660 4290 50  0000 C CNN
-F 2 "Socket_Strips:Socket_Strip_Straight_2x01_Pitch2.54mm" H 9650 4350 50  0001 C CNN
-F 3 "" H 9650 4350 50  0001 C CNN
-	1    9650 4350
+P 10800 4350
+F 0 "JP2" H 10800 4430 50  0000 C CNN
+F 1 "Jumper_NC_Small" H 10810 4290 50  0000 C CNN
+F 2 "Socket_Strips:Socket_Strip_Straight_2x01_Pitch2.54mm" H 10800 4350 50  0001 C CNN
+F 3 "" H 10800 4350 50  0001 C CNN
+	1    10800 4350
 	0    -1   -1   0   
 $EndComp
 Wire Wire Line
-	9350 4200 9350 4250
+	10500 4200 10500 4250
 Wire Wire Line
-	9650 4200 9650 4250
+	10800 4200 10800 4250
 Wire Wire Line
-	9650 4450 9650 4600
+	10800 4450 10800 4600
 Wire Wire Line
-	9350 4450 9350 4600
-Text Label 9350 4600 3    60   ~ 0
+	10500 4450 10500 4600
+Text Label 10500 4600 3    60   ~ 0
 I2C_SDA
-Text Label 9650 4600 3    60   ~ 0
+Text Label 10800 4600 3    60   ~ 0
 I2C_SCL
 Text Notes 600  800  0    60   ~ 0
 Designed for a cheap FX2LA\nto be just "plugged in" for sigrok
@@ -928,36 +926,36 @@ Wire Wire Line
 Wire Wire Line
 	9400 2300 9300 2300
 NoConn ~ 9300 2300
-NoConn ~ 950  4450
-NoConn ~ 950  3150
-Text Notes 1350 3150 0    60   ~ 0
+NoConn ~ 1350 4600
+NoConn ~ 1350 3300
+Text Notes 1750 3300 0    60   ~ 0
 We're using debugger only here
 $Comp
 L C C6
 U 1 1 5A0FB867
-P 700 3800
-F 0 "C6" H 725 3900 50  0000 L CNN
-F 1 "100n" H 725 3700 50  0000 L CNN
-F 2 "Capacitors_SMD:C_0603_HandSoldering" H 738 3650 50  0000 C CNN
-F 3 "" H 700 3800 50  0000 C CNN
-	1    700  3800
+P 800 3200
+F 0 "C6" H 825 3300 50  0000 L CNN
+F 1 "100n" H 825 3100 50  0000 L CNN
+F 2 "Capacitors_SMD:C_0603_HandSoldering" H 838 3050 50  0000 C CNN
+F 3 "" H 800 3200 50  0000 C CNN
+	1    800  3200
 	1    0    0    -1  
 $EndComp
 $Comp
 L GND #PWR021
 U 1 1 5A0FB8D8
-P 700 4000
-F 0 "#PWR021" H 700 3750 50  0001 C CNN
-F 1 "GND" H 700 3850 50  0000 C CNN
-F 2 "" H 700 4000 50  0000 C CNN
-F 3 "" H 700 4000 50  0000 C CNN
-	1    700  4000
+P 800 3400
+F 0 "#PWR021" H 800 3150 50  0001 C CNN
+F 1 "GND" H 800 3250 50  0000 C CNN
+F 2 "" H 800 3400 50  0000 C CNN
+F 3 "" H 800 3400 50  0000 C CNN
+	1    800  3400
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	700  3950 700  4000
-Text Notes -500 3850 0    60   ~ 0
-Don't place this\nI dont' think we need it
+	800  3350 800  3400
+Text Notes -950 3450 0    60   ~ 0
+Not needed on L1, but needed for L4/F3
 Text Notes 9000 3300 0    60   ~ 0
 TODO\n[ ] Route all spare pins to _something_?
 $Comp
@@ -988,11 +986,76 @@ Connection ~ 5400 7500
 Wire Wire Line
 	6100 7200 6100 7000
 Connection ~ 6100 7000
-Connection ~ 9500 3800
+Connection ~ 10650 3800
 Wire Wire Line
-	950  3350 700  3350
+	1350 3500 1100 3500
 Wire Wire Line
-	700  3350 700  3650
-Text Label 950  3350 2    60   ~ 0
+	1100 3500 800  3050
+Text Label 1350 3500 2    60   ~ 0
 VLCD
+Text Notes 5150 2750 0    60   ~ 0
+L1/F303/L4 in qfp48 are all compatible with this layout\n(but f3 needs external pullup on USB-DP)
+$Comp
+L Crystal_GND24_Small Y?
+U 1 1 5A137095
+P 800 3800
+F 0 "Y?" H 850 3975 50  0000 L CNN
+F 1 "Crystal_GND24_Small" H 850 3900 50  0000 L CNN
+F 2 "" H 800 3800 50  0001 C CNN
+F 3 "" H 800 3800 50  0001 C CNN
+	1    800  3800
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	550  3700 1350 3700
+Wire Wire Line
+	1350 3800 1150 3800
+Wire Wire Line
+	1150 3900 1150 3800
+Wire Wire Line
+	750  3900 1150 3900
+$Comp
+L C C?
+U 1 1 5A1373B8
+P 750 4150
+F 0 "C?" H 775 4250 50  0000 L CNN
+F 1 "18pf" H 775 4050 50  0000 L CNN
+F 2 "Capacitors_SMD:C_0603_HandSoldering" H 788 4000 50  0000 C CNN
+F 3 "" H 750 4150 50  0000 C CNN
+	1    750  4150
+	1    0    0    -1  
+$EndComp
+$Comp
+L C C?
+U 1 1 5A137455
+P 550 4150
+F 0 "C?" H 575 4250 50  0000 L CNN
+F 1 "18pf" H 575 4050 50  0000 L CNN
+F 2 "Capacitors_SMD:C_0603_HandSoldering" H 588 4000 50  0000 C CNN
+F 3 "" H 550 4150 50  0000 C CNN
+	1    550  4150
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 5A137592
+P 650 4400
+F 0 "#PWR?" H 650 4150 50  0001 C CNN
+F 1 "GND" H 650 4250 50  0000 C CNN
+F 2 "" H 650 4400 50  0000 C CNN
+F 3 "" H 650 4400 50  0000 C CNN
+	1    650  4400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	550  4000 550  3700
+Connection ~ 800  3700
+Wire Wire Line
+	650  4400 650  4300
+Wire Wire Line
+	550  4300 750  4300
+Connection ~ 650  4300
+Wire Wire Line
+	750  4000 750  3900
+Connection ~ 800  3900
 $EndSCHEMATC
