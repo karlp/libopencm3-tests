@@ -491,19 +491,19 @@ Wire Wire Line
 Wire Wire Line
 	1250 1350 1200 1350
 Text Label 1200 1050 2    60   ~ 0
-I2C_SCL
-Text Label 1800 1050 0    60   ~ 0
 I2C_SDA
+Text Label 1800 1050 0    60   ~ 0
+I2C_SCL
 Text Label 1200 1150 2    60   ~ 0
-SPI_SCK
+UART_TX_OUT
 Text Label 1200 1250 2    60   ~ 0
 SPI_MOSI
 Text Label 1800 1150 0    60   ~ 0
-SPI_MISO
-Text Label 1800 1250 0    60   ~ 0
-SPI_CS
-Text Label 1200 1350 2    60   ~ 0
 UART_RX_OUT
+Text Label 1800 1250 0    60   ~ 0
+SPI_MISO
+Text Label 1200 1350 2    60   ~ 0
+SPI_SCK
 Text Notes 500  2100 0    60   Italic 0
 NOTE: this can be freely routed to do whatever's possible!\nPotentially:\nJumpers to select what you're connecting here?\n(but non-ideal)
 $Comp
@@ -531,12 +531,12 @@ $EndComp
 $Comp
 L +3V3 #PWR010
 U 1 1 58CF46D6
-P 2450 6800
-F 0 "#PWR010" H 2450 6650 50  0001 C CNN
-F 1 "+3V3" H 2450 6940 50  0000 C CNN
-F 2 "" H 2450 6800 50  0000 C CNN
-F 3 "" H 2450 6800 50  0000 C CNN
-	1    2450 6800
+P 2050 6650
+F 0 "#PWR010" H 2050 6500 50  0001 C CNN
+F 1 "+3V3" H 2050 6790 50  0000 C CNN
+F 2 "" H 2050 6650 50  0000 C CNN
+F 3 "" H 2050 6650 50  0000 C CNN
+	1    2050 6650
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
@@ -836,7 +836,7 @@ IN/OUT from perspective of HOST\nDUT Nucleo is TARGET
 Text Notes 8950 6350 0    60   ~ 0
 IN/OUT is from the perspective of HOST\nDUT Nucleo is TARGET
 Text Label 1800 1350 0    60   ~ 0
-UART_TX_OUT
+SPI_CS
 Text Label 5600 1250 0    60   ~ 0
 SWCLK
 Text Label 5600 1450 0    60   ~ 0
@@ -996,29 +996,29 @@ VLCD
 Text Notes 5150 2750 0    60   ~ 0
 L1/F303/L4 in qfp48 are all compatible with this layout\n(but f3 needs external pullup on USB-DP)
 $Comp
-L Crystal_GND24_Small Y?
+L Crystal_GND24_Small Y1
 U 1 1 5A137095
 P 800 3800
-F 0 "Y?" H 850 3975 50  0000 L CNN
+F 0 "Y1" H 850 3975 50  0000 L CNN
 F 1 "Crystal_GND24_Small" H 850 3900 50  0000 L CNN
-F 2 "" H 800 3800 50  0001 C CNN
+F 2 "Crystals:Crystal_SMD_SeikoEpson_FA238-4pin_3.2x2.5mm" H 800 3800 50  0001 C CNN
 F 3 "" H 800 3800 50  0001 C CNN
 	1    800  3800
-	0    1    1    0   
+	0    -1   -1   0   
 $EndComp
 Wire Wire Line
 	550  3700 1350 3700
 Wire Wire Line
 	1350 3800 1150 3800
 Wire Wire Line
-	1150 3900 1150 3800
+	1150 3800 1150 3900
 Wire Wire Line
-	750  3900 1150 3900
+	1150 3900 750  3900
 $Comp
-L C C?
+L C C10
 U 1 1 5A1373B8
 P 750 4150
-F 0 "C?" H 775 4250 50  0000 L CNN
+F 0 "C10" H 775 4250 50  0000 L CNN
 F 1 "18pf" H 775 4050 50  0000 L CNN
 F 2 "Capacitors_SMD:C_0603_HandSoldering" H 788 4000 50  0000 C CNN
 F 3 "" H 750 4150 50  0000 C CNN
@@ -1026,10 +1026,10 @@ F 3 "" H 750 4150 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L C C?
+L C C9
 U 1 1 5A137455
 P 550 4150
-F 0 "C?" H 575 4250 50  0000 L CNN
+F 0 "C9" H 575 4250 50  0000 L CNN
 F 1 "18pf" H 575 4050 50  0000 L CNN
 F 2 "Capacitors_SMD:C_0603_HandSoldering" H 588 4000 50  0000 C CNN
 F 3 "" H 550 4150 50  0000 C CNN
@@ -1037,10 +1037,10 @@ F 3 "" H 550 4150 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR?
+L GND #PWR022
 U 1 1 5A137592
 P 650 4400
-F 0 "#PWR?" H 650 4150 50  0001 C CNN
+F 0 "#PWR022" H 650 4150 50  0001 C CNN
 F 1 "GND" H 650 4250 50  0000 C CNN
 F 2 "" H 650 4400 50  0000 C CNN
 F 3 "" H 650 4400 50  0000 C CNN
@@ -1056,6 +1056,6 @@ Wire Wire Line
 	550  4300 750  4300
 Connection ~ 650  4300
 Wire Wire Line
-	750  4000 750  3900
+	750  3900 750  4000
 Connection ~ 800  3900
 $EndSCHEMATC
