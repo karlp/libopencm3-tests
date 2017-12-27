@@ -552,8 +552,6 @@ Wire Wire Line
 	2550 4400 1350 4400
 Wire Wire Line
 	1050 4400 900  4400
-NoConn ~ 2550 5700
-NoConn ~ 2550 5800
 NoConn ~ 2550 5500
 NoConn ~ 2550 5400
 NoConn ~ 2550 5300
@@ -743,12 +741,12 @@ Wire Wire Line
 	7700 10150 7700 9950
 Connection ~ 7700 9950
 $Comp
-L CONN_01X06 J1
+L CONN_01X06 P11
 U 1 1 59F7E088
 P 6850 1300
-F 0 "J1" H 6850 1650 50  0000 C CNN
+F 0 "P11" H 6850 1650 50  0000 C CNN
 F 1 "CONN_01X06" V 6950 1300 50  0000 C CNN
-F 2 "Pin_Headers:Pin_Header_Straight_1x06_Pitch2.54mm" H 6850 1300 50  0001 C CNN
+F 2 "Socket_Strips:Socket_Strip_Straight_1x06_Pitch2.54mm" H 6850 1300 50  0001 C CNN
 F 3 "" H 6850 1300 50  0001 C CNN
 	1    6850 1300
 	-1   0    0    -1  
@@ -793,14 +791,7 @@ Text Label 7100 1550 0    60   ~ 0
 SWO
 Text Notes 6700 850  0    60   ~ 0
 STLink compatible debug
-NoConn ~ 9750 5700
-NoConn ~ 9750 5800
-NoConn ~ 9750 6500
-NoConn ~ 9750 6600
-NoConn ~ 9750 6700
 NoConn ~ 9750 7200
-NoConn ~ 2550 6800
-NoConn ~ 2550 6700
 NoConn ~ 2550 6400
 NoConn ~ 2550 6300
 NoConn ~ 2550 6200
@@ -859,7 +850,7 @@ U 1 1 5A0F91B9
 P 10600 10050
 F 0 "JP1" H 10600 10130 50  0000 C CNN
 F 1 "Jumper_NC_Small" H 10610 9990 50  0000 C CNN
-F 2 "Socket_Strips:Socket_Strip_Straight_2x01_Pitch2.54mm" H 10600 10050 50  0001 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_1x02_Pitch2.54mm" H 10600 10050 50  0001 C CNN
 F 3 "" H 10600 10050 50  0001 C CNN
 	1    10600 10050
 	0    -1   -1   0   
@@ -870,7 +861,7 @@ U 1 1 5A0F9269
 P 10900 10050
 F 0 "JP2" H 10900 10130 50  0000 C CNN
 F 1 "Jumper_NC_Small" H 10910 9990 50  0000 C CNN
-F 2 "Socket_Strips:Socket_Strip_Straight_2x01_Pitch2.54mm" H 10900 10050 50  0001 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_1x02_Pitch2.54mm" H 10900 10050 50  0001 C CNN
 F 3 "" H 10900 10050 50  0001 C CNN
 	1    10900 10050
 	0    -1   -1   0   
@@ -899,9 +890,8 @@ Wire Wire Line
 Wire Wire Line
 	12500 2400 12400 2400
 NoConn ~ 12400 2400
-NoConn ~ 2550 5900
 Text Notes 2950 4600 0    39   ~ 0
-We're using debugger only here\n(but be safe)
+Bootloader wut?
 $Comp
 L C C6
 U 1 1 5A0FB867
@@ -1022,7 +1012,7 @@ U 1 1 5A36E60E
 P 12050 2000
 F 0 "JP3" H 12050 2080 50  0000 C CNN
 F 1 "Jumper_NC_Small" H 12060 1940 50  0000 C CNN
-F 2 "Socket_Strips:Socket_Strip_Straight_2x01_Pitch2.54mm" H 12050 2000 50  0001 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_1x02_Pitch2.54mm" H 12050 2000 50  0001 C CNN
 F 3 "" H 12050 2000 50  0001 C CNN
 	1    12050 2000
 	1    0    0    -1  
@@ -1037,10 +1027,10 @@ Wire Wire Line
 Wire Wire Line
 	11800 2000 11800 1550
 $Comp
-L CONN_01X02 J3
+L CONN_01X02 J1
 U 1 1 5A36EBE0
 P 4850 2350
-F 0 "J3" H 4850 2500 50  0000 C CNN
+F 0 "J1" H 4850 2500 50  0000 C CNN
 F 1 "CONN_01X02" V 4950 2350 50  0000 C CNN
 F 2 "Pin_Headers:Pin_Header_Straight_1x02_Pitch2.54mm" H 4850 2350 50  0001 C CNN
 F 3 "" H 4850 2350 50  0001 C CNN
@@ -1049,19 +1039,8 @@ F 3 "" H 4850 2350 50  0001 C CNN
 $EndComp
 Text Notes 4550 2700 0    60   ~ 0
 Probe points, for\nbus tracing USB
-$Comp
-L CONN_01X01_MALE J2
-U 1 1 5A36F13B
-P 2150 4600
-F 0 "J2" H 2150 4675 50  0000 C CNN
-F 1 "CONN_01X01_MALE" H 2150 4500 50  0000 C CNN
-F 2 "Wire_Pads:SolderWirePad_single_0-8mmDrill" H 2150 4600 50  0001 C CNN
-F 3 "" H 2150 4600 50  0001 C CNN
-	1    2150 4600
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
-	2550 4600 2450 4600
+	2550 4600 2200 4600
 Wire Wire Line
 	1450 4900 1450 5300
 Wire Wire Line
@@ -1078,4 +1057,134 @@ Wire Wire Line
 Connection ~ 1750 5100
 NoConn ~ 13300 1300
 NoConn ~ 13300 1400
+$Comp
+L GND #PWR022
+U 1 1 5A43A55C
+P 2200 4600
+F 0 "#PWR022" H 2200 4350 50  0001 C CNN
+F 1 "GND" H 2200 4450 50  0000 C CNN
+F 2 "" H 2200 4600 50  0000 C CNN
+F 3 "" H 2200 4600 50  0000 C CNN
+	1    2200 4600
+	1    0    0    -1  
+$EndComp
+$Comp
+L TEST_1P J2
+U 1 1 5A43D04F
+P 2500 5700
+F 0 "J2" H 2500 5970 50  0000 C CNN
+F 1 "TEST_1P" H 2500 5900 50  0000 C CNN
+F 2 "Measurement_Points:Measurement_Point_Round-TH_Small" H 2700 5700 50  0001 C CNN
+F 3 "" H 2700 5700 50  0001 C CNN
+	1    2500 5700
+	0    -1   -1   0   
+$EndComp
+$Comp
+L TEST_1P J3
+U 1 1 5A43D328
+P 2300 5800
+F 0 "J3" H 2300 6070 50  0000 C CNN
+F 1 "TEST_1P" H 2300 6000 50  0000 C CNN
+F 2 "Measurement_Points:Measurement_Point_Round-TH_Small" H 2500 5800 50  0001 C CNN
+F 3 "" H 2500 5800 50  0001 C CNN
+	1    2300 5800
+	0    -1   -1   0   
+$EndComp
+$Comp
+L TEST_1P J4
+U 1 1 5A43D40B
+P 2250 6700
+F 0 "J4" H 2250 6970 50  0000 C CNN
+F 1 "TEST_1P" H 2250 6900 50  0000 C CNN
+F 2 "Measurement_Points:Measurement_Point_Round-TH_Small" H 2450 6700 50  0001 C CNN
+F 3 "" H 2450 6700 50  0001 C CNN
+	1    2250 6700
+	0    -1   -1   0   
+$EndComp
+$Comp
+L TEST_1P J5
+U 1 1 5A43D49D
+P 2100 6800
+F 0 "J5" H 2100 7070 50  0000 C CNN
+F 1 "TEST_1P" H 2100 7000 50  0000 C CNN
+F 2 "Measurement_Points:Measurement_Point_Round-TH_Small" H 2300 6800 50  0001 C CNN
+F 3 "" H 2300 6800 50  0001 C CNN
+	1    2100 6800
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	2500 5700 2550 5700
+Wire Wire Line
+	2550 5800 2300 5800
+Wire Wire Line
+	2550 6700 2250 6700
+Wire Wire Line
+	2550 6800 2100 6800
+$Comp
+L TEST_1P J7
+U 1 1 5A43EE7B
+P 10100 6500
+F 0 "J7" H 10100 6770 50  0000 C CNN
+F 1 "TEST_1P" H 10100 6700 50  0000 C CNN
+F 2 "Measurement_Points:Measurement_Point_Round-TH_Small" H 10300 6500 50  0001 C CNN
+F 3 "" H 10300 6500 50  0001 C CNN
+	1    10100 6500
+	0    1    1    0   
+$EndComp
+$Comp
+L TEST_1P J8
+U 1 1 5A43F060
+P 10250 6600
+F 0 "J8" H 10250 6870 50  0000 C CNN
+F 1 "TEST_1P" H 10250 6800 50  0000 C CNN
+F 2 "Measurement_Points:Measurement_Point_Round-TH_Small" H 10450 6600 50  0001 C CNN
+F 3 "" H 10450 6600 50  0001 C CNN
+	1    10250 6600
+	0    1    1    0   
+$EndComp
+$Comp
+L TEST_1P J9
+U 1 1 5A43F0E2
+P 10400 6700
+F 0 "J9" H 10400 6970 50  0000 C CNN
+F 1 "TEST_1P" H 10400 6900 50  0000 C CNN
+F 2 "Measurement_Points:Measurement_Point_Round-TH_Small" H 10600 6700 50  0001 C CNN
+F 3 "" H 10600 6700 50  0001 C CNN
+	1    10400 6700
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	9750 6500 10100 6500
+Wire Wire Line
+	9750 6600 10250 6600
+Wire Wire Line
+	9750 6700 10400 6700
+$Comp
+L TEST_1P J10
+U 1 1 5A43FB1F
+P 10300 5700
+F 0 "J10" H 10300 5970 50  0000 C CNN
+F 1 "TEST_1P" H 10300 5900 50  0000 C CNN
+F 2 "Measurement_Points:Measurement_Point_Round-TH_Small" H 10500 5700 50  0001 C CNN
+F 3 "" H 10500 5700 50  0001 C CNN
+	1    10300 5700
+	0    1    1    0   
+$EndComp
+$Comp
+L TEST_1P J11
+U 1 1 5A43FBC5
+P 10500 5800
+F 0 "J11" H 10500 6070 50  0000 C CNN
+F 1 "TEST_1P" H 10500 6000 50  0000 C CNN
+F 2 "Measurement_Points:Measurement_Point_Round-TH_Small" H 10700 5800 50  0001 C CNN
+F 3 "" H 10700 5800 50  0001 C CNN
+	1    10500 5800
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	9750 5700 10300 5700
+Wire Wire Line
+	9750 5800 10500 5800
+Text Notes 5900 5400 0    60   ~ 0
+no need for rtc\nthis is the host board
 $EndSCHEMATC
