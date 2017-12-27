@@ -91,8 +91,6 @@ SPI_SCK
 Text Label 13400 1500 0    60   ~ 0
 AREF
 NoConn ~ 12500 1700
-Text Notes 13950 1100 0    60   ~ 0
-Holes
 Text Notes 11650 850  0    60   ~ 0
 Arduino UNOr3 pins\nAs used on Nucleo64 boards\n
 $Comp
@@ -152,54 +150,6 @@ F 3 "" H 12700 2850 50  0000 C CNN
 	1    12700 2850
 	1    0    0    -1  
 $EndComp
-$Comp
-L CONN_01X01 P5
-U 1 1 56D71177
-P 13900 750
-F 0 "P5" V 14000 750 50  0000 C CNN
-F 1 "CONN_01X01" V 14000 750 50  0001 C CNN
-F 2 "Socket_Arduino_Uno:Arduino_1pin" H 13900 750 50  0001 C CNN
-F 3 "" H 13900 750 50  0000 C CNN
-	1    13900 750 
-	0    -1   -1   0   
-$EndComp
-$Comp
-L CONN_01X01 P6
-U 1 1 56D71274
-P 14000 750
-F 0 "P6" V 14100 750 50  0000 C CNN
-F 1 "CONN_01X01" V 14100 750 50  0001 C CNN
-F 2 "Socket_Arduino_Uno:Arduino_1pin" H 14000 750 50  0001 C CNN
-F 3 "" H 14000 750 50  0000 C CNN
-	1    14000 750 
-	0    -1   -1   0   
-$EndComp
-$Comp
-L CONN_01X01 P7
-U 1 1 56D712A8
-P 14100 750
-F 0 "P7" V 14200 750 50  0000 C CNN
-F 1 "CONN_01X01" V 14200 750 50  0001 C CNN
-F 2 "Socket_Arduino_Uno:Arduino_1pin" H 14100 750 50  0001 C CNN
-F 3 "" H 14100 750 50  0000 C CNN
-	1    14100 750 
-	0    -1   -1   0   
-$EndComp
-$Comp
-L CONN_01X01 P8
-U 1 1 56D712DB
-P 14200 750
-F 0 "P8" V 14300 750 50  0000 C CNN
-F 1 "CONN_01X01" V 14300 750 50  0001 C CNN
-F 2 "Socket_Arduino_Uno:Arduino_1pin" H 14200 750 50  0001 C CNN
-F 3 "" H 14200 750 50  0000 C CNN
-	1    14200 750 
-	0    -1   -1   0   
-$EndComp
-NoConn ~ 13900 950 
-NoConn ~ 14000 950 
-NoConn ~ 14100 950 
-NoConn ~ 14200 950 
 $Comp
 L CONN_01X08 P4
 U 1 1 56D7164F
@@ -394,10 +344,6 @@ Wire Notes Line
 	11600 3550 14300 3550
 Wire Wire Line
 	12500 1900 12400 1900
-Wire Notes Line
-	14300 1100 13800 1100
-Wire Notes Line
-	13800 1100 13800 600 
 Wire Wire Line
 	6100 3900 6100 3800
 Wire Wire Line
@@ -949,8 +895,6 @@ Wire Wire Line
 	8900 10150 8900 9950
 Connection ~ 8900 9950
 Connection ~ 10750 9500
-Wire Wire Line
-	1350 4800 2550 4800
 Text Label 2550 4800 2    60   ~ 0
 VLCD
 Text Notes 6350 4050 0    60   ~ 0
@@ -1187,4 +1131,7 @@ Wire Wire Line
 	9750 5800 10500 5800
 Text Notes 5900 5400 0    60   ~ 0
 no need for rtc\nthis is the host board
+Wire Wire Line
+	2550 4800 1350 4800
+NoConn ~ 2550 5900
 $EndSCHEMATC
