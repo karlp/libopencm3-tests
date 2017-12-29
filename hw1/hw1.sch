@@ -159,7 +159,7 @@ F 1 "Digital" V 13200 2750 50  0000 C CNN
 F 2 "Socket_Arduino_Uno:Socket_Strip_Arduino_1x08" H 13100 2750 50  0001 C CNN
 F 3 "" H 13100 2750 50  0000 C CNN
 	1    13100 2750
-	-1   0    0    1   
+	-1   0    0    -1  
 $EndComp
 $Comp
 L CONN_01X10 P3
@@ -170,7 +170,7 @@ F 1 "Digital" V 13200 1750 50  0000 C CNN
 F 2 "Socket_Arduino_Uno:Socket_Strip_Arduino_1x10" H 13100 1750 50  0001 C CNN
 F 3 "" H 13100 1750 50  0000 C CNN
 	1    13100 1750
-	-1   0    0    1   
+	-1   0    0    -1  
 $EndComp
 Text Notes 12800 1700 0    60   ~ 0
 1
@@ -862,7 +862,7 @@ F 3 "" H 900 4800 50  0000 C CNN
 $EndComp
 Wire Wire Line
 	1050 4800 900  4800
-Text Notes -50  4450 0    60   ~ 0
+Text Notes 2950 4800 0    60   ~ 0
 Not needed on L1, but needed for L4/F3
 Text Notes 12100 3400 0    60   ~ 0
 TODO\n[ ] Route all spare pins to _something_?
