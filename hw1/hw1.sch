@@ -193,6 +193,7 @@ F 0 "P9" H 1850 1750 50  0000 C CNN
 F 1 "FX2LA" H 1850 1150 50  0000 C CNN
 F 2 "Socket_Strips:Socket_Strip_Angled_2x05_Pitch2.54mm" H 1850 250 50  0001 C CNN
 F 3 "" H 1850 250 50  0000 C CNN
+F 4 "Wurth 613010243121" H 1850 1450 60  0001 C CNN "female-RA"
 	1    1850 1450
 	1    0    0    -1  
 $EndComp
