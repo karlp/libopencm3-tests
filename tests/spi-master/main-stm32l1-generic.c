@@ -13,10 +13,9 @@
 #include "trace.h"
 
 #include "hw.h"
-//#include "i2c-master.h"
 
 #define LED_DISCO_GREEN_PORT GPIOB
-#define LED_DISCO_GREEN_PIN GPIO7
+#define LED_DISCO_GREEN_PIN GPIO8
 
 
 struct hw_detail hw_details = {
@@ -28,7 +27,7 @@ struct hw_detail hw_details = {
 	.port_rcc = RCC_GPIOB,
 	.trigger_rcc = RCC_GPIOB,
 	.trigger_port = GPIOB,
-	.trigger_pin = GPIO11,
+	.trigger_pin = GPIO9,
 };
 
 
@@ -84,8 +83,21 @@ static void setup(void)
 
 int main(void)
 {
+	const struct rcc_clock_scale myclock = {
+		.pll_source = RCC_CFGR_PLLSRC_HSE_CLK,
+		.pll_mul = RCC_CFGR_PLLMUL_MUL4,
+		.pll_div = RCC_CFGR_PLLDIV_DIV2,
+		.hpre = RCC_CFGR_HPRE_SYSCLK_NODIV,
+		.ppre1 = RCC_CFGR_PPRE1_HCLK_NODIV,
+		.ppre2 = RCC_CFGR_PPRE2_HCLK_NODIV,
+		.voltage_scale = PWR_SCALE1,
+		.flash_waitstates = 1,
+		.ahb_frequency = 32e6,
+		.apb1_frequency = 32e6,
+		.apb2_frequency = 32e6,
+	};
 	int i, j;
-	rcc_clock_setup_pll(&rcc_clock_config[RCC_CLOCK_VRANGE1_HSI_PLL_32MHZ]);
+	rcc_clock_setup_pll(&myclock);
 	/* green led for ticking */
 	rcc_periph_clock_enable(RCC_GPIOB);
 	gpio_mode_setup(LED_DISCO_GREEN_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
