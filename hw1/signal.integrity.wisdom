@@ -1,0 +1,41 @@
+22:59 < karlp> BrainDamage: yeah, proper questions from you of course. building 
+               test  harness host board to plug all the nucleo64 boards into 
+               for locm3 testing.  Adding a port for plugging a cheap fx2 logic 
+               analyser on, so I can do auto testing with sigrok, 
+23:00 < karlp> I'm estimating like 20-30mm on the side tap to the logic 
+               analyser port, plus 30-40mm or so between target/host.
+23:00 < karlp> how fast can I go on the signals before I need to do anything I 
+               guess?
+23:00 < karlp> i2c/uart are probably fine, spi might have an upper limit?
+23:06 < BrainDamage> the highest frequency for squarewaves is 2/trise for 
+                     signal integrity, assuming say, 30MHz spi that gives us 
+                     30ns period, trise would be say, 1/5th of a semiperiod so 
+                     30/2/5 ~3ns, so that gives us a frequency of approx 
+                     ~700MHz for signal integrity, in turn that has a 
+                     wavelength of c/700MHz ~430mm, now a common ballpark is 
+                     that when your circuit size is comparable to 1/10th of the
+                     wavelength, you start seeing
+23:06 < BrainDamage> effects, since you said it's overall 60mm it's more than 
+                     40, so yes, it'll distort the signal a bit leaving it 
+                     dangling there
+23:07  * karlp loves you
+23:08 < karlp> so, is the solution "throw small series resistors right by the 
+               stub off to the dangling trace, so that it dissipates any 
+               reflections on that line?
+23:08 < karlp> I guess this also then changes when the LA is plugged in/not in 
+               too.
+23:09 < BrainDamage> the LA tends to be a very high impedance, so it doesn't 
+                     change a lot when it's in compared to the open circuit case
+23:09 < BrainDamage> series termination should work
+23:09 < karlp> adds capacitance though, I've foudn that out the hardware with 
+               insufficient i2c pullups, but that's already taken care of.
+23:09 < karlp> and yeah, just like 22ohm right on the beginning of the stub, by 
+               the T-junction?
+23:12 < BrainDamage> i forgot the exact value for series termination, it was 
+                     either 2x or 1/2 of the nominal impedance, if 22 is what 
+                     you've seen before then i guess it was 1/2 and yes, that 
+                     should fix it
+23:14 < BrainDamage> if you feel brave there's faster terminations using 
+                     clamping diodes and caps, buuut, i'd say to keep it simple 
+                     first
+
