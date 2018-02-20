@@ -7,10 +7,17 @@ cheap FX2based logic analysers, allowing automatic tests to be written
 that use sigrok to check that the signals on the wire match expectations.
 
 
-TODO:
-Check i2c conns to target board! (drop the unused one!)
-VCC routing (and recommended mic5504 routing)
-ground pours in kicad
-reshuffle LA conn
-gerber generation?
-
+Notes on assembly hw1-a:
+* 16Mhz crystal, 15pf load caps, and 3k7 i2c pullups
+  (why don't I have 4k7 0603 resistors lying around? who knows!)
+* A power LED wouldn't hurt.
+* Adding a red/green user led wouldn't hurt for test pass/fail, even though
+  it's meant to be autotest
+* maybe a fet to turn on/off the i2c pull ups programatically?
+  (maybe just a single jumper? is there really any need for individual control
+   of the pullups?)
+* move stlink connector 90° or just down and tuck it in, so we can pull the
+  edge in.  It overlaps the buttons on the nucleos, and requires longer
+  pins than necessary otherwise.
+* Add some ground pads for test points, just in general.  Test points good,
+  more test points better.
