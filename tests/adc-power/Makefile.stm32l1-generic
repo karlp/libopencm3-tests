@@ -13,6 +13,6 @@ VPATH += $(SHARED_DIR)
 INCLUDES += $(patsubst %,-I%, . $(SHARED_DIR))
 
 OPENCM3_DIR=../../libopencm3
-DEVICE=stm32l151xb
+DEVICE=stm32l151x8
 OOCD_FILE = openocd.stm32l1-generic.cfg
 include ../../rules.mk

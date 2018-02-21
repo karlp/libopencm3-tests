@@ -16,7 +16,7 @@
 #include "adc-power.h"
 
 #define LED_DISCO_GREEN_PORT GPIOB
-#define LED_DISCO_GREEN_PIN GPIO7
+#define LED_DISCO_GREEN_PIN GPIO9
 
 
 int main(void)
