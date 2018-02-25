@@ -20,7 +20,7 @@
 #define LED_DISCO_GREEN_PORT GPIOE
 #define LED_DISCO_GREEN_PIN GPIO8
 
-int hack(void) {
+static int hack(void) {
 	pwr_set_vos_scale(PWR_SCALE1);
 	flash_set_ws(FLASH_ACR_LATENCY_2WS);
 	rcc_set_msi_range(RCC_CR_MSIRANGE_48MHZ);

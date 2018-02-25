@@ -147,6 +147,7 @@ static float adc_calc_tempf(unsigned int ts_v, unsigned int vref) {
 	float slope = (110-30) * 1.0f / (ST_TSENSE_CAL2_110C - ST_TSENSE_CAL1_30C) * 1.0f;
 	return slope * (adjusted_vtemp - ST_TSENSE_CAL1_30C) + 30;
 #else
+	(void)vref;
 	return ts_v * 1.0;
 #endif
 }
@@ -157,6 +158,7 @@ static int adc_calc_tempi(unsigned int ts, unsigned int vref) {
 	int slope = (110-30) / (ST_TSENSE_CAL2_110C - ST_TSENSE_CAL1_30C);
 	return slope * (adjusted_vtemp - ST_TSENSE_CAL1_30C) + 30;
 #else
+	(void)vref;
 	return ts * 1.00;
 #endif
 }
