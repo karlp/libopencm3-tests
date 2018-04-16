@@ -1,0 +1,21 @@
+BOARD = dut-stm32l073rz
+PROJECT = spi-master-$(BOARD)
+BUILD_DIR = bin-$(BOARD)
+
+SHARED_DIR = ../../shared
+
+CFLAGS = -DSTDIO_USART=USART2
+CFILES = main-$(BOARD).c
+#CFILES += spi-master.c
+# No trace on cm0!
+#CFILES += trace.c trace_stdio.c
+CFILES += usart_stdio.c
+
+VPATH += $(SHARED_DIR)
+
+INCLUDES += $(patsubst %,-I%, . $(SHARED_DIR))
+
+OPENCM3_DIR=../../libopencm3
+DEVICE=stm32l073rz
+OOCD_FILE = openocd.dut-stm32l073rz.cfg
+include ../../rules.mk
