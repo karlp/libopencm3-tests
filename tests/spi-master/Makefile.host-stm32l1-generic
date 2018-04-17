@@ -1,5 +1,5 @@
-BOARD = stm32l1-generic
-PROJECT = spi-master-$(BOARD)
+BOARD = host-stm32l1-generic
+PROJECT = spi-slave-$(BOARD)
 BUILD_DIR = bin-$(BOARD)
 
 SHARED_DIR = ../../shared

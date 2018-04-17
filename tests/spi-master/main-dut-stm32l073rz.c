@@ -52,7 +52,7 @@ static void test_init(void)
 {
         /* Setup SPI parameters. */
 	rcc_periph_clock_enable(hw_details.periph_rcc);
-        spi_init_master(hw_details.periph, SPI_CR1_BAUDRATE_FPCLK_DIV_64, SPI_CR1_CPOL_CLK_TO_0_WHEN_IDLE,
+        spi_init_master(hw_details.periph, SPI_CR1_BAUDRATE_FPCLK_DIV_32, SPI_CR1_CPOL_CLK_TO_0_WHEN_IDLE,
                 SPI_CR1_CPHA_CLK_TRANSITION_1, SPI_CR1_DFF_8BIT, SPI_CR1_MSBFIRST);
         /* Ignore the stupid NSS pin. */
         spi_enable_software_slave_management(hw_details.periph);
@@ -64,12 +64,13 @@ static void test_init(void)
 
 static void test_task(void) {
 	static int i = 0;
+	printf("DUT iter %d\n", i++);
 	gpio_set(hw_details.trigger_port, hw_details.trigger_pin);
-	printf("Test iteration %d\n", i++);
+	gpio_clear(LED_DISCO_GREEN_PORT, LED_DISCO_GREEN_PIN);
 	spi_xfer(hw_details.periph, 0xaa);
 	spi_xfer(hw_details.periph, 0x42);
 	spi_xfer(hw_details.periph, 0x69);
-
+	gpio_set(LED_DISCO_GREEN_PORT, LED_DISCO_GREEN_PIN);
 	gpio_clear(hw_details.trigger_port, hw_details.trigger_pin);
 }
 

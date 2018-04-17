@@ -14,10 +14,6 @@
 
 #include "hw.h"
 
-#define LED_DISCO_GREEN_PORT GPIOB
-#define LED_DISCO_GREEN_PIN GPIO8
-
-
 struct hw_detail hw_details = {
 	.periph = SPI2,
 	.periph_rcc = RCC_SPI2,
@@ -53,25 +49,36 @@ static void test_init(void)
 {
         /* Setup SPI parameters. */
 	rcc_periph_clock_enable(hw_details.periph_rcc);
-        spi_init_master(hw_details.periph, SPI_CR1_BAUDRATE_FPCLK_DIV_16, SPI_CR1_CPOL_CLK_TO_0_WHEN_IDLE,
-                SPI_CR1_CPHA_CLK_TRANSITION_1, SPI_CR1_DFF_8BIT, SPI_CR1_MSBFIRST);
-        /* Ignore the stupid NSS pin. */
-        spi_enable_software_slave_management(hw_details.periph);
-        //spi_enable_ss_output(MRF_SPI);
-        spi_set_nss_high(hw_details.periph);
+	/* mostly, this is just "write 0 to cr1" */
+	spi_set_slave_mode(hw_details.periph);
+	spi_send_msb_first(hw_details.periph);
+	spi_set_dff_8bit(hw_details.periph);
+	spi_set_clock_phase_0(hw_details.periph);
+	spi_set_clock_polarity_0(hw_details.periph);
+	spi_set_frf_motorola(hw_details.periph);
+
+	/* we're a spi slave, use a CS pin */
+	spi_disable_software_slave_management(hw_details.periph);
+	SPI_CR2(hw_details.periph) &= ~SPI_CR2_SSOE;
+
         /* Finally enable the SPI. */
         spi_enable(hw_details.periph);
 }
 
 static void test_task(void) {
 	static int i = 0;
-	printf("Test iteration %d\n", i++);
-	gpio_set(hw_details.trigger_port, hw_details.trigger_pin);
-	spi_xfer(hw_details.periph, 0xaa);
-	spi_xfer(hw_details.periph, 0x42);
-	spi_xfer(hw_details.periph, 0x69);
-	gpio_clear(hw_details.trigger_port, hw_details.trigger_pin);
+	uint32_t spi = hw_details.periph;
+	if (SPI_SR(spi) & SPI_SR_TXE) {
+		/* ready to load next data in */
+		SPI_DR(spi) = i++;
+	}
+
+	if (SPI_SR(spi) & SPI_SR_RXNE) {
+		uint8_t data = SPI_DR(spi);
+		trace_send8(2, data);
+	}
 }
+
 
 static void setup(void)
 {
@@ -98,18 +105,10 @@ int main(void)
 	};
 	int i, j;
 	rcc_clock_setup_pll(&myclock);
-	/* green led for ticking */
-	rcc_periph_clock_enable(RCC_GPIOB);
-	gpio_mode_setup(LED_DISCO_GREEN_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
-		LED_DISCO_GREEN_PIN);
 	setup();
 
 	while (1) {
 		test_task();
-		gpio_toggle(LED_DISCO_GREEN_PORT, LED_DISCO_GREEN_PIN);
-		for (i = 0; i < 0x800000; i++) { /* Wait a bit. */
-                        __asm__("NOP");
-                }
 	}
 	return 0;
 }
