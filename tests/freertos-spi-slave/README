@@ -1,0 +1,11 @@
+host: freertos usb-spi bridge, allowing as much as possible
+of the testing to be written host side.
+
+dut: freertos spi slave, implements read/write register style, of mixed widths.
+
+fx2lafw connector:
+
+D0: "trigger"
+D4: MOSI
+D5: MISO
+D6: SCK
