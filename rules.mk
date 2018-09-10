@@ -74,7 +74,8 @@ OOCD	?= openocd
 # Inclusion of library header files
 include $(OPENCM3_DIR)/mk/genlink-config.mk
 
-OBJS = $(CFILES:%.c=$(BUILD_DIR)/%.o)
+OBJS_1 = $(CFILES:%.c=$(BUILD_DIR)/%.o)
+OBJS = $(OBJS_1:%.S=$(BUILD_DIR)/%.o)
 
 TGT_CPPFLAGS += -MD
 TGT_CPPFLAGS += -Wall -Wundef
@@ -110,7 +111,7 @@ LDLIBS += -specs=nosys.specs
 
 # Burn in legacy hell fortran modula pascal yacc idontevenwat
 .SUFFIXES:
-.SUFFIXES: .c .h .o .cxx .elf .bin .list .lss
+.SUFFIXES: .c .h .S .o .cxx .elf .bin .list .lss
 
 # Bad make, never *ever* try to get a file out of source control by yourself.
 %: %,v
@@ -125,6 +126,11 @@ flash: $(PROJECT).flash
 # Need a special rule to have a bin dir
 $(BUILD_DIR)/%.o: %.c
 	@printf "  CC\t$<\n"
+	@mkdir -p $(dir $@)
+	$(Q)$(CC) $(TGT_CFLAGS) $(CFLAGS) $(TGT_CPPFLAGS) $(CPPFLAGS) -o $@ -c $<
+
+$(BUILD_DIR)/%.o: %.S
+	@printf "  ASM\t$<\n"
 	@mkdir -p $(dir $@)
 	$(Q)$(CC) $(TGT_CFLAGS) $(CFLAGS) $(TGT_CPPFLAGS) $(CPPFLAGS) -o $@ -c $<
 
