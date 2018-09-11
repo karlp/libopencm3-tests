@@ -1,0 +1,23 @@
+BOARD = stm32l053-disco
+PROJECT = i2c-master-$(BOARD)
+BUILD_DIR = bin-$(BOARD)
+
+SHARED_DIR = ../../shared
+
+CFILES = main-$(BOARD).c
+CFILES += i2c-master.c
+# No trace on cm0!
+#CFILES += trace.c trace_stdio.c
+CFILES += usart_stdio.c
+
+VPATH += $(SHARED_DIR)
+
+INCLUDES += $(patsubst %,-I%, . $(SHARED_DIR))
+
+OPENCM3_DIR=../../libopencm3
+DEVICE=stm32l053c8t6
+#OOCD_INTERFACE = stlink-v2
+#OOCD_TARGET = stm32f0x
+OOCD_FILE = ../../openocd/openocd.$(BOARD).cfg
+
+include ../../rules.mk
