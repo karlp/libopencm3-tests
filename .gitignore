@@ -4,5 +4,6 @@
 swodump*.log
 nbproject/
 bin-*/
+bin/
 generated*
 
