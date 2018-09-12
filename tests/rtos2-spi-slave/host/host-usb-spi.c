@@ -47,6 +47,11 @@ struct hw_detail hw_details = {
 
 
 
+/* USB configurations */
+#define GZ_CFG_SOURCESINK	2
+
+#define BULK_EP_MAXPACKET	64
+
 static const struct usb_device_descriptor dev = {
 	.bLength = USB_DT_DEVICE_SIZE,
 	.bDescriptorType = USB_DT_DEVICE,
@@ -55,7 +60,6 @@ static const struct usb_device_descriptor dev = {
 	.bDeviceSubClass = 0,
 	.bDeviceProtocol = 0,
 	.bMaxPacketSize0 = BULK_EP_MAXPACKET,
-
 	.idVendor = 0xcafe,
 	.idProduct = 0xcafe,
 	.bcdDevice = 0x0001,
@@ -84,7 +88,7 @@ static const struct usb_endpoint_descriptor endp_bulk[] = {
 	},
 };
 
-static const struct usb_interface_descriptor iface_spi[] = {
+static const struct usb_interface_descriptor iface_sourcesink[] = {
 	{
 		.bLength = USB_DT_INTERFACE_SIZE,
 		.bDescriptorType = USB_DT_INTERFACE,
@@ -97,14 +101,12 @@ static const struct usb_interface_descriptor iface_spi[] = {
 	}
 };
 
-
-static const struct usb_interface ifaces_spi[] = {
+static const struct usb_interface ifaces_sourcesink[] = {
 	{
 		.num_altsetting = 1,
-		.altsetting = iface_spi,
+		.altsetting = iface_sourcesink,
 	}
 };
-
 
 static const struct usb_config_descriptor config[] = {
 	{
@@ -112,26 +114,89 @@ static const struct usb_config_descriptor config[] = {
 		.bDescriptorType = USB_DT_CONFIGURATION,
 		.wTotalLength = 0,
 		.bNumInterfaces = 1,
-		.bConfigurationValue = MY_CONFIG_VALUE, /* pretty much arbitrary */
+		.bConfigurationValue = GZ_CFG_SOURCESINK,
 		.iConfiguration = 4, /* string index */
 		.bmAttributes = 0x80,
 		.bMaxPower = 0x32,
-		.interface = ifaces_spi,
+		.interface = ifaces_sourcesink,
 	},
 };
 
 static char serial[] = "0123456789.0123456789.0123456789";
 static const char *usb_strings[] = {
 	"libopencm3",
-	"host-spi-master",
+	"spi-host-rtos2",
 	serial,
-	"spi master",
+	"source and sink data",
 };
 
 /* Buffer to be used for control requests. */
 static uint8_t usbd_control_buffer[5*BULK_EP_MAXPACKET];
-//static usbd_device *our_dev;
 
+static void hostspi_out_cb(usbd_device *usbd_dev, uint8_t ep)
+{
+	(void) usbd_dev;
+	(void) ep;
+	uint16_t x;
+	//x = usbd_ep_read_packet(usbd_dev, ep, dest, BULK_EP_MAXPACKET);
+}
+
+static void hostspi_in_cb(usbd_device *usbd_dev, uint8_t ep)
+{
+	(void) usbd_dev;
+	(void) ep;
+	//uint16_t x = usbd_ep_write_packet(usbd_dev, ep, src, BULK_EP_MAXPACKET);
+}
+
+
+static enum usbd_request_return_codes hostspi_control_request(usbd_device *usbd_dev,
+	struct usb_setup_data *req,
+	uint8_t **buf,
+	uint16_t *len,
+	usbd_control_complete_callback *complete)
+{
+	(void) usbd_dev;
+	(void) complete;
+	(void) buf;
+	(void) len;
+	ER_DPRINTF("ctrl breq: %x, bmRT: %x, windex :%x, wlen: %x, wval :%x\n",
+		req->bRequest, req->bmRequestType, req->wIndex, req->wLength,
+		req->wValue);
+
+	/* TODO - what do the return values mean again? */
+	switch (req->bRequest) {
+	case 42:
+		return USBD_REQ_HANDLED;
+	case 43:
+		return USBD_REQ_NOTSUPP;
+	default:
+		ER_DPRINTF("Unhandled request!\n");
+		return USBD_REQ_NOTSUPP;
+	}
+	return USBD_REQ_NEXT_CALLBACK;
+}
+
+static void hostspi_set_config(usbd_device *usbd_dev, uint16_t wValue)
+{
+	ER_DPRINTF("set cfg %d\n", wValue);
+	switch (wValue) {
+	case GZ_CFG_SOURCESINK:
+		usbd_ep_setup(usbd_dev, 0x01, USB_ENDPOINT_ATTR_BULK, BULK_EP_MAXPACKET,
+			hostspi_out_cb);
+		usbd_ep_setup(usbd_dev, 0x81, USB_ENDPOINT_ATTR_BULK, BULK_EP_MAXPACKET,
+			hostspi_in_cb);
+		usbd_register_control_callback(
+			usbd_dev,
+			USB_REQ_TYPE_VENDOR | USB_REQ_TYPE_INTERFACE,
+			USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
+			hostspi_control_request);
+		/* Prime source for IN data. */
+		// gadget0_ss_in_cb(usbd_dev, 0x81);
+		break;
+	default:
+		ER_DPRINTF("set configuration unknown: %d\n", wValue);
+	}
+}
 
 
 /* provided in board files please*/
@@ -187,89 +252,38 @@ static void prvTaskSpiMaster(void *pvParameters)
 
 }
 
-static enum usbd_request_return_codes hostspi_control_request(usbd_device *usbd_dev,
-	struct usb_setup_data *req,
-	uint8_t **buf,
-	uint16_t *len,
-	usbd_control_complete_callback *complete)
-{
-	(void) usbd_dev;
-	(void) complete;
-	(void) buf;
-	(void) len;
-	ER_DPRINTF("ctrl breq: %x, bmRT: %x, windex :%x, wlen: %x, wval :%x\n",
-		req->bRequest, req->bmRequestType, req->wIndex, req->wLength,
-		req->wValue);
-
-	/* TODO - what do the return values mean again? */
-//	switch (req->bRequest) {
-//	case 0:
-//		return USBD_REQ_HANDLED;
-//	case 1:
-//		return USBD_REQ_NOTSUPP;
-//	}
-	return USBD_REQ_NEXT_CALLBACK;
-}
-
-
-static void hostspi_out_cb(usbd_device *usbd_dev, uint8_t ep)
-{
-	uint16_t x;
-	uint8_t dest[64];
-	x = usbd_ep_read_packet(usbd_dev, ep, dest, BULK_EP_MAXPACKET);
-	// this is where we push data into a queue that we're goign to spi write...
-	(void)x;
-}
-
-static void hostspi_in_cb(usbd_device *usbd_dev, uint8_t ep)
-{
-	// This is where we push our spi response data back up
-	uint8_t src[BULK_EP_MAXPACKET];
-	uint16_t x = usbd_ep_write_packet(usbd_dev, ep, src, BULK_EP_MAXPACKET);
-}
-
-
-
-static void hostspi_set_config(usbd_device *usbd_dev, uint16_t wValue)
-{
-	ER_DPRINTF("set cfg %d\n", wValue);
-	switch (wValue) {
-	case MY_CONFIG_VALUE:
-		usbd_ep_setup(usbd_dev, 0x01, USB_ENDPOINT_ATTR_BULK, BULK_EP_MAXPACKET,
-			hostspi_out_cb);
-		usbd_ep_setup(usbd_dev, 0x81, USB_ENDPOINT_ATTR_BULK, BULK_EP_MAXPACKET,
-			hostspi_in_cb);
-		usbd_register_control_callback(
-			usbd_dev,
-			USB_REQ_TYPE_VENDOR | USB_REQ_TYPE_INTERFACE,
-			USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
-			hostspi_control_request);
-		/* Prime source for IN data. */
-		// nope, don't have this   hostspi_in_cb(usbd_dev, 0x81);
-		break;
-	default:
-		ER_DPRINTF("set configuration unknown: %d\n", wValue);
-	}
-}
 
 static void taskUSBD(void *args)
 {
 	(void)args;
+
 	/* Enable built in USB pullup on L1 */
         rcc_periph_clock_enable(RCC_SYSCFG);
         SYSCFG_PMC |= SYSCFG_PMC_USB_PU;
 
-	usbd_device *usbd_dev = usbd_init(&st_usbfs_v1_usb_driver, &dev, config,
-		usb_strings, 4,
+#ifdef ER_DEBUG
+	setbuf(stdout, NULL);
+#endif
+	static const char *userserial = "myserial";
+	if (userserial) {
+		usb_strings[2] = userserial;
+	}
+	usbd_device *our_dev = usbd_init(&st_usbfs_v1_usb_driver, &dev, config,
+		usb_strings, 5,
 		usbd_control_buffer, sizeof(usbd_control_buffer));
-	usbd_register_set_config_callback(usbd_dev, hostspi_set_config);
+
+	usbd_register_set_config_callback(our_dev, hostspi_set_config);
 
 	ER_DPRINTF("USBD: loop start\n");
+	// just for the LA
+	gpio_mode_setup(GPIOB, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO8);
         while (1) {
-                gpio_set(GPIOB, GPIO9);
-		usbd_poll(usbd_dev);
-                gpio_clear(GPIOB, GPIO9);
+                gpio_set(GPIOB, GPIO8);
+		usbd_poll(our_dev);
+                gpio_clear(GPIOB, GPIO8);
         }
+
+
 }
 
 
@@ -278,8 +292,8 @@ int main(void)
 {
         const struct rcc_clock_scale myclock = {
                 .pll_source = RCC_CFGR_PLLSRC_HSE_CLK,
-                .pll_mul = RCC_CFGR_PLLMUL_MUL4,
-                .pll_div = RCC_CFGR_PLLDIV_DIV2,
+                .pll_mul = RCC_CFGR_PLLMUL_MUL6,
+                .pll_div = RCC_CFGR_PLLDIV_DIV3,
                 .hpre = RCC_CFGR_HPRE_SYSCLK_NODIV,
                 .ppre1 = RCC_CFGR_PPRE1_HCLK_NODIV,
                 .ppre2 = RCC_CFGR_PPRE2_HCLK_NODIV,
@@ -292,6 +306,7 @@ int main(void)
         int i, j;
         rcc_clock_setup_pll(&myclock);
 	hw_init();
+
 	printf("starting rtos2...\n");
 	osKernelInitialize();
 
@@ -307,6 +322,8 @@ int main(void)
 
         osThreadAttr_t attrUSBD = {
                 .name = "usbd",
+		// leaving this will starve the other tasks, as we never yield from usbd.
+		// and as per rtos2, even if we yielded, lower priority would never run.
 		.priority = osPriorityAboveNormal
         };
 	osThreadNew(taskUSBD, NULL, &attrUSBD);
