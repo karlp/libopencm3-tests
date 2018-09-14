@@ -32,8 +32,8 @@
 
 osEventFlagsId_t evt_usbd;
 
-#define BULK_EP_MAXPACKET	64
-#define MY_CONFIG_VALUE		2
+#define BULK_EP_MAXPACKET 64
+#define MY_CONFIG_VALUE  2
 
 struct hw_detail hw_details = {
 	.periph = SPI2,
@@ -50,9 +50,9 @@ struct hw_detail hw_details = {
 
 
 /* USB configurations */
-#define GZ_CFG_SOURCESINK	2
+#define GZ_CFG_SOURCESINK 2
 
-#define BULK_EP_MAXPACKET	64
+#define BULK_EP_MAXPACKET 64
 
 static const struct usb_device_descriptor dev = {
 	.bLength = USB_DT_DEVICE_SIZE,
@@ -133,7 +133,7 @@ static const char *usb_strings[] = {
 };
 
 /* Buffer to be used for control requests. */
-static uint8_t usbd_control_buffer[5*BULK_EP_MAXPACKET];
+static uint8_t usbd_control_buffer[5 * BULK_EP_MAXPACKET];
 
 static void hostspi_out_cb(usbd_device *usbd_dev, uint8_t ep)
 {
@@ -148,7 +148,6 @@ static void hostspi_in_cb(usbd_device *usbd_dev, uint8_t ep)
 	(void) ep;
 	//uint16_t x = usbd_ep_write_packet(usbd_dev, ep, src, BULK_EP_MAXPACKET);
 }
-
 
 static enum usbd_request_return_codes hostspi_control_request(usbd_device *usbd_dev,
 	struct usb_setup_data *req,
@@ -201,6 +200,7 @@ static void hostspi_set_config(usbd_device *usbd_dev, uint16_t wValue)
 
 
 /* provided in board files please*/
+
 /**
  * Setup any gpios or anything hardware specific.
  * Should _only_ be things that can't be done in shared init()
@@ -218,7 +218,6 @@ static void hw_init(void)
 	gpio_set_af(hw_details.port, GPIO_AF5, hw_details.pins);
 }
 
-
 static void prvTaskGreenBlink1(void *pvParameters)
 {
 	(void) pvParameters;
@@ -232,35 +231,34 @@ static void prvTaskGreenBlink1(void *pvParameters)
 
 static void prvTaskSpiMaster(void *pvParameters)
 {
-	(void)pvParameters;
-        rcc_periph_clock_enable(hw_details.periph_rcc);
-        spi_init_master(hw_details.periph, SPI_CR1_BAUDRATE_FPCLK_DIV_32, SPI_CR1_CPOL_CLK_TO_0_WHEN_IDLE,
-                SPI_CR1_CPHA_CLK_TRANSITION_1, SPI_CR1_DFF_8BIT, SPI_CR1_MSBFIRST);
-        /* Ignore the stupid NSS pin. */
-        spi_enable_software_slave_management(hw_details.periph);
-        spi_set_nss_high(hw_details.periph);
+	(void) pvParameters;
+	rcc_periph_clock_enable(hw_details.periph_rcc);
+	spi_init_master(hw_details.periph, SPI_CR1_BAUDRATE_FPCLK_DIV_32, SPI_CR1_CPOL_CLK_TO_0_WHEN_IDLE,
+		SPI_CR1_CPHA_CLK_TRANSITION_1, SPI_CR1_DFF_8BIT, SPI_CR1_MSBFIRST);
+	/* Ignore the stupid NSS pin. */
+	spi_enable_software_slave_management(hw_details.periph);
+	spi_set_nss_high(hw_details.periph);
 
-        /* Finally enable the SPI. */
-        spi_enable(hw_details.periph);
+	/* Finally enable the SPI. */
+	spi_enable(hw_details.periph);
 
 	int i = 0;
 	while (1) {
 		printf("spi send %d\n", i);
 		osDelay(200);
-	        spi_xfer(hw_details.periph, 0xaa);
-	        spi_xfer(hw_details.periph, i++);
+		spi_xfer(hw_details.periph, 0xaa);
+		spi_xfer(hw_details.periph, i++);
 	}
 
 }
 
-
 static void taskUSBD(void *args)
 {
-	(void)args;
+	(void) args;
 
 	/* Enable built in USB pullup on L1 */
-        rcc_periph_clock_enable(RCC_SYSCFG);
-        SYSCFG_PMC |= SYSCFG_PMC_USB_PU;
+	rcc_periph_clock_enable(RCC_SYSCFG);
+	SYSCFG_PMC |= SYSCFG_PMC_USB_PU;
 
 #ifdef ER_DEBUG
 	setbuf(stdout, NULL);
@@ -276,62 +274,60 @@ static void taskUSBD(void *args)
 	usbd_register_set_config_callback(our_dev, hostspi_set_config);
 	nvic_enable_irq(NVIC_USB_LP_IRQ);
 	/* these aren't used (yet) */
-//	nvic_enable_irq(NVIC_USB_HP_IRQ);
-//	nvic_enable_irq(NVIC_USB_FS_WAKEUP_IRQ);
+	//	nvic_enable_irq(NVIC_USB_HP_IRQ);
+	//	nvic_enable_irq(NVIC_USB_FS_WAKEUP_IRQ);
 
 	ER_DPRINTF("USBD: loop start\n");
 	// just for the LA
 	gpio_mode_setup(GPIOB, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO8);
 
-        while (1) {
-                gpio_set(GPIOB, GPIO8);
+	while (1) {
+		gpio_set(GPIOB, GPIO8);
 		uint32_t flags = osEventFlagsWait(evt_usbd, 1, osFlagsWaitAny, osWaitForever);
 		trace_send8(1, flags);
 		usbd_poll(our_dev);
 		nvic_enable_irq(NVIC_USB_LP_IRQ);
-                gpio_clear(GPIOB, GPIO8);
-        }
+		gpio_clear(GPIOB, GPIO8);
+	}
 
 
 }
 
-
-
 int main(void)
 {
-        const struct rcc_clock_scale myclock = {
-                .pll_source = RCC_CFGR_PLLSRC_HSE_CLK,
-                .pll_mul = RCC_CFGR_PLLMUL_MUL6,
-                .pll_div = RCC_CFGR_PLLDIV_DIV3,
-                .hpre = RCC_CFGR_HPRE_SYSCLK_NODIV,
-                .ppre1 = RCC_CFGR_PPRE1_HCLK_NODIV,
-                .ppre2 = RCC_CFGR_PPRE2_HCLK_NODIV,
-                .voltage_scale = PWR_SCALE1,
-                .flash_waitstates = 1,
-                .ahb_frequency = 32e6,
-                .apb1_frequency = 32e6,
-                .apb2_frequency = 32e6,
-        };
-        rcc_clock_setup_pll(&myclock);
+	const struct rcc_clock_scale myclock = {
+		.pll_source = RCC_CFGR_PLLSRC_HSE_CLK,
+		.pll_mul = RCC_CFGR_PLLMUL_MUL6,
+		.pll_div = RCC_CFGR_PLLDIV_DIV3,
+		.hpre = RCC_CFGR_HPRE_SYSCLK_NODIV,
+		.ppre1 = RCC_CFGR_PPRE1_HCLK_NODIV,
+		.ppre2 = RCC_CFGR_PPRE2_HCLK_NODIV,
+		.voltage_scale = PWR_SCALE1,
+		.flash_waitstates = 1,
+		.ahb_frequency = 32e6,
+		.apb1_frequency = 32e6,
+		.apb2_frequency = 32e6,
+	};
+	rcc_clock_setup_pll(&myclock);
 	hw_init();
 
 	printf("starting rtos2...\n");
 	osKernelInitialize();
 
-        osThreadAttr_t attrSPI = {
-                .name = "spi-master"
-        };
+	osThreadAttr_t attrSPI = {
+		.name = "spi-master"
+	};
 	osThreadNew(prvTaskSpiMaster, NULL, &attrSPI);
 
-        osThreadAttr_t attrBlink = {
-                .name = "blink-green"
-        };
+	osThreadAttr_t attrBlink = {
+		.name = "blink-green"
+	};
 	osThreadNew(prvTaskGreenBlink1, NULL, &attrBlink);
 
-        osThreadAttr_t attrUSBD = {
-                .name = "usbd",
+	osThreadAttr_t attrUSBD = {
+		.name = "usbd",
 		.priority = osPriorityAboveNormal
-        };
+	};
 	osThreadNew(taskUSBD, NULL, &attrUSBD);
 	osKernelStart();
 
@@ -346,10 +342,12 @@ void usb_lp_isr(void)
 }
 
 #if 0 // never hit
+
 void usb_hp_isr(void)
 {
 	osEventFlagsSet(evt_usbd, 2);
 }
+
 void usb_fs_wakeup_isr(void)
 {
 	osEventFlagsSet(evt_usbd, 3);
