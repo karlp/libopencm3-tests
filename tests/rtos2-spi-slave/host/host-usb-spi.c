@@ -11,6 +11,7 @@
 
 #include <cmsis_os2.h>
 
+#include <libopencm3/cm3/nvic.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/spi.h>
@@ -29,6 +30,7 @@
 	do { } while (0)
 #endif
 
+osEventFlagsId_t evt_usbd;
 
 #define BULK_EP_MAXPACKET	64
 #define MY_CONFIG_VALUE		2
@@ -137,8 +139,7 @@ static void hostspi_out_cb(usbd_device *usbd_dev, uint8_t ep)
 {
 	(void) usbd_dev;
 	(void) ep;
-	uint16_t x;
-	//x = usbd_ep_read_packet(usbd_dev, ep, dest, BULK_EP_MAXPACKET);
+	//uint16_t x = usbd_ep_read_packet(usbd_dev, ep, dest, BULK_EP_MAXPACKET);
 }
 
 static void hostspi_in_cb(usbd_device *usbd_dev, uint8_t ep)
@@ -268,18 +269,26 @@ static void taskUSBD(void *args)
 	if (userserial) {
 		usb_strings[2] = userserial;
 	}
+	evt_usbd = osEventFlagsNew(NULL);
 	usbd_device *our_dev = usbd_init(&st_usbfs_v1_usb_driver, &dev, config,
 		usb_strings, 5,
 		usbd_control_buffer, sizeof(usbd_control_buffer));
-
 	usbd_register_set_config_callback(our_dev, hostspi_set_config);
+	nvic_enable_irq(NVIC_USB_LP_IRQ);
+	/* these aren't used (yet) */
+//	nvic_enable_irq(NVIC_USB_HP_IRQ);
+//	nvic_enable_irq(NVIC_USB_FS_WAKEUP_IRQ);
 
 	ER_DPRINTF("USBD: loop start\n");
 	// just for the LA
 	gpio_mode_setup(GPIOB, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO8);
+
         while (1) {
                 gpio_set(GPIOB, GPIO8);
+		uint32_t flags = osEventFlagsWait(evt_usbd, 1, osFlagsWaitAny, osWaitForever);
+		trace_send8(1, flags);
 		usbd_poll(our_dev);
+		nvic_enable_irq(NVIC_USB_LP_IRQ);
                 gpio_clear(GPIOB, GPIO8);
         }
 
@@ -303,7 +312,6 @@ int main(void)
                 .apb1_frequency = 32e6,
                 .apb2_frequency = 32e6,
         };
-        int i, j;
         rcc_clock_setup_pll(&myclock);
 	hw_init();
 
@@ -322,8 +330,6 @@ int main(void)
 
         osThreadAttr_t attrUSBD = {
                 .name = "usbd",
-		// leaving this will starve the other tasks, as we never yield from usbd.
-		// and as per rtos2, even if we yielded, lower priority would never run.
 		.priority = osPriorityAboveNormal
         };
 	osThreadNew(taskUSBD, NULL, &attrUSBD);
@@ -332,3 +338,20 @@ int main(void)
 	return 0;
 }
 
+void usb_lp_isr(void)
+{
+	nvic_disable_irq(NVIC_USB_LP_IRQ);
+	int x = osEventFlagsSet(evt_usbd, 1);
+	trace_send8(2, x);
+}
+
+#if 0 // never hit
+void usb_hp_isr(void)
+{
+	osEventFlagsSet(evt_usbd, 2);
+}
+void usb_fs_wakeup_isr(void)
+{
+	osEventFlagsSet(evt_usbd, 3);
+}
+#endif
