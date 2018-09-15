@@ -153,7 +153,7 @@
 //   <i> Initializes thread stack with watermark pattern for analyzing stack usage.
 //   <i> Enabling this option increases significantly the execution time of thread creation.
 #ifndef OS_STACK_WATERMARK
-#define OS_STACK_WATERMARK          0
+#define OS_STACK_WATERMARK          1
 #endif
  
 //   <o>Processor mode for Thread execution 

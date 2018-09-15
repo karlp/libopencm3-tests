@@ -21,7 +21,12 @@ int32_t OS_Tick_Setup (uint32_t freq, IRQHandler_t handler)
 		return -1;
 	}
 	systick_set_reload(load);
-	/* possibly fiddle with irq priorities here */
+	/* re-reading rtx docs, these should be lowest _logical_ priority */
+	// 0xff is lowest priority, no matter how many bits were implemented
+	nvic_set_priority(NVIC_SYSTICK_IRQ, 0xff);
+	// layering violation, but easiest to just do it here too
+	nvic_set_priority(NVIC_SV_CALL_IRQ, 0xff);
+	nvic_set_priority(NVIC_PENDSV_IRQ, 0xff);
 	systick_interrupt_enable();
 	return 0;
 }
