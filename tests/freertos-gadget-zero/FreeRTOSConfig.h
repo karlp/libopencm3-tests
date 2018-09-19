@@ -25,8 +25,8 @@ void vAssertCalled( const char * const pcFileName, unsigned long ulLine );
 #define configTIMER_TASK_STACK_DEPTH            configMINIMAL_STACK_SIZE
 
 
-#define configMAX_PRIORITIES		( 2 )
-#define configMAX_CO_ROUTINE_PRIORITIES ( 2 )
+#define configMAX_PRIORITIES		( 4 )
+#define configMAX_CO_ROUTINE_PRIORITIES ( 4 )
 
 /* Set the following definitions to 1 to include the API function, or zero
 to exclude the API function. */
@@ -39,10 +39,10 @@ to exclude the API function. */
 #define INCLUDE_vTaskDelayUntil			0
 #define INCLUDE_vTaskDelay				1
 
-#define configKERNEL_INTERRUPT_PRIORITY 		255
+#define configKERNEL_INTERRUPT_PRIORITY 		0xff
 /* !!!! configMAX_SYSCALL_INTERRUPT_PRIORITY must not be set to zero !!!!
 See http://www.FreeRTOS.org/RTOS-Cortex-M3-M4.html. */
-#define configMAX_SYSCALL_INTERRUPT_PRIORITY 	191 /* equivalent to 0xa0, or priority 5. */
+#define configMAX_SYSCALL_INTERRUPT_PRIORITY 	(5 << 4)
 
 #define vPortSVCHandler sv_call_handler
 #define xPortPendSVHandler pend_sv_handler
