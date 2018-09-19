@@ -12,6 +12,8 @@ CMSIS_ROOT=/home/karlp/src/oocd-rtos-locm3/cmsis-rtos-rtx/CMSIS_5
 include ../../cmsis-rtos2.rules.mk
 CFILES += rtx_config.c
 
+CPPFLAGS += -DER_DEBUG
+
 OPENCM3_DIR=../../libopencm3
 DEVICE=stm32l151xb
 OOCD_FILE = openocd.stm32l1-generic.cfg

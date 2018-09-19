@@ -16,7 +16,6 @@
 #include "usb-gadget0.h"
 #include "trace.h"
 
-#define ER_DEBUG
 #ifdef ER_DEBUG
 #define ER_DPRINTF(fmt, ...) \
 	do { printf(fmt, ## __VA_ARGS__); } while (0)
@@ -53,6 +52,7 @@ static void taskUSBD(void *args)
 	evt_usbd = osEventFlagsNew(NULL);
 	usbd_device *usbd_dev = gadget0_init(&st_usbfs_v1_usb_driver,
 					     "rtos2-stm32l1-hw1");
+	nvic_set_priority(NVIC_USB_LP_IRQ, 6<<4);
 	nvic_enable_irq(NVIC_USB_LP_IRQ);
 
 	ER_DPRINTF("USBD: loop start\n");
@@ -63,7 +63,7 @@ static void taskUSBD(void *args)
 		gadget0_run(usbd_dev);
 		nvic_enable_irq(NVIC_USB_LP_IRQ);
 		gpio_clear(GPIOB, GPIO9);
-		ER_DPRINTF("sl %lu\n", osThreadGetStackSpace(threadUSBD));
+		//ER_DPRINTF("sl %lu\n", osThreadGetStackSpace(threadUSBD));
 	}
 }
 
@@ -95,4 +95,7 @@ void usb_lp_isr(void)
 	nvic_disable_irq(NVIC_USB_LP_IRQ);
 	int x = osEventFlagsSet(evt_usbd, 1);
 	trace_send8(2, '!');
+	if (x < 0) {
+		ER_DPRINTF("Failed to set flag: %d\n", x);
+	}
 }

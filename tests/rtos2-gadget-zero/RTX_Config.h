@@ -349,7 +349,7 @@
 //     <q>Start recording
 //     <i> Start event recording after initialization.
 #ifndef OS_EVR_START
-#define OS_EVR_START                1
+#define OS_EVR_START                0
 #endif
  
 //     <h>Global Event Filter Setup
