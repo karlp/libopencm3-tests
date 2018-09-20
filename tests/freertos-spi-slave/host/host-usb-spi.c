@@ -33,6 +33,8 @@
 	do { } while (0)
 #endif
 
+TaskHandle_t taskHandleUSBD;
+
 struct hw_detail hw_details = {
 	.periph = SPI2,
 	.periph_rcc = RCC_SPI2,
@@ -192,7 +194,6 @@ static const char *usb_strings[] = {
 
 /* Buffer to be used for control requests. */
 static uint8_t usbd_control_buffer[5*BULK_EP_MAXPACKET];
-//static usbd_device *our_dev;
 
 
 static void hostspi_out_cb(usbd_device *usbd_dev, uint8_t ep)
@@ -264,7 +265,7 @@ static void hostspi_set_config(usbd_device *usbd_dev, uint16_t wValue)
 static void prvTaskUSBD(void *pvParameters)
 {
 	(void)pvParameters;
-	static int i = 0;
+	gpio_mode_setup(GPIOB, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO8);
 	/* Enable built in USB pullup on L1 */
         rcc_periph_clock_enable(RCC_SYSCFG);
         SYSCFG_PMC |= SYSCFG_PMC_USB_PU;
@@ -282,14 +283,33 @@ static void prvTaskUSBD(void *pvParameters)
 
 	usbd_register_set_config_callback(our_dev, hostspi_set_config);
 
-	gpio_mode_setup(GPIOB, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO8);
-        while (1) {
-                gpio_set(GPIOB, GPIO8);
-		usbd_poll(our_dev);
-                gpio_clear(GPIOB, GPIO8);
-        }
+	/* numerically greater than free rtos kernel split (lower priority) */
+	nvic_set_priority(NVIC_USB_LP_IRQ, 6<<4);
+	nvic_enable_irq(NVIC_USB_LP_IRQ);
 
+	const TickType_t xBlockTime = pdMS_TO_TICKS( 500 );
+	uint32_t ulNotifiedValue;
 
+	ER_DPRINTF("USBD: loop start\n");
+	while (1) {
+
+		ulNotifiedValue = ulTaskNotifyTake(pdTRUE, xBlockTime);
+		trace_send8(1, ulNotifiedValue);
+
+		if (ulNotifiedValue == 0) {
+			/* No big deal, just no usb traffic. just gives us an idle blip */
+			ER_DPRINTF(".");
+		} else {
+			/* ulNotifiedValue holds a count of the number of outstanding
+			interrupts.  Process each in turn. */
+			while (ulNotifiedValue--) {
+				gpio_set(GPIOB, GPIO8);
+				usbd_poll(our_dev);
+				gpio_clear(GPIOB, GPIO8);
+			}
+			nvic_enable_irq(NVIC_USB_LP_IRQ);
+		}
+	}
 }
 
 
@@ -308,18 +328,26 @@ int main(void)
                 .apb1_frequency = 32e6,
                 .apb2_frequency = 32e6,
         };
-        int i, j;
         rcc_clock_setup_pll(&myclock);
 	hw_init();
 	printf("starting freertos...\n");
 
 	xTaskCreate(prvTaskGreenBlink1, "green.blink", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 1, NULL);
 	xTaskCreate(prvTaskSpiMaster, "spi.master", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 1, NULL);
-	xTaskCreate(prvTaskUSBD, "USBD", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, NULL);
+	xTaskCreate(prvTaskUSBD, "USBD", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, &taskHandleUSBD);
 
 	vTaskStartScheduler();
 
 	return 0;
+}
+
+void usb_lp_isr(void)
+{
+	BaseType_t xHigherPriorityTaskWoken;
+	nvic_disable_irq(NVIC_USB_LP_IRQ);
+	xHigherPriorityTaskWoken = pdFALSE;
+	vTaskNotifyGiveFromISR(taskHandleUSBD, &xHigherPriorityTaskWoken);
+	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
 void vAssertCalled(const char * const pcFileName, unsigned long ulLine)
