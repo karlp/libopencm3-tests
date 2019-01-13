@@ -23,6 +23,7 @@
 
 #include "hw.h"
 #include "trace.h"
+#include "queue.h"
 
 #define ER_DEBUG
 #ifdef ER_DEBUG
@@ -34,6 +35,7 @@
 #endif
 
 TaskHandle_t taskHandleUSBD;
+QueueHandle_t spiQ_rx;
 
 struct hw_detail hw_details = {
 	.periph = SPI2,
@@ -45,6 +47,9 @@ struct hw_detail hw_details = {
 	.trigger_rcc = RCC_GPIOB,
 	.trigger_port = GPIOB,
 	.trigger_pin = GPIO9,
+	.cs_rcc = RCC_GPIOB,
+	.cs_port = GPIOB,
+	.cs_pin = GPIO8,
 };
 
 /* provided in board files please*/
@@ -63,6 +68,10 @@ static void hw_init(void)
 	gpio_mode_setup(hw_details.port, GPIO_MODE_AF, GPIO_PUPD_NONE, hw_details.pins);
 	gpio_set_output_options(hw_details.port, GPIO_OTYPE_PP, GPIO_OSPEED_10MHZ, hw_details.pins);
 	gpio_set_af(hw_details.port, GPIO_AF5, hw_details.pins);
+
+	//rcc_periph_clock_enable(hw_details.cs_rcc); already done
+	gpio_mode_setup(hw_details.cs_port, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, hw_details.cs_pin);
+	gpio_set(hw_details.cs_port, hw_details.cs_pin);
 }
 
 
@@ -72,7 +81,7 @@ static void prvTaskGreenBlink1(void *pvParameters)
 	int i = 0;
 	while (1) {
 		printf("gblink %d\n", i++);
-		vTaskDelay(portTICK_PERIOD_MS * 550);
+		vTaskDelay(portTICK_PERIOD_MS * 500);
 		gpio_toggle(hw_details.trigger_port, hw_details.trigger_pin);
 	}
 
@@ -89,6 +98,11 @@ static void prvTaskSpiMaster(void *pvParameters)
 {
 	(void)pvParameters;
         rcc_periph_clock_enable(hw_details.periph_rcc);
+	/* This is _heaps_ */
+	/* NOTE: queues not stream/message buffers because freertos 10.x is busted in openocd, no other reason */
+	spiQ_rx = xQueueCreate(1024, 1);
+	configASSERT(spiQ_rx);
+#if 0
         spi_init_master(hw_details.periph, SPI_CR1_BAUDRATE_FPCLK_DIV_32, SPI_CR1_CPOL_CLK_TO_0_WHEN_IDLE,
                 SPI_CR1_CPHA_CLK_TRANSITION_1, SPI_CR1_DFF_8BIT, SPI_CR1_MSBFIRST);
         /* Ignore the stupid NSS pin. */
@@ -104,6 +118,14 @@ static void prvTaskSpiMaster(void *pvParameters)
 		vTaskDelay(portTICK_PERIOD_MS * 200);
 	        spi_xfer(hw_details.periph, 0xaa);
 	        spi_xfer(hw_details.periph, i++);
+	}
+#endif
+	/* FIXME - this task only necessary for handling spi slave mode
+	 * or potentially, if I get freaky, running transnfers registered by usb modes?
+	 * Start with doing nothing!
+	 */
+	while(1) {
+		vTaskDelay(portTICK_PERIOD_MS * 1000);
 	}
 
 }
@@ -200,7 +222,7 @@ static void hostspi_out_cb(usbd_device *usbd_dev, uint8_t ep)
 {
 	(void) usbd_dev;
 	(void) ep;
-	uint16_t x;
+	//uint16_t x;
 	//x = usbd_ep_read_packet(usbd_dev, ep, dest, BULK_EP_MAXPACKET);
 }
 
@@ -218,23 +240,75 @@ static enum usbd_request_return_codes hostspit_control_request(usbd_device *usbd
 	uint16_t *len,
 	usbd_control_complete_callback *complete)
 {
-	(void) usbd_dev;
-	(void) complete;
-	(void) buf;
-	(void) len;
+	(void)usbd_dev;
+	(void)complete;
 	ER_DPRINTF("ctrl breq: %x, bmRT: %x, windex :%x, wlen: %x, wval :%x\n",
 		req->bRequest, req->bmRequestType, req->wIndex, req->wLength,
 		req->wValue);
 
+	uint8_t *real = *buf;
 	/* TODO - what do the return values mean again? */
+	/* remember, we're only taking vendor interface reqs here, no need to recheck! */
 	switch (req->bRequest) {
-	case 42:
+	case 1:
+		/* (re)init master */
+		if (req->wLength != 5) {
+			ER_DPRINTF("Illegal number of args %d != 5\n", req->wLength);
+			return USBD_REQ_NOTSUPP;
+		}
+		rcc_periph_reset_pulse(hw_details.periph_rst);
+/*		spi_init_master(hw_details.periph, SPI_CR1_BAUDRATE_FPCLK_DIV_32, SPI_CR1_CPOL_CLK_TO_0_WHEN_IDLE,
+			SPI_CR1_CPHA_CLK_TRANSITION_1, SPI_CR1_DFF_8BIT, SPI_CR1_MSBFIRST); */
+		/* yes, there's enough bytes in the control request itself, but bandwidth optimization why?! */
+		spi_init_master(hw_details.periph, real[0], real[1], real[2], real[3], real[4]);
+		/* Ignore the stupid NSS pin. */
+		spi_enable_software_slave_management(hw_details.periph);
+		spi_set_nss_high(hw_details.periph);
+
+		/* Finally enable the SPI. */
+		spi_enable(hw_details.periph);
+		*len = 0;
 		return USBD_REQ_HANDLED;
-	case 43:
-		return USBD_REQ_NOTSUPP;
+
+	/* FIXME - both of these run completely blocking within the usb task thread.
+	 * Especially if you want to try slow speeds, make them work async in the spi thread instead?
+	 */
+	case 10:
+		/* spi xfer */
+		/* If the user/host chose not to read out the reply buffer, then they lose it
+		 * we're making a new transfer now. */
+		if (uxQueueMessagesWaiting(spiQ_rx) > 0) {
+			ER_DPRINTF("Tossing old rx data\n");
+		}
+		xQueueReset(spiQ_rx);
+		gpio_clear(hw_details.cs_port, hw_details.cs_pin);
+		for (int i = 0; i < req->wLength; i++) {
+			uint8_t x = spi_xfer(hw_details.periph, real[i]);
+			BaseType_t rv = xQueueSendToBack(spiQ_rx, &x, 0);
+			// If you overflowed this jumbo queue, you have issues
+			configASSERT(rv == pdTRUE);
+		}
+		gpio_set(hw_details.cs_port, hw_details.cs_pin);
+		return USBD_REQ_HANDLED;
+	case 11:
+		/* Read xfer buffer */
+		/* You should call this after issuing a spi transfer req if you want to see what came back! */
+		/* Lengths are good thankfully, it's spi, queue is as long as they transferred. */
+		if (req->wLength != uxQueueMessagesWaiting(spiQ_rx)) {
+			ER_DPRINTF("requested read not matching our stored length? %lu\n", uxQueueMessagesWaiting(spiQ_rx));
+			return USBD_REQ_NOTSUPP;
+		}
+		for (int i = 0; i < req->wLength; i++) {
+			if (!xQueueReceive(spiQ_rx, &real[i], 0)) {
+				ER_DPRINTF("Couldn't read?!\n");
+				configASSERT(false);
+			}
+		}
+		*len = req->wLength;
+		return USBD_REQ_HANDLED;
 	default:
-		ER_DPRINTF("Unhandled request!\n");
-		return USBD_REQ_NOTSUPP;
+		ER_DPRINTF("unexpected control breq: %x deferring?!\n", req->bRequest);
+		break;
 	}
 	return USBD_REQ_NEXT_CALLBACK;
 }
@@ -253,8 +327,6 @@ static void hostspi_set_config(usbd_device *usbd_dev, uint16_t wValue)
 			USB_REQ_TYPE_VENDOR | USB_REQ_TYPE_INTERFACE,
 			USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
 			hostspit_control_request);
-		/* Prime source for IN data. */
-		// gadget0_ss_in_cb(usbd_dev, 0x81);
 		break;
 	default:
 		ER_DPRINTF("set configuration unknown: %d\n", wValue);
@@ -265,7 +337,7 @@ static void hostspi_set_config(usbd_device *usbd_dev, uint16_t wValue)
 static void prvTaskUSBD(void *pvParameters)
 {
 	(void)pvParameters;
-	gpio_mode_setup(GPIOB, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO8);
+	//gpio_mode_setup(GPIOB, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO8);
 	/* Enable built in USB pullup on L1 */
         rcc_periph_clock_enable(RCC_SYSCFG);
         SYSCFG_PMC |= SYSCFG_PMC_USB_PU;
@@ -303,9 +375,9 @@ static void prvTaskUSBD(void *pvParameters)
 			/* ulNotifiedValue holds a count of the number of outstanding
 			interrupts.  Process each in turn. */
 			while (ulNotifiedValue--) {
-				gpio_set(GPIOB, GPIO8);
+				//gpio_set(GPIOB, GPIO8);
 				usbd_poll(our_dev);
-				gpio_clear(GPIOB, GPIO8);
+				//gpio_clear(GPIOB, GPIO8);
 			}
 			nvic_enable_irq(NVIC_USB_LP_IRQ);
 		}

@@ -1,0 +1,67 @@
+import array
+import datetime
+import random
+import usb.core
+import usb.util as uu
+import random
+import sys
+
+import unittest
+
+VENDOR_ID=0xcafe
+PRODUCT_ID=0xcafe
+
+DUT_SERIAL = "myserial"
+
+# Control requests to do stuff....
+SS_INIT = 1
+SS_XFER = 10
+SS_READ = 11
+
+class find_by_serial(object):
+    def __init__(self, serial):
+        self._serial = serial
+
+    def __call__(self, device):
+        return usb.util.get_string(device, device.iSerialNumber)
+
+
+class TestSpiBasic(unittest.TestCase):
+    def setUp(self):
+        self.dev = usb.core.find(idVendor=VENDOR_ID, idProduct=PRODUCT_ID, custom_match=find_by_serial(DUT_SERIAL))
+        self.assertIsNotNone(self.dev, "Couldn't find locm3 gadget0 device")
+        self.longMessage = True
+
+    def tearDown(self):
+        uu.dispose_resources(self.dev)
+
+    def test_do_a_thing(self):
+        self.dev.set_configuration()  # iirc, this will set to the first/only config
+        # type, request, value, index, length/data (baud divider, cpol, cpha, 8/16, msb/lsb first
+        # init master mode, baud = div32 = 1Mhz
+        x = self.dev.ctrl_transfer(uu.CTRL_OUT | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_INIT, 0, 0, [5<<3, 0, 0, 0, 0])
+        self.assertEqual(x, 5)
+
+        # now write some shit...
+        x = self.dev.ctrl_transfer(uu.CTRL_OUT | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_XFER, 0, 0, [0xaa, 0x22, 0x55, 0xa5])
+        print("ok, wrote... and got x", x)
+
+        # Write again, should just toss out last received data
+        x = self.dev.ctrl_transfer(uu.CTRL_OUT | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_XFER, 0, 0, [0xcc, 0xdd, 0x22, 0x33, 0x55, 0x99, 0x12, 0x34])
+
+        x = self.dev.ctrl_transfer(uu.CTRL_IN | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_READ, 0, 0, x) # fixme -get from write stage!
+        print("ok, read, and got x", x)
+
+
+if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        DUT_SERIAL = sys.argv.pop()
+        print("Running tests for DUT: ", DUT_SERIAL)
+        unittest.main()
+    else:
+        # scan for available and try them all!
+        devs = usb.core.find(idVendor=VENDOR_ID, idProduct=PRODUCT_ID, find_all=True)
+        for dev in devs:
+            DUT_SERIAL = dev.serial_number
+            print("Running tests for DUT: ", DUT_SERIAL)
+            unittest.main(exit=False)

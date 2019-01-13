@@ -18,6 +18,9 @@ struct hw_detail
        uint32_t trigger_rcc;
        uint32_t trigger_port;
        uint32_t trigger_pin;
+       uint32_t cs_rcc;
+       uint32_t cs_port;
+       uint32_t cs_pin;
 };
 
 extern struct hw_detail hw_details;
