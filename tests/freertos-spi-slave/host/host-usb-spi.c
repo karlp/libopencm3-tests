@@ -47,9 +47,12 @@ struct hw_detail hw_details = {
 	.trigger_rcc = RCC_GPIOB,
 	.trigger_port = GPIOB,
 	.trigger_pin = GPIO9,
+	/* Might be software, might be hardware controlled */
 	.cs_rcc = RCC_GPIOB,
 	.cs_port = GPIOB,
-	.cs_pin = GPIO8,
+	.cs_pin = GPIO12,
+	.led_port = GPIOB,
+	.led_pin = GPIO8,
 };
 
 /* provided in board files please*/
@@ -62,6 +65,11 @@ static void hw_init(void)
 	/* trigger pin gpio */
 	rcc_periph_clock_enable(hw_details.trigger_rcc);
 	gpio_mode_setup(hw_details.trigger_port, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, hw_details.trigger_pin);
+	/* Make sure we're starting clean */
+	gpio_clear(hw_details.trigger_port, hw_details.trigger_pin);
+
+	/* "spare" "led" line */
+	gpio_mode_setup(hw_details.led_port, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, hw_details.led_pin);
 
 	/* spi control lines */
 	rcc_periph_clock_enable(hw_details.port_rcc);
@@ -69,9 +77,6 @@ static void hw_init(void)
 	gpio_set_output_options(hw_details.port, GPIO_OTYPE_PP, GPIO_OSPEED_10MHZ, hw_details.pins);
 	gpio_set_af(hw_details.port, GPIO_AF5, hw_details.pins);
 
-	//rcc_periph_clock_enable(hw_details.cs_rcc); already done
-	gpio_mode_setup(hw_details.cs_port, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, hw_details.cs_pin);
-	gpio_set(hw_details.cs_port, hw_details.cs_pin);
 }
 
 
@@ -82,7 +87,7 @@ static void prvTaskGreenBlink1(void *pvParameters)
 	while (1) {
 		printf("gblink %d\n", i++);
 		vTaskDelay(portTICK_PERIOD_MS * 500);
-		gpio_toggle(hw_details.trigger_port, hw_details.trigger_pin);
+		gpio_toggle(hw_details.led_port, hw_details.led_pin);
 	}
 
 	/* Tasks must not attempt to return from their implementing
@@ -217,6 +222,22 @@ static const char *usb_strings[] = {
 /* Buffer to be used for control requests. */
 static uint8_t usbd_control_buffer[5*BULK_EP_MAXPACKET];
 
+/**
+ * Cleanly disable the peripheral.
+ * Use this after your last spi_xfer to disable the peripheral.
+ * Important if you are using hardware NSS in output
+ * @param spi peripheral of choice
+ * @sa spi_xfer
+ */
+static void spi_clean_disable2(uint32_t spi) {
+	/* Wait to transmit last data */
+	while (!(SPI_SR(spi) & SPI_SR_TXE));
+
+	/* Wait until not busy */
+	while (SPI_SR(spi) & SPI_SR_BSY);
+
+	SPI_CR1(spi) &= ~SPI_CR1_SPE;	
+}
 
 static void hostspi_out_cb(usbd_device *usbd_dev, uint8_t ep)
 {
@@ -257,8 +278,10 @@ static enum usbd_request_return_codes hostspit_control_request(usbd_device *usbd
 			return USBD_REQ_NOTSUPP;
 		}
 		rcc_periph_reset_pulse(hw_details.periph_rst);
-/*		spi_init_master(hw_details.periph, SPI_CR1_BAUDRATE_FPCLK_DIV_32, SPI_CR1_CPOL_CLK_TO_0_WHEN_IDLE,
-			SPI_CR1_CPHA_CLK_TRANSITION_1, SPI_CR1_DFF_8BIT, SPI_CR1_MSBFIRST); */
+		/* chip select as a regular GPIO for this mode. assume RCC already setup */
+		gpio_mode_setup(hw_details.cs_port, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, hw_details.cs_pin);
+		gpio_set(hw_details.cs_port, hw_details.cs_pin);
+
 		/* yes, there's enough bytes in the control request itself, but bandwidth optimization why?! */
 		spi_init_master(hw_details.periph, real[0], real[1], real[2], real[3], real[4]);
 		/* Ignore the stupid NSS pin. */
@@ -267,6 +290,31 @@ static enum usbd_request_return_codes hostspit_control_request(usbd_device *usbd
 
 		/* Finally enable the SPI. */
 		spi_enable(hw_details.periph);
+		*len = 0;
+		return USBD_REQ_HANDLED;
+
+	case 2:
+		/* init with hardware cs mode */
+		if (req->wLength != 5) {
+			ER_DPRINTF("Illegal number of args %d != 5\n", req->wLength);
+			return USBD_REQ_NOTSUPP;
+		}
+		rcc_periph_reset_pulse(hw_details.periph_rst);
+		/* hardware spi chip select needs to reset this to AF */
+		gpio_set_af(hw_details.cs_port, GPIO_AF5, hw_details.cs_pin);
+		gpio_mode_setup(hw_details.cs_port, GPIO_MODE_AF, GPIO_PUPD_NONE, hw_details.cs_pin);
+
+		/* yes, there's enough bytes in the control request itself, but bandwidth optimization why?! */
+		spi_init_master(hw_details.periph, real[0], real[1], real[2], real[3], real[4]);
+		*len = 0;
+		return USBD_REQ_HANDLED;
+
+	case 3:
+		if (real[0]) {
+			gpio_set(hw_details.trigger_port, hw_details.trigger_pin);
+		} else {
+			gpio_clear(hw_details.trigger_port, hw_details.trigger_pin);
+		}
 		*len = 0;
 		return USBD_REQ_HANDLED;
 
@@ -306,6 +354,23 @@ static enum usbd_request_return_codes hostspit_control_request(usbd_device *usbd
 		}
 		*len = req->wLength;
 		return USBD_REQ_HANDLED;
+
+	case 12:
+		/* write, the other way.... */
+		if (uxQueueMessagesWaiting(spiQ_rx) > 0) {
+			ER_DPRINTF("Tossing old rx data\n");
+		}
+		xQueueReset(spiQ_rx);
+		spi_enable(hw_details.periph);
+		for (int i = 0; i < req->wLength; i++) {
+			uint8_t x = spi_xfer(hw_details.periph, real[i]);
+			BaseType_t rv = xQueueSendToBack(spiQ_rx, &x, 0);
+			// If you overflowed this jumbo queue, you have issues
+			configASSERT(rv == pdTRUE);
+		}
+		spi_clean_disable2(hw_details.periph);
+		return USBD_REQ_HANDLED;
+
 	default:
 		ER_DPRINTF("unexpected control breq: %x deferring?!\n", req->bRequest);
 		break;

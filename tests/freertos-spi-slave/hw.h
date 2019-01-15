@@ -21,6 +21,8 @@ struct hw_detail
        uint32_t cs_rcc;
        uint32_t cs_port;
        uint32_t cs_pin;
+       uint32_t led_port;
+       uint32_t led_pin;
 };
 
 extern struct hw_detail hw_details;
