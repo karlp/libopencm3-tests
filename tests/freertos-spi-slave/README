@@ -9,3 +9,4 @@ D0: "trigger"
 D4: MOSI
 D5: MISO
 D6: SCK
+D7: CS
