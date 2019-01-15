@@ -6,4 +6,9 @@ nbproject/
 bin-*/
 bin/
 generated*
+# Python virtual envs
+venv
+venv3
+.env
+.env3
 
