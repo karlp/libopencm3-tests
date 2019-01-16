@@ -17,6 +17,7 @@
 #include <libopencm3/cm3/nvic.h>
 #include <libopencm3/cm3/scb.h>
 #include <libopencm3/cm3/systick.h>
+#include <libopencm3/stm32/exti.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/spi.h>
@@ -26,7 +27,8 @@
 #include "trace.h"
 #include "queue.h"
 
-// no trace on cm0 #define ER_DEBUG
+// no trace on cm0
+#define ER_DEBUG
 #ifdef ER_DEBUG
 #define ER_DPRINTF(fmt, ...) \
 	do { printf(fmt, ## __VA_ARGS__); } while (0)
@@ -39,6 +41,7 @@
 #define ARRAY_LENGTH(array) (sizeof((array))/sizeof((array)[0]))
 #endif
 
+/* Same for l0 as l1 nucleo */
 struct hw_detail hw_details = {
 	.periph = SPI1,
 	.periph_rcc = RCC_SPI1,
@@ -72,7 +75,8 @@ static void hw_init(void)
 	rcc_periph_clock_enable(hw_details.port_rcc);
 	gpio_mode_setup(hw_details.port, GPIO_MODE_AF, GPIO_PUPD_NONE, hw_details.pins);
 //	gpio_set_output_options(hw_details.port, GPIO_OTYPE_PP, GPIO_OSPEED_10MHZ, hw_details.pins);
-	gpio_set_af(hw_details.port, GPIO_AF0, hw_details.pins);
+	// For L0 gpio_set_af(hw_details.port, GPIO_AF0, hw_details.pins);
+	gpio_set_af(hw_details.port, GPIO_AF5, hw_details.pins);
 
 	rcc_periph_clock_enable(hw_details.cs_rcc);
 	gpio_mode_setup(hw_details.cs_port, GPIO_MODE_AF, GPIO_PUPD_NONE, hw_details.cs_pin);
@@ -101,26 +105,43 @@ static void prvTaskGreenBlink1(void *pvParameters)
 	vTaskDelete(NULL);
 }
 
+bool exti_direction_falling;
+void exti9_5_isr(void)
+{
+	// Turn on spi when it goes low.
+	exti_reset_request(EXTI6);
+
+        if (exti_direction_falling) {
+		spi_enable(hw_details.periph);
+                exti_direction_falling = false;
+                exti_set_trigger(EXTI6, EXTI_TRIGGER_RISING);
+        } else {
+		// TODO - if it goes high again, make sure we reset our state machine!
+		spi_disable(hw_details.periph);
+                exti_direction_falling = true;
+                exti_set_trigger(EXTI6, EXTI_TRIGGER_FALLING);
+        }
+}
+
 void spi1_isr(void)  {
 	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 	uint32_t flags = SPI_SR(hw_details.periph);
+	trace_send_blocking16(3, flags);
 	if (flags & SPI_SR_RXNE) {
 		//spi_disable_rx_buffer_not_empty_interrupt(hw_details.periph);
 		uint8_t x = spi_read(hw_details.periph);
+		trace_send_blocking8(4, x);
 		xQueueSendFromISR(spiQ_rx, &x, &xHigherPriorityTaskWoken);
 	}
 	if (flags & SPI_SR_TXE) {
-#if 1
 		uint8_t x;
 		BaseType_t rc = xQueueReceiveFromISR(spiQ_tx, &x, &xHigherPriorityTaskWoken);
 		if (rc == pdFALSE) {
-			x = 0xfa; // default data to reply with
+			//x = 0xfa; // default data to reply with
+			x = 0;
 		}
 		spi_write(hw_details.periph, x);
-#else
-		static uint8_t source = 0xff;
-		spi_write(hw_details.periph, source--);
-#endif
+		trace_send_blocking8(5, x);
 	}
 
 	if (xHigherPriorityTaskWoken) {
@@ -130,6 +151,8 @@ void spi1_isr(void)  {
 	}
 }
 
+/* easier to debug here */
+uint8_t spi_regs[] = { 0xaa, 0xca, 0xfe, 0xbe, 0xef };
 static void prvTaskSpiSlave(void *pvParameters)
 {
 	(void)pvParameters;
@@ -142,34 +165,52 @@ static void prvTaskSpiSlave(void *pvParameters)
 
         rcc_periph_clock_enable(hw_details.periph_rcc);
 
-	uint8_t spi_regs[] = { 0xaa, 0xca, 0xfe, 0xbe, 0xef };
 	spi_set_slave_mode(hw_details.periph);
 	// PB6 is not the real NSS pin, so have to do it... magically.
 	spi_enable_software_slave_management(hw_details.periph);
-	spi_enable(hw_details.periph);
+	//spi_enable(hw_details.periph);
+
+	rcc_periph_clock_enable(hw_details.cs_rcc);
+	rcc_periph_clock_enable(RCC_SYSCFG);
+	gpio_mode_setup(hw_details.cs_port, GPIO_MODE_INPUT, GPIO_PUPD_PULLUP, hw_details.cs_pin);
+	exti_select_source(EXTI6, hw_details.cs_port);
+        exti_set_trigger(EXTI6, EXTI_TRIGGER_FALLING);
+	exti_direction_falling = true;
+        exti_enable_request(EXTI6);
+        nvic_set_priority(NVIC_EXTI9_5_IRQ, 6<<4);
+	nvic_enable_irq(NVIC_EXTI9_5_IRQ);
 
 	spi_enable_rx_buffer_not_empty_interrupt(hw_details.periph);
 	spi_enable_tx_buffer_empty_interrupt(hw_details.periph);
+	/* numerically greater than free rtos kernel split (lower priority) */
+        nvic_set_priority(hw_details.periph_irq, 6<<4);
 	nvic_enable_irq(hw_details.periph_irq);
+
+	/* Prestuff first byte */
+	SPI_DR(hw_details.periph) = 0;
 
 	while(1) {
 		/* Block on a receive fifo, statemachine on that... */
-		uint8_t x;
-		BaseType_t rc = xQueueReceive(spiQ_rx, &x, portMAX_DELAY);
+		uint8_t in, out;
+		BaseType_t rc = xQueueReceive(spiQ_rx, &in, portMAX_DELAY);
 		configASSERT(rc); /* We want to block forever */
-		bool write = x & 0x80;
-		unsigned reg = x & 0x7f;
+		trace_send_blocking8(2, in);
+		bool write = in & 0x80;
+		unsigned reg = in & 0x7f;
 		if (reg > ARRAY_LENGTH(spi_regs)) {
 			/* how do we flag errors? */
 			ER_DPRINTF("out of bounds register requested");
 		}
+		/* always need to consume, in write _and_ read mode! */
+		rc = xQueueReceive(spiQ_rx, &in, portMAX_DELAY);
+		configASSERT(rc);
 		if (write) {
-			rc = xQueueReceive(spiQ_rx, &x, portMAX_DELAY);
-			configASSERT(rc);
-			spi_regs[reg] = x;
+			trace_send_blocking8(2, in);
+			spi_regs[reg] = in;
 		} else {
-			x = spi_regs[reg];
-			xQueueSend(spiQ_tx, &x, portMAX_DELAY);
+			out = spi_regs[reg];
+			xQueueSend(spiQ_tx, &out, portMAX_DELAY);
+			trace_send_blocking8(6, out);
 		}
 	}
 
@@ -178,6 +219,7 @@ static void prvTaskSpiSlave(void *pvParameters)
 
 int main(void)
 {
+#if 0 /* l0 */
         const struct rcc_clock_scale myclock = {
                 .ahb_frequency = 32e6,
                 .apb1_frequency = 32e6,
@@ -191,6 +233,21 @@ int main(void)
                 .ppre1 = RCC_CFGR_PPRE1_NODIV,
                 .ppre2 = RCC_CFGR_PPRE2_NODIV,
         };
+#endif
+	const struct rcc_clock_scale myclock = {
+                .pll_source = RCC_CFGR_PLLSRC_HSI_CLK,
+                .pll_mul = RCC_CFGR_PLLMUL_MUL6,
+                .pll_div = RCC_CFGR_PLLDIV_DIV3,
+                .hpre = RCC_CFGR_HPRE_SYSCLK_NODIV,
+                .ppre1 = RCC_CFGR_PPRE1_HCLK_NODIV,
+                .ppre2 = RCC_CFGR_PPRE2_HCLK_NODIV,
+                .voltage_scale = PWR_SCALE1,
+                .flash_waitstates = 1,
+                .ahb_frequency = 32e6,
+                .apb1_frequency = 32e6,
+                .apb2_frequency = 32e6,
+        };
+
         rcc_clock_setup_pll(&myclock);
 	hw_init();
 	printf("starting freertos...\n");
