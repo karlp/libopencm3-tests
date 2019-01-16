@@ -74,6 +74,16 @@ class TestSpiBasic(unittest.TestCase):
         x = self.dev.ctrl_transfer(uu.CTRL_IN | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_READ, 0, 0, x) # fixme -get from write stage!
         print("ok, read, and got x", x)
 
+    def test_reg_read_write(self):
+        self.dev.ctrl_transfer(uu.CTRL_OUT | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_INIT2, 0, 0, [5 << 3, 0, 0, 0, 0])
+
+        # issue a read of register 2
+        x = self.dev.ctrl_transfer(uu.CTRL_OUT | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_XFER2, 0, 0, [0x2, 0])
+        print("ok, wrote... and got x", x)
+
+        # write somethign new back again
+        x = self.dev.ctrl_transfer(uu.CTRL_OUT | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_XFER2, 0, 0, [0x2|0x80, 0xab])
+        print("ok, wrote... and got x", x)
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
