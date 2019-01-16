@@ -12,6 +12,7 @@ struct hw_detail
        uint32_t periph; /* eg: SPI2 */
        uint32_t periph_rcc; /* eg: RCC_SPI2 */
        uint32_t periph_rst; /* eg: RST_SPI2 */
+       uint8_t periph_irq; /* eg: NVIC_SPI2_IRQ */
        uint32_t pins; /* to set to the AF for the periph */
        uint32_t port; /* eg GPIOB */
        uint32_t port_rcc; /* for the gpio pins */
