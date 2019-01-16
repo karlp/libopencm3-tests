@@ -8,7 +8,7 @@ VPATH += $(SHARED_DIR)
 INCLUDES += $(patsubst %,-I%, . $(SHARED_DIR))
 
 FREERTOS_DIR = ../../../FreeRTOSv10.1.0/FreeRTOS
-include ../../../freertos.rules.mk
+include ../../../freertos.cm3.rules.mk
 
 OPENCM3_DIR=../../../libopencm3
 DEVICE=stm32l151xb
