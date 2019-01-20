@@ -68,9 +68,6 @@ static void hw_init(void)
 	/* Make sure we're starting clean */
 	gpio_clear(hw_details.trigger_port, hw_details.trigger_pin);
 
-	/* "spare" "led" line */
-	gpio_mode_setup(hw_details.led_port, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, hw_details.led_pin);
-
 	/* spi control lines */
 	rcc_periph_clock_enable(hw_details.port_rcc);
 	gpio_mode_setup(hw_details.port, GPIO_MODE_AF, GPIO_PUPD_NONE, hw_details.pins);
@@ -84,9 +81,15 @@ static void prvTaskGreenBlink1(void *pvParameters)
 {
 	(void) pvParameters;
 	int i = 0;
+	TickType_t xLastWakeTime = xTaskGetTickCount();
+	gpio_mode_setup(hw_details.led_port, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, hw_details.led_pin);
+//	gpio_mode_setup(hw_details.cs_port, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, hw_details.cs_pin);
+
 	while (1) {
 		printf("gblink %d\n", i++);
-		vTaskDelay(portTICK_PERIOD_MS * 500);
+		//vTaskDelay(portTICK_PERIOD_MS * 500);
+		vTaskDelayUntil(&xLastWakeTime, portTICK_PERIOD_MS * 500);
+//		gpio_toggle(hw_details.cs_port, hw_details.cs_pin);
 		gpio_toggle(hw_details.led_port, hw_details.led_pin);
 	}
 
@@ -103,6 +106,7 @@ static void prvTaskSpiMaster(void *pvParameters)
 {
 	(void)pvParameters;
         rcc_periph_clock_enable(hw_details.periph_rcc);
+	rcc_periph_clock_enable(hw_details.cs_rcc);
 	/* This is _heaps_ */
 	/* NOTE: queues not stream/message buffers because freertos 10.x is busted in openocd, no other reason */
 	spiQ_rx = xQueueCreate(1024, 1);
@@ -129,8 +133,16 @@ static void prvTaskSpiMaster(void *pvParameters)
 	 * or potentially, if I get freaky, running transnfers registered by usb modes?
 	 * Start with doing nothing!
 	 */
+
+		/* chip select as a regular GPIO for this mode. assume RCC already setup */
+//		gpio_mode_setup(hw_details.cs_port, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, hw_details.cs_pin);
+//		gpio_set(hw_details.cs_port, hw_details.cs_pin);
+
 	while(1) {
-		vTaskDelay(portTICK_PERIOD_MS * 1000);
+		vTaskDelay(portTICK_PERIOD_MS * 100);
+//		gpio_set(hw_details.cs_port, hw_details.cs_pin);
+//		vTaskDelay(portTICK_PERIOD_MS * 100);
+//		gpio_clear(hw_details.cs_port, hw_details.cs_pin);
 	}
 
 }
@@ -272,7 +284,7 @@ static enum usbd_request_return_codes hostspit_control_request(usbd_device *usbd
 	/* remember, we're only taking vendor interface reqs here, no need to recheck! */
 	switch (req->bRequest) {
 	case 1:
-		/* (re)init master */
+		/* (re)init master with software cs */
 		if (req->wLength != 5) {
 			ER_DPRINTF("Illegal number of args %d != 5\n", req->wLength);
 			return USBD_REQ_NOTSUPP;
@@ -294,15 +306,15 @@ static enum usbd_request_return_codes hostspit_control_request(usbd_device *usbd
 		return USBD_REQ_HANDLED;
 
 	case 2:
-		/* init with hardware cs mode */
+		/* (re)init master with hardware cs  */
 		if (req->wLength != 5) {
 			ER_DPRINTF("Illegal number of args %d != 5\n", req->wLength);
 			return USBD_REQ_NOTSUPP;
 		}
 		rcc_periph_reset_pulse(hw_details.periph_rst);
 		/* hardware spi chip select needs to reset this to AF */
-		gpio_set_af(hw_details.cs_port, GPIO_AF5, hw_details.cs_pin);
 		gpio_mode_setup(hw_details.cs_port, GPIO_MODE_AF, GPIO_PUPD_NONE, hw_details.cs_pin);
+		gpio_set_af(hw_details.cs_port, GPIO_AF5, hw_details.cs_pin);
 
 		/* yes, there's enough bytes in the control request itself, but bandwidth optimization why?! */
 		spi_init_master(hw_details.periph, real[0], real[1], real[2], real[3], real[4]);
