@@ -121,7 +121,6 @@ void adc_power_init(void)
 	 * the adc.
 	 */
 	rcc_periph_clock_enable(TIMER_RCC);
-	timer_reset(TIMER);
 	timer_set_prescaler(TIMER, 0);
 	timer_enable_counter(TIMER);
 }

@@ -30,7 +30,6 @@ static int hack(void) {
 int main(void)
 {
 	int i;
-	int j = 0;
 	rcc_periph_clock_enable(RCC_GPIOB); // led
 	rcc_periph_clock_enable(RCC_GPIOE); // led
 	rcc_periph_clock_enable(RCC_GPIOA); // adcs

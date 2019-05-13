@@ -22,7 +22,6 @@
 int main(void)
 {
 	int i;
-	int j = 0;
 	rcc_clock_setup_pll(&rcc_clock_config[RCC_CLOCK_VRANGE1_HSI_PLL_32MHZ]);
 	rcc_periph_clock_enable(RCC_GPIOB);
 	printf("hi guys!\n");

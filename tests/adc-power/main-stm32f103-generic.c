@@ -21,7 +21,6 @@
 int main(void)
 {
 	int i;
-	int j = 0;
 	rcc_clock_setup_in_hse_8mhz_out_72mhz();
 	rcc_periph_clock_enable(RCC_GPIOC);
 	printf("hi guys!\n");
