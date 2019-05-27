@@ -112,47 +112,83 @@ void exti9_5_isr(void)
 	exti_reset_request(EXTI6);
 
         if (exti_direction_falling) {
+		ER_DPRINTF("\n[[\n");
 		spi_enable(hw_details.periph);
-                exti_direction_falling = false;
+		SPI_DR(hw_details.periph) = 0;
+		exti_direction_falling = false;
                 exti_set_trigger(EXTI6, EXTI_TRIGGER_RISING);
         } else {
 		// TODO - if it goes high again, make sure we reset our state machine!
+		ER_DPRINTF("]]\n");
 		spi_disable(hw_details.periph);
                 exti_direction_falling = true;
                 exti_set_trigger(EXTI6, EXTI_TRIGGER_FALLING);
         }
 }
 
-void spi1_isr(void)  {
-	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-	uint32_t flags = SPI_SR(hw_details.periph);
-	trace_send_blocking16(3, flags);
-	if (flags & SPI_SR_RXNE) {
-		//spi_disable_rx_buffer_not_empty_interrupt(hw_details.periph);
-		uint8_t x = spi_read(hw_details.periph);
-		trace_send_blocking8(4, x);
-		xQueueSendFromISR(spiQ_rx, &x, &xHigherPriorityTaskWoken);
-	}
-	if (flags & SPI_SR_TXE) {
-		uint8_t x;
-		BaseType_t rc = xQueueReceiveFromISR(spiQ_tx, &x, &xHigherPriorityTaskWoken);
-		if (rc == pdFALSE) {
-			//x = 0xfa; // default data to reply with
-			x = 0;
-		}
-		spi_write(hw_details.periph, x);
-		trace_send_blocking8(5, x);
-	}
 
-	if (xHigherPriorityTaskWoken) {
-		//taskYIELD_FROM_ISR(); /* documented freertos name */
-		// and it's fucking borked. wat
-		//portYIELD_FROM_ISR(); /* actual name, thanks freertos */
+uint8_t spi_regs[] = { 0xaa, 0xca, 0xfe, 0xbe, 0xef };
+enum ss_state {
+	SS_IDLE,
+	SS_WRITE,
+	SS_READ,
+};
+
+volatile enum ss_state ss_state;
+uint8_t cmd_reg;
+
+void spi1_isr(void)  {
+//	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+	uint32_t flags = SPI_SR(hw_details.periph);
+	trace_send_blocking16(3, flags | (ss_state << 8));
+
+	/* In duplex, assume that if we get rxne, then txe is also ok!
+	 * this.... may not be ok.
+	 */
+
+	switch(ss_state) {
+	case SS_IDLE:
+		if (flags & SPI_SR_RXNE) {
+			uint8_t cmd = spi_read(hw_details.periph);
+			trace_send_blocking8(4, cmd);
+			uint8_t reg = cmd & 0x7;
+			if (reg > ARRAY_LENGTH(spi_regs)) {
+				/* how do we flag errors? */
+				ER_DPRINTF("out of bounds register requested");
+				reg = 0;
+			}
+			if (cmd & 0x80) {
+				spi_write(hw_details.periph, 0);
+				ss_state = SS_WRITE;
+				cmd_reg = reg;
+			} else {
+				spi_write(hw_details.periph, spi_regs[reg]);
+				ss_state = SS_READ;
+			}
+		}
+		break;
+	case SS_WRITE:
+		if (flags & SPI_SR_RXNE) {
+			uint8_t newdata = spi_read(hw_details.periph);
+			spi_regs[cmd_reg] = newdata;
+			trace_send_blocking8(5, newdata);
+			/* prepare next round */
+			spi_write(hw_details.periph, 0);
+			ss_state = SS_IDLE;
+		}
+		break;
+	case SS_READ:
+		if (flags & SPI_SR_RXNE) {
+			(void)spi_read(hw_details.periph);
+			trace_send_blocking8(6, 0);
+			/* prepare next round */
+			spi_write(hw_details.periph, 0);
+			ss_state = SS_IDLE;
+		}
+		break;
 	}
 }
 
-/* easier to debug here */
-uint8_t spi_regs[] = { 0xaa, 0xca, 0xfe, 0xbe, 0xef };
 static void prvTaskSpiSlave(void *pvParameters)
 {
 	(void)pvParameters;
@@ -181,19 +217,22 @@ static void prvTaskSpiSlave(void *pvParameters)
 	nvic_enable_irq(NVIC_EXTI9_5_IRQ);
 
 	spi_enable_rx_buffer_not_empty_interrupt(hw_details.periph);
-	spi_enable_tx_buffer_empty_interrupt(hw_details.periph);
+	//spi_enable_tx_buffer_empty_interrupt(hw_details.periph);
+	spi_enable_error_interrupt(hw_details.periph);
 	/* numerically greater than free rtos kernel split (lower priority) */
         nvic_set_priority(hw_details.periph_irq, 6<<4);
 	nvic_enable_irq(hw_details.periph_irq);
 
 	/* Prestuff first byte */
-	SPI_DR(hw_details.periph) = 0;
+	// can't do that here, periph isn't even enabled? do it when we turn it on?
+	//SPI_DR(hw_details.periph) = 0;
 
 	while(1) {
 		/* Block on a receive fifo, statemachine on that... */
-		uint8_t in, out;
+		uint8_t in;//, out;
 		BaseType_t rc = xQueueReceive(spiQ_rx, &in, portMAX_DELAY);
 		configASSERT(rc); /* We want to block forever */
+#if 0
 		trace_send_blocking8(2, in);
 		bool write = in & 0x80;
 		unsigned reg = in & 0x7f;
@@ -212,6 +251,7 @@ static void prvTaskSpiSlave(void *pvParameters)
 			xQueueSend(spiQ_tx, &out, portMAX_DELAY);
 			trace_send_blocking8(6, out);
 		}
+#endif
 	}
 
 }
