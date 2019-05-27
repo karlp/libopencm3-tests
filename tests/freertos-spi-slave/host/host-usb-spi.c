@@ -355,6 +355,9 @@ static enum usbd_request_return_codes hostspit_control_request(usbd_device *usbd
 		}
 		xQueueReset(spiQ_rx);
 		gpio_clear(hw_details.cs_port, hw_details.cs_pin);
+		for (uint32_t i = 0; i < ((uint32_t)req->wValue << 16); i++) {
+			__asm volatile( "NOP");
+		}
 		for (int i = 0; i < req->wLength; i++) {
 			uint8_t x = spi_xfer(hw_details.periph, real[i]);
 			BaseType_t rv = xQueueSendToBack(spiQ_rx, &x, 0);
@@ -387,11 +390,17 @@ static enum usbd_request_return_codes hostspit_control_request(usbd_device *usbd
 		}
 		xQueueReset(spiQ_rx);
 		spi_enable(hw_details.periph);
+		for (uint32_t i = 0; i < ((uint32_t)req->wValue << 5); i++) {
+			__asm volatile( "NOP");
+		}
 		for (int i = 0; i < req->wLength; i++) {
 			uint8_t x = spi_xfer(hw_details.periph, real[i]);
 			BaseType_t rv = xQueueSendToBack(spiQ_rx, &x, 0);
 			// If you overflowed this jumbo queue, you have issues
 			configASSERT(rv == pdTRUE);
+		}
+		for (uint32_t i = 0; i < ((uint32_t)req->wValue << 5); i++) {
+			__asm volatile( "NOP");
 		}
 		spi_clean_disable2(hw_details.periph);
 		return USBD_REQ_HANDLED;
