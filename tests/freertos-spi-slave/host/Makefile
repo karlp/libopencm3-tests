@@ -12,7 +12,7 @@ include ../../../freertos.cm3.rules.mk
 
 OPENCM3_DIR=../../../libopencm3
 DEVICE=stm32l151xb
-OOCD_FILE = openocd.stm32l1-generic.cfg
+OOCD_FILE = ../../../openocd/openocd.host-stm32l1.cfg
 include ../../../rules.mk
 
 
