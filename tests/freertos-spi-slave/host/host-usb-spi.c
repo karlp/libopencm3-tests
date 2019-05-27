@@ -330,6 +330,19 @@ static enum usbd_request_return_codes hostspit_control_request(usbd_device *usbd
 		*len = 0;
 		return USBD_REQ_HANDLED;
 
+	case 4:
+		/* hard take the pin back and set */
+		gpio_mode_setup(hw_details.cs_port, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, hw_details.cs_pin);
+		if (real[0]) {
+			ER_DPRINTF("hard SET\n");
+			gpio_set(hw_details.cs_port, hw_details.cs_pin);
+		} else {
+			ER_DPRINTF("hard _clear\n");
+			gpio_clear(hw_details.cs_port, hw_details.cs_pin);
+		}
+		*len = 0;
+		return USBD_REQ_HANDLED;
+
 	/* FIXME - both of these run completely blocking within the usb task thread.
 	 * Especially if you want to try slow speeds, make them work async in the spi thread instead?
 	 */
