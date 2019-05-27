@@ -73,13 +73,13 @@ static void hw_init(void)
 
 	/* spi control lines */
 	rcc_periph_clock_enable(hw_details.port_rcc);
-	gpio_mode_setup(hw_details.port, GPIO_MODE_AF, GPIO_PUPD_NONE, hw_details.pins);
+	gpio_mode_setup(hw_details.port, GPIO_MODE_AF, GPIO_PUPD_PULLUP, hw_details.pins);
 //	gpio_set_output_options(hw_details.port, GPIO_OTYPE_PP, GPIO_OSPEED_10MHZ, hw_details.pins);
 	// For L0 gpio_set_af(hw_details.port, GPIO_AF0, hw_details.pins);
 	gpio_set_af(hw_details.port, GPIO_AF5, hw_details.pins);
 
 	rcc_periph_clock_enable(hw_details.cs_rcc);
-	gpio_mode_setup(hw_details.cs_port, GPIO_MODE_AF, GPIO_PUPD_NONE, hw_details.cs_pin);
+	gpio_mode_setup(hw_details.cs_port, GPIO_MODE_AF, GPIO_PUPD_PULLUP, hw_details.cs_pin);
 //	gpio_set_output_options(hw_details.port, GPIO_OTYPE_PP, GPIO_OSPEED_10MHZ, hw_details.pins);
 	// WHAT? gpio_set_af(hw_details.cs_port, GPIO_AF5, hw_details.cs_pins);
 
