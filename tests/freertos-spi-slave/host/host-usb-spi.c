@@ -64,6 +64,8 @@ static void hw_init(void)
 {
 	/* trigger pin gpio */
 	rcc_periph_clock_enable(hw_details.trigger_rcc);
+        rcc_periph_clock_enable(hw_details.periph_rcc);
+	rcc_periph_clock_enable(hw_details.cs_rcc);
 	gpio_mode_setup(hw_details.trigger_port, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, hw_details.trigger_pin);
 	/* Make sure we're starting clean */
 	gpio_clear(hw_details.trigger_port, hw_details.trigger_pin);
@@ -105,8 +107,6 @@ static void prvTaskGreenBlink1(void *pvParameters)
 static void prvTaskSpiMaster(void *pvParameters)
 {
 	(void)pvParameters;
-        rcc_periph_clock_enable(hw_details.periph_rcc);
-	rcc_periph_clock_enable(hw_details.cs_rcc);
 	/* This is _heaps_ */
 	/* NOTE: queues not stream/message buffers because freertos 10.x is busted in openocd, no other reason */
 	spiQ_rx = xQueueCreate(1024, 1);
