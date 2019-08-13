@@ -59,6 +59,17 @@ struct hw_detail hw_details = {
 QueueHandle_t spiQ_rx;
 QueueHandle_t spiQ_tx;
 
+uint8_t spi_regs[] = { 0xaa, 0xca, 0xfe, 0xbe, 0xef };
+enum ss_state {
+	SS_IDLE,
+	SS_WRITE,
+	SS_READ1,
+	SS_READ2,
+};
+
+volatile enum ss_state ss_state;
+volatile uint8_t cmd_reg;
+
 /* provided in board files please*/
 /**
  * Setup any gpios or anything hardware specific.
@@ -106,6 +117,26 @@ static void prvTaskGreenBlink1(void *pvParameters)
 }
 
 bool exti_direction_falling;
+
+void dis_exti9_5_isr(void) {
+	// Turn on spi when it goes low.
+	exti_reset_request(EXTI6);
+
+        if (exti_direction_falling) {
+		ER_DPRINTF("\n[[\n");
+//		ss_state = SS_IDLE;
+//		// Prime our first reply in idle state.
+//		SPI_DR(hw_details.periph) = 0;
+		exti_direction_falling = false;
+                exti_set_trigger(EXTI6, EXTI_TRIGGER_RISING);
+        } else {
+		// TODO - if it goes high again, make sure we reset our state machine!
+		ER_DPRINTF("]]\n");
+                exti_direction_falling = true;
+                exti_set_trigger(EXTI6, EXTI_TRIGGER_FALLING);
+        }
+}
+
 void exti9_5_isr(void)
 {
 	// Turn on spi when it goes low.
@@ -114,33 +145,35 @@ void exti9_5_isr(void)
         if (exti_direction_falling) {
 		ER_DPRINTF("\n[[\n");
 		spi_enable(hw_details.periph);
-		SPI_DR(hw_details.periph) = 0;
+		// Prime our first reply in idle state. (should get a txe instantly)
+		//SPI_DR(hw_details.periph) = 0;
 		exti_direction_falling = false;
                 exti_set_trigger(EXTI6, EXTI_TRIGGER_RISING);
         } else {
 		// TODO - if it goes high again, make sure we reset our state machine!
 		ER_DPRINTF("]]\n");
+		ss_state = SS_IDLE;
+#if 1
+//		while (!(SPI_SR(hw_details.periph) & SPI_SR_RXNE)) {
+//			;
+//		}
+//		while (!(SPI_SR(hw_details.periph) & SPI_SR_TXE)) {
+//			;
+//		}
+		while (!(SPI_SR(hw_details.periph) & SPI_SR_BSY)) {
+			;
+		}
+#endif
 		spi_disable(hw_details.periph);
                 exti_direction_falling = true;
                 exti_set_trigger(EXTI6, EXTI_TRIGGER_FALLING);
         }
 }
 
-
-uint8_t spi_regs[] = { 0xaa, 0xca, 0xfe, 0xbe, 0xef };
-enum ss_state {
-	SS_IDLE,
-	SS_WRITE,
-	SS_READ,
-};
-
-volatile enum ss_state ss_state;
-uint8_t cmd_reg;
-
 void spi1_isr(void)  {
 //	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 	uint32_t flags = SPI_SR(hw_details.periph);
-	trace_send_blocking16(3, flags | (ss_state << 8));
+	trace_send_blocking16(3, flags | (ss_state << 12));
 
 	/* In duplex, assume that if we get rxne, then txe is also ok!
 	 * this.... may not be ok.
@@ -150,39 +183,46 @@ void spi1_isr(void)  {
 	case SS_IDLE:
 		if (flags & SPI_SR_RXNE) {
 			uint8_t cmd = spi_read(hw_details.periph);
+			spi_write(hw_details.periph, 0); // this is byte 1, 0 was prestuffed
 			trace_send_blocking8(4, cmd);
-			uint8_t reg = cmd & 0x7;
-			if (reg > ARRAY_LENGTH(spi_regs)) {
+			cmd_reg = cmd & 0x7f;
+			if (cmd_reg > ARRAY_LENGTH(spi_regs)) {
 				/* how do we flag errors? */
 				ER_DPRINTF("out of bounds register requested");
-				reg = 0;
+				cmd_reg = 0;
 			}
 			if (cmd & 0x80) {
-				spi_write(hw_details.periph, 0);
 				ss_state = SS_WRITE;
-				cmd_reg = reg;
 			} else {
-				spi_write(hw_details.periph, spi_regs[reg]);
-				ss_state = SS_READ;
+				ss_state = SS_READ1;
 			}
 		}
 		break;
 	case SS_WRITE:
 		if (flags & SPI_SR_RXNE) {
 			uint8_t newdata = spi_read(hw_details.periph);
+			/* prepare next round */
+			spi_write(hw_details.periph, 0); // this is byte 2, byte 1 was transferred in idle
 			spi_regs[cmd_reg] = newdata;
 			trace_send_blocking8(5, newdata);
-			/* prepare next round */
-			spi_write(hw_details.periph, 0);
 			ss_state = SS_IDLE;
 		}
 		break;
-	case SS_READ:
+	case SS_READ1:
 		if (flags & SPI_SR_RXNE) {
 			(void)spi_read(hw_details.periph);
-			trace_send_blocking8(6, 0);
+			spi_write(hw_details.periph, spi_regs[cmd_reg]);  // this is byte 2, byte 1 was transferred in idle.
+			trace_send_blocking8(6, spi_regs[cmd_reg]);
 			/* prepare next round */
-			spi_write(hw_details.periph, 0);
+			ss_state = SS_READ2;
+		}
+		break;
+	case SS_READ2:
+		if (flags & SPI_SR_RXNE) {
+			(void)spi_read(hw_details.periph);
+			/* prepare next round */
+			spi_write(hw_details.periph, 0); // this is byte 2, byte 1 was transferred in idle
+			trace_send_blocking8(6, 0);
 			ss_state = SS_IDLE;
 		}
 		break;
