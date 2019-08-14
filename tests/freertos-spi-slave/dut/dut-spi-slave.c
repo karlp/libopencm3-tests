@@ -146,7 +146,7 @@ void dis_exti9_5_isr(void) {
         }
 }
 
-void exti9_5_isr(void)
+void no_exti9_5_isr(void)
 {
 	// Turn on spi when it goes low.
 	exti_reset_request(EXTI6);
@@ -222,7 +222,7 @@ void spi1_isr__rtos_attempt(void) {
 	}
 }
 
-void spi1_isr(void) {
+void spi1_isr_clean_fresh2(void) {
 	uint32_t flags = SPI_SR(hw_details.periph);
 	trace_send_blocking16(3, flags);
 	gpio_set(hw_details.led_port, hw_details.led_pin);
@@ -283,6 +283,36 @@ void spi1_isr(void) {
 	}
 	gpio_clear(hw_details.led_port, hw_details.led_pin);
 }
+
+/* The dumb version, just reply with a counter, work out what the fuck's going on. */
+static volatile uint8_t dumb_to_send = 0;
+void spi1_isr(void) {
+	uint32_t flags = SPI_SR(hw_details.periph);
+	trace_send_blocking16(3, flags);
+	gpio_set(hw_details.led_port, hw_details.led_pin);
+	if (flags & SPI_SR_TXE) {
+		gpio_set(GPIOA, GPIO2);
+		trace_send_blocking8(4, dumb_to_send);
+		SPI_DR(hw_details.periph) = dumb_to_send;
+		gpio_clear(GPIOA, GPIO2);
+	}
+	if (flags & SPI_SR_RXNE) {
+		gpio_set(GPIOA, GPIO3);
+		uint8_t x = SPI_DR(hw_details.periph);
+		trace_send_blocking8(5, x);
+		dumb_to_send = x + 1;
+		gpio_clear(GPIOA, GPIO3);
+	}
+	if (flags & SPI_SR_OVR) {
+		trace_send_blocking8(15, 1);
+		ER_DPRINTF("<<OVERRUN>>");
+		/* clear it, hopefully we can continue, better than just hanging */
+		(void)spi_read(hw_details.periph);
+		(void)SPI_SR(hw_details.periph);
+	}
+	gpio_clear(hw_details.led_port, hw_details.led_pin);
+}
+
 
 void old_spi1_isr(void)  {
 //	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
@@ -354,7 +384,7 @@ static void prvTaskSpiSlave(void *pvParameters)
 	rcc_periph_clock_enable(hw_details.cs_rcc);
 	rcc_periph_clock_enable(RCC_SYSCFG);
 	gpio_mode_setup(hw_details.cs_port, GPIO_MODE_INPUT, GPIO_PUPD_PULLUP, hw_details.cs_pin);
-#if 1
+#if 0
 	exti_select_source(EXTI6, hw_details.cs_port);
         exti_set_trigger(EXTI6, EXTI_TRIGGER_FALLING);
 	exti_direction_falling = true;
