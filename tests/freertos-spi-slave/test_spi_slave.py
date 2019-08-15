@@ -75,23 +75,32 @@ class TestSpiBasic(unittest.TestCase):
         print("ok, read, and got x", x)
 
     def test_reg_read_write(self):
-        self.dev.ctrl_transfer(uu.CTRL_OUT | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_INIT2, 0, 0, [6 << 3, 0, 0, 0, 0])
+        self.dev.ctrl_transfer(uu.CTRL_OUT | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_INIT, 0, 0, [6 << 3, 0, 0, 0, 0])
+
+        def read_reg(reg, delay=0):
+            x = self.dev.ctrl_transfer(uu.CTRL_OUT | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_XFER, 0, delay, [reg, 0])
+            x = self.dev.ctrl_transfer(uu.CTRL_IN | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_READ, 0, 0, x)
+            return x
+
+        print(read_reg(3,1))
+        print(read_reg(3,1))
+        print(read_reg(3,1))
 
         # issue a read of register 2
-        x = self.dev.ctrl_transfer(uu.CTRL_OUT | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_XFER2, 2, 0, [0x3, 0])
-        print("did a reg 'read' which is a usb write only", x)
+        #x = self.dev.ctrl_transfer(uu.CTRL_OUT | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_XFER, 0, 0, [0x2, 0])
+        #print("did a reg 'read' which is a usb write only", x)
 
-        x = self.dev.ctrl_transfer(uu.CTRL_IN | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_READ, 0, 0, x)
-        print("reading the reply backk in again, got", x)
+        #x = self.dev.ctrl_transfer(uu.CTRL_IN | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_READ, 0, 0, x)
+        #print("reading the reply backk in again, got", x)
 
         # write somethign new back again
-        x = self.dev.ctrl_transfer(uu.CTRL_OUT | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_XFER2, 4, 0, [0x2|0x80, 0xab])
-        print("ok, a new value to a register", x)
+        #x = self.dev.ctrl_transfer(uu.CTRL_OUT | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_XFER2, 4, 0, [0x2|0x80, 0, 0xab])
+        #print("ok, a new value to a register", x)
         # Read it backk again.
-        x = self.dev.ctrl_transfer(uu.CTRL_OUT | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_XFER2, 4, 0, [0x2,0])
-        print("issued a read of that register", x)
-        x = self.dev.ctrl_transfer(uu.CTRL_IN | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_READ, 0, 0, x)
-        print("ok, read, and got x", x)
+        #x = self.dev.ctrl_transfer(uu.CTRL_OUT | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_XFER2, 4, 0, [0x2, 0, 0])
+        #print("issued a read of that register", x)
+        #x = self.dev.ctrl_transfer(uu.CTRL_IN | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_READ, 0, 0, x)
+        #print("ok, read, and got x", x)
 
     def test_raw_toggle2(self):
         self.dev.ctrl_transfer(uu.CTRL_OUT | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, 4, 0, 0, [1])
