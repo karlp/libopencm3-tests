@@ -10,3 +10,19 @@ D4: MOSI
 D5: MISO
 D6: SCK
 D7: CS
+
+
+Originally, I was intending to implement a "classic" register style, with transfers
+of one byte with address and a read/write flag, and the replies coming in the next byte.
+I've failed at writing that in any way reliably enough to have the second byte ready to stuff in time.
+Paste the below into www.wavedrom.com to see visually what I've done instead, using a pad byte
+in the middle of the transfer.  This avoids setting up separate transfers, and should still allow full speed.
+
+{signal: [
+  {name: 'clk', wave: 'p....|....'},
+  {name: 'mosi', wave: 'x3=5x|3==x', data: ['wr+addr', 'pad', 'data', 'rd+addr', 'pad', 'pad']},
+  {name: 'miso', wave: 'x===x|==5x', data: ['0', '0', '0', '0', '0', 'data']},
+  {name: 'cs', wave: '10..1|0..1'},
+  {},
+],config: { hscale: 2 }}
+
