@@ -21,3 +21,22 @@ Notes on assembly hw1-a:
   pins than necessary otherwise.
 * Add some ground pads for test points, just in general.  Test points good,
   more test points better.
+
+Notes on schematic "lessons"
+
+* i2c on pb8/9 aren't actually on CN5, A4/A5 by default, only if you change solder bridges.
+  => need to move the i2c pullups and inputs to the host hw1 board over to their default location
+  on CN5 D14/D15!
+* uart on pa2/3 on cn9 aren't by default, they're routed to the onboard stlinks of nucleos.
+  Is there a uart on any pins available by default?!!
+  PB6 is available for uart-tx, (usart1) CN5 pin3 (already in use for spi!)
+  PA9 is _also_ usart-tx (usart1) CN5-pin1
+  pa10 is available! usart1-rx CN9-pin3
+* SPI CS, on PB6, despite the nucleo user manual saying is available.  isn't.  It's not in
+  the AF table, or the pin descriptions for PB6.
+  => Need to find another spi cs if you want to test hardware css control
+	nucleo docs only mention spi1, which from above is busted.  Is there another?
+  PA4! on CN8 SPI1 NSS, same SPI1 as we're using already
+  I had discounted this originally, as it was the only pin the dac is available on, for the parts with only a single dac channel
+  (This is DAC from the _DUT_ so can't be moved)
+* pin numbers on arduino hheaders doesn't match numbering in the nucleo user manuals, which just makes things hard.
