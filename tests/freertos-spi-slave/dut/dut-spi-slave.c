@@ -146,32 +146,39 @@ void dis_exti9_5_isr(void) {
         }
 }
 
-void no_exti9_5_isr(void)
+void exti9_5_isr(void)
 {
 	// Turn on spi when it goes low.
 	exti_reset_request(EXTI6);
 
         if (exti_direction_falling) {
-		ER_DPRINTF("\n[[\n");
+		//ER_DPRINTF("\n[[\n");
+		trace_send_blocking8(6, 0);
+		//spi_enable_tx_buffer_empty_interrupt(hw_details.periph);
 		spi_enable(hw_details.periph);
+
 		exti_direction_falling = false;
                 exti_set_trigger(EXTI6, EXTI_TRIGGER_RISING);
         } else {
 		// TODO - if it goes high again, make sure we reset our state machine!
-		ER_DPRINTF("]]\n");
+		//ER_DPRINTF("]]\n");
+		trace_send_blocking8(14, 0);
 		ss_state = SS_IDLE;
 #if 1
-//		while (!(SPI_SR(hw_details.periph) & SPI_SR_RXNE)) {
-//			;
-//		}
-//		while (!(SPI_SR(hw_details.periph) & SPI_SR_TXE)) {
-//			;
-//		}
-		while (!(SPI_SR(hw_details.periph) & SPI_SR_BSY)) {
+		while (!(SPI_SR(hw_details.periph) & SPI_SR_RXNE)) {
 			;
 		}
-#endif
+		while (!(SPI_SR(hw_details.periph) & SPI_SR_TXE)) {
+			;
+		}
+		// per errata, disable first, then check it's not busy still
+		//spi_disable_tx_buffer_empty_interrupt(hw_details.periph);
 		spi_disable(hw_details.periph);
+		// THIS IS HANGING!
+//		while (SPI_SR(hw_details.periph) & SPI_SR_BSY) {
+//			;
+//		}
+#endif
                 exti_direction_falling = true;
                 exti_set_trigger(EXTI6, EXTI_TRIGGER_FALLING);
         }
@@ -293,14 +300,14 @@ void spi1_isr(void) {
 	if (flags & SPI_SR_TXE) {
 		gpio_set(GPIOA, GPIO2);
 		trace_send_blocking8(4, dumb_to_send);
-		SPI_DR(hw_details.periph) = dumb_to_send;
+		SPI_DR(hw_details.periph) = dumb_to_send++;
 		gpio_clear(GPIOA, GPIO2);
 	}
 	if (flags & SPI_SR_RXNE) {
 		gpio_set(GPIOA, GPIO3);
 		uint8_t x = SPI_DR(hw_details.periph);
 		trace_send_blocking8(5, x);
-		dumb_to_send = x + 1;
+		//dumb_to_send = x + 1;
 		gpio_clear(GPIOA, GPIO3);
 	}
 	if (flags & SPI_SR_OVR) {
@@ -384,7 +391,7 @@ static void prvTaskSpiSlave(void *pvParameters)
 	rcc_periph_clock_enable(hw_details.cs_rcc);
 	rcc_periph_clock_enable(RCC_SYSCFG);
 	gpio_mode_setup(hw_details.cs_port, GPIO_MODE_INPUT, GPIO_PUPD_PULLUP, hw_details.cs_pin);
-#if 0
+#if 1
 	exti_select_source(EXTI6, hw_details.cs_port);
         exti_set_trigger(EXTI6, EXTI_TRIGGER_FALLING);
 	exti_direction_falling = true;
@@ -394,13 +401,13 @@ static void prvTaskSpiSlave(void *pvParameters)
 #endif
 
 	spi_enable_rx_buffer_not_empty_interrupt(hw_details.periph);
-	spi_enable_tx_buffer_empty_interrupt(hw_details.periph);
+	//spi_enable_tx_buffer_empty_interrupt(hw_details.periph);
 	spi_enable_error_interrupt(hw_details.periph);
 	/* numerically greater than free rtos kernel split (lower priority) */
         nvic_set_priority(hw_details.periph_irq, 6<<4);
 	nvic_enable_irq(hw_details.periph_irq);
 
-	spi_enable(hw_details.periph);
+	//spi_enable(hw_details.periph);
 	ss_state = SS_IDLE;
 
 	while(1) {
