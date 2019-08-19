@@ -21,6 +21,7 @@ Notes on assembly hw1-a:
   pins than necessary otherwise.
 * Add some ground pads for test points, just in general.  Test points good,
   more test points better.
+* capacitor footprints longer than needed, were these the "hand solder" variants?
 
 Notes on schematic "lessons"
 
