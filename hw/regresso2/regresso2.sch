@@ -73,13 +73,13 @@ $EndComp
 $Comp
 L Connector_Generic:Conn_02x05_Odd_Even P9
 U 1 1 58CF048F
-P 1800 1450
-F 0 "P9" H 1800 1750 50  0000 C CNN
-F 1 "FX2LA" H 1800 1150 50  0000 C CNN
-F 2 "Socket_Strips:Socket_Strip_Angled_2x05_Pitch2.54mm" H 1800 250 50  0001 C CNN
-F 3 "" H 1800 250 50  0000 C CNN
-F 4 "Wurth 613010243121" H 1800 1450 60  0001 C CNN "female-RA"
-	1    1800 1450
+P 1800 1400
+F 0 "P9" H 1800 1700 50  0000 C CNN
+F 1 "FX2LA" H 1800 1100 50  0000 C CNN
+F 2 "Socket_Strips:Socket_Strip_Angled_2x05_Pitch2.54mm" H 1800 200 50  0001 C CNN
+F 3 "" H 1800 200 50  0000 C CNN
+F 4 "Wurth 613010243121" H 1800 1400 60  0001 C CNN "female-RA"
+	1    1800 1400
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -96,12 +96,12 @@ $EndComp
 $Comp
 L power:GND #PWR06
 U 1 1 58CF0E5B
-P 2200 1750
-F 0 "#PWR06" H 2200 1500 50  0001 C CNN
-F 1 "GND" H 2200 1600 50  0000 C CNN
-F 2 "" H 2200 1750 50  0000 C CNN
-F 3 "" H 2200 1750 50  0000 C CNN
-	1    2200 1750
+P 2200 1700
+F 0 "#PWR06" H 2200 1450 50  0001 C CNN
+F 1 "GND" H 2200 1550 50  0000 C CNN
+F 2 "" H 2200 1700 50  0000 C CNN
+F 3 "" H 2200 1700 50  0000 C CNN
+	1    2200 1700
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -181,9 +181,7 @@ Wire Wire Line
 	3400 7500 3400 7400
 Connection ~ 3300 7500
 Wire Wire Line
-	2100 1650 2200 1650
-Wire Wire Line
-	2200 1650 2200 1750
+	2100 1600 2200 1600
 Wire Wire Line
 	3800 6800 3900 6800
 Wire Wire Line
@@ -200,35 +198,17 @@ Wire Wire Line
 	2200 6600 2600 6600
 Wire Wire Line
 	2600 6500 2200 6500
-Wire Wire Line
-	2100 1250 2150 1250
-Wire Wire Line
-	2100 1350 2150 1350
-Wire Wire Line
-	2100 1450 2150 1450
-Wire Wire Line
-	2100 1550 2150 1550
-Wire Wire Line
-	1600 1250 1550 1250
-Wire Wire Line
-	1600 1350 1550 1350
-Wire Wire Line
-	1600 1450 1550 1450
-Wire Wire Line
-	1600 1550 1550 1550
-Text Label 1550 1250 2    60   ~ 0
+Text Label 1600 1200 2    60   ~ 0
 I2C_SDA
-Text Label 2150 1250 0    60   ~ 0
+Text Label 2100 1200 0    60   ~ 0
 I2C_SCL
-Text Label 1550 1350 2    60   ~ 0
+Text Label 1600 1500 2    60   ~ 0
 UART_TX_OUT
-Text Label 1550 1450 2    60   ~ 0
+Text Label 1600 1300 2    60   ~ 0
 SPI_MOSI
-Text Label 2150 1350 0    60   ~ 0
-UART_RX_OUT
-Text Label 2150 1450 0    60   ~ 0
+Text Label 2100 1300 0    60   ~ 0
 SPI_MISO
-Text Label 1550 1550 2    60   ~ 0
+Text Label 1600 1400 2    60   ~ 0
 SPI_SCK
 Text Notes 850  2300 0    60   Italic 0
 NOTE: this can be freely routed to do whatever's possible!\nPotentially:\nJumpers to select what you're connecting here?\n(but non-ideal)
@@ -382,7 +362,6 @@ F 3 "" H 3900 9900 50  0000 C CNN
 	1    3900 9900
 	1    0    0    -1  
 $EndComp
-NoConn ~ 1600 1650
 Text Notes 1350 1650 0    60   ~ 0
 CLK
 Text Label 4075 6600 0    60   ~ 0
@@ -537,7 +516,7 @@ Text Notes -121300 438350 0    60   ~ 0
 IN/OUT from perspective of HOST\nDUT Nucleo is TARGET
 Text Notes 5350 7300 0    60   ~ 0
 IN/OUT is from the perspective of HOST\nDUT Nucleo is TARGET
-Text Label 2150 1550 0    60   ~ 0
+Text Label 2100 1400 0    60   ~ 0
 SPI_CS
 Text Label 7100 1150 0    60   ~ 0
 SWCLK
@@ -828,14 +807,6 @@ F 3 "" H 2350 6800 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 Wire Wire Line
-	2550 5700 2600 5700
-Wire Wire Line
-	2600 5800 2350 5800
-Wire Wire Line
-	2600 6700 2300 6700
-Wire Wire Line
-	2600 6800 2150 6800
-Wire Wire Line
 	3800 6500 4075 6500
 Wire Wire Line
 	3800 6600 4075 6600
@@ -863,10 +834,6 @@ F 3 "" H 4750 5800 50  0001 C CNN
 	1    4550 5800
 	0    1    1    0   
 $EndComp
-Wire Wire Line
-	3800 5700 4350 5700
-Wire Wire Line
-	3800 5800 4550 5800
 Text Notes 3000 5450 0    60   ~ 0
 no need for rtc\nthis is the host board
 Wire Wire Line
@@ -1134,4 +1101,11 @@ NoConn ~ 13300 2800
 NoConn ~ 13300 2700
 Text Notes 13400 1500 0    61   ~ 0
 AREF
+Text Notes 6400 4600 0    61   ~ 0
+add a button for autorunning tests, or getting to DFU mode? or is that just via\na usb control method in the host we just "always impelemtn"
+Text Label 2100 1500 0    60   ~ 0
+UART_RX_OUT
+Wire Wire Line
+	2200 1600 2200 1700
+NoConn ~ 1600 1600
 $EndSCHEMATC

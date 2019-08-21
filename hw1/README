@@ -16,6 +16,11 @@ Notes on assembly hw1-a:
 * maybe a fet to turn on/off the i2c pull ups programatically?
   (maybe just a single jumper? is there really any need for individual control
    of the pullups?)
+karlp | http://tinyurl.com/y37mrp5w
+23:14:38      englishman | maybe put a second nfet to actually simulate the opendrain i2c peripherals?
+23:14:40           Thorn | I reduced the resistors to 2.2K and the drain voltage is now higher
+23:15:08           Thorn | should not be a problem with a low Rds(on) mosfet though
+
 * move stlink connector 90° or just down and tuck it in, so we can pull the
   edge in.  It overlaps the buttons on the nucleos, and requires longer
   pins than necessary otherwise.
