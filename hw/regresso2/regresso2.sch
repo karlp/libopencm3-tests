@@ -60,17 +60,6 @@ $EndComp
 Text Notes 12800 1700 0    60   ~ 0
 1
 $Comp
-L MCU_ST_STM32L1:STM32L151C6TxA U1
-U 1 1 58CEFE92
-P 3200 5800
-F 0 "U1" H 2700 7350 50  0000 L BNN
-F 1 "STM32L151C6TxA" H 4100 7350 50  0000 R BNN
-F 2 "Housings_QFP:TQFP-48_7x7mm_Pitch0.5mm" H 5150 4250 50  0000 R TNN
-F 3 "" H 3200 5800 50  0000 C CNN
-	1    3200 5800
-	1    0    0    -1  
-$EndComp
-$Comp
 L Connector_Generic:Conn_02x05_Odd_Even P9
 U 1 1 58CF048F
 P 1800 1400
@@ -115,17 +104,17 @@ F 3 "" H 5350 1500 50  0000 C CNN
 	1    5350 1500
 	1    0    0    -1  
 $EndComp
-Text Label 3900 6800 0    60   ~ 0
+Text Label 4000 6800 0    60   ~ 0
 USB_DM
-Text Label 3900 6900 0    60   ~ 0
+Text Label 4000 6900 0    60   ~ 0
 USB_DP
 Text Label 5000 1750 3    60   ~ 0
 USB_DM
 Text Label 4900 1750 3    60   ~ 0
 USB_DP
-Text Label 3900 6100 0    60   ~ 0
+Text Label 4000 6100 0    60   ~ 0
 DAC1_OUT
-Text Label 3900 6200 0    60   ~ 0
+Text Label 4000 6200 0    60   ~ 0
 DAC2_OUT
 Text Label 2200 6500 0    60   ~ 0
 I2C_SCL
@@ -183,17 +172,15 @@ Connection ~ 3300 7500
 Wire Wire Line
 	2100 1600 2200 1600
 Wire Wire Line
-	3800 6800 3900 6800
-Wire Wire Line
-	3800 6900 3900 6900
+	3900 6800 4000 6800
 Wire Wire Line
 	5000 1700 5000 2150
 Wire Wire Line
 	4900 1700 4900 2150
 Wire Wire Line
-	3800 6100 3900 6100
+	3900 6100 4000 6100
 Wire Wire Line
-	3800 6200 3900 6200
+	3900 6200 4000 6200
 Wire Wire Line
 	2200 6600 2600 6600
 Wire Wire Line
@@ -262,29 +249,29 @@ Connection ~ 3350 10050
 $Comp
 L Device:C C1
 U 1 1 58CF4B65
-P 1250 4400
-F 0 "C1" H 1275 4500 50  0000 L CNN
-F 1 "100n" H 1275 4300 50  0000 L CNN
-F 2 "Capacitor_SMD:C_0603_1608Metric" H 1288 4250 50  0000 C CNN
-F 3 "" H 1250 4400 50  0000 C CNN
-	1    1250 4400
+P 1250 4600
+F 0 "C1" H 1275 4700 50  0000 L CNN
+F 1 "100n" H 1275 4500 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 1288 4450 50  0000 C CNN
+F 3 "" H 1250 4600 50  0000 C CNN
+	1    1250 4600
 	0    -1   -1   0   
 $EndComp
 $Comp
 L power:GND #PWR010
 U 1 1 58CF4BEA
-P 950 4400
-F 0 "#PWR010" H 950 4150 50  0001 C CNN
-F 1 "GND" H 950 4250 50  0000 C CNN
-F 2 "" H 950 4400 50  0000 C CNN
-F 3 "" H 950 4400 50  0000 C CNN
-	1    950  4400
+P 950 4600
+F 0 "#PWR010" H 950 4350 50  0001 C CNN
+F 1 "GND" H 950 4450 50  0000 C CNN
+F 2 "" H 950 4600 50  0000 C CNN
+F 3 "" H 950 4600 50  0000 C CNN
+	1    950  4600
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	2600 4400 1400 4400
+	2600 4600 1400 4600
 Wire Wire Line
-	1100 4400 950  4400
+	1100 4600 950  4600
 NoConn ~ 2600 5500
 NoConn ~ 2600 5400
 NoConn ~ 2600 5300
@@ -294,14 +281,14 @@ Wire Wire Line
 Text Label 2200 6000 0    60   Italic 0
 SWO
 Wire Wire Line
-	3800 7000 3900 7000
+	3900 7000 4000 7000
 Wire Wire Line
-	3800 7100 3900 7100
-Text Label 3900 7000 0    60   Italic 0
+	3900 7100 4000 7100
+Text Label 4000 7000 0    60   Italic 0
 SWDIO
-Text Label 3900 7100 0    60   Italic 0
+Text Label 4000 7100 0    60   Italic 0
 SWCLK
-Text Label 1400 4400 0    60   Italic 0
+Text Label 1400 4600 0    60   Italic 0
 NRST
 $Comp
 L power:PWR_FLAG #FLG011
@@ -364,10 +351,8 @@ F 3 "" H 3900 9900 50  0000 C CNN
 $EndComp
 Text Notes 1350 1650 0    60   ~ 0
 CLK
-Text Label 4075 6600 0    60   ~ 0
+Text Label 4100 6600 0    60   ~ 0
 UART_TX_OUT
-Text Label 4075 6700 0    60   ~ 0
-UART_RX_OUT
 Wire Wire Line
 	2600 6900 2200 6900
 Wire Wire Line
@@ -458,11 +443,11 @@ Wire Wire Line
 	7700 10150 7700 9950
 Connection ~ 7700 9950
 $Comp
-L Connector_Generic:Conn_01x06 P11
+L Connector_Generic:Conn_01x06 STLINK1
 U 1 1 59F7E088
 P 6850 1250
-F 0 "P11" H 6850 1600 50  0000 C CNN
-F 1 "CONN_01X06" V 6950 1250 50  0000 C CNN
+F 0 "STLINK1" H 6850 1600 50  0000 C CNN
+F 1 "STLINK" V 6950 1250 50  0000 C CNN
 F 2 "Socket_Strips:Socket_Strip_Straight_1x06_Pitch2.54mm" H 6850 1250 50  0001 C CNN
 F 3 "" H 6850 1250 50  0001 C CNN
 	1    6850 1250
@@ -508,7 +493,6 @@ Text Label 7100 1550 0    60   ~ 0
 SWO
 Text Notes 6700 850  0    60   ~ 0
 STLink compatible debug
-NoConn ~ 3800 7200
 NoConn ~ 2600 6400
 NoConn ~ 2600 6300
 NoConn ~ 2600 6200
@@ -605,34 +589,8 @@ Wire Wire Line
 Wire Wire Line
 	12400 2300 12400 2200
 NoConn ~ 12500 2400
-Text Notes 3000 4600 0    39   ~ 0
-Bootloader wut?
-$Comp
-L Device:C C6
-U 1 1 5A0FB867
-P 1250 4800
-F 0 "C6" H 1275 4900 50  0000 L CNN
-F 1 "100n" H 1275 4700 50  0000 L CNN
-F 2 "Capacitor_SMD:C_0603_1608Metric" H 1288 4650 50  0000 C CNN
-F 3 "" H 1250 4800 50  0000 C CNN
-	1    1250 4800
-	0    -1   -1   0   
-$EndComp
-$Comp
-L power:GND #PWR020
-U 1 1 5A0FB8D8
-P 950 4800
-F 0 "#PWR020" H 950 4550 50  0001 C CNN
-F 1 "GND" H 950 4650 50  0000 C CNN
-F 2 "" H 950 4800 50  0000 C CNN
-F 3 "" H 950 4800 50  0000 C CNN
-	1    950  4800
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	1100 4800 950  4800
-Text Notes 3000 4800 0    60   ~ 0
-Not needed on L1, but needed for L4/F3
+Text Notes 3000 4800 0    39   ~ 0
+Bootloader wut?\nRely on app code rebooting into ROM DFU?
 Text Notes 12100 3400 0    60   ~ 0
 TODO\n[ ] Route all spare pins to _something_?
 $Comp
@@ -664,61 +622,19 @@ Wire Wire Line
 	8900 10150 8900 9950
 Connection ~ 8900 9950
 Connection ~ 10750 9500
-Text Label 2600 4800 2    60   ~ 0
-VLCD
 Text Notes 2450 3500 0    60   ~ 0
 L1/F303/L4 in qfp48 are all compatible with this layout\n(but f3 needs external pullup on USB-DP)
 $Comp
-L Device:Crystal_GND24_Small Y1
-U 1 1 5A137095
-P 1650 5100
-F 0 "Y1" H 1700 5275 50  0000 L CNN
-F 1 "Crystal_GND24_Small" H 1700 5200 50  0000 L CNN
-F 2 "Crystals:Crystal_SMD_SeikoEpson_FA238-4pin_3.2x2.5mm" H 1650 5100 50  0001 C CNN
-F 3 "" H 1650 5100 50  0001 C CNN
-	1    1650 5100
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	1750 5100 1800 5100
-$Comp
-L Device:C C10
-U 1 1 5A1373B8
-P 1800 5450
-F 0 "C10" H 1825 5550 50  0000 L CNN
-F 1 "18pf" H 1825 5350 50  0000 L CNN
-F 2 "Capacitor_SMD:C_0603_1608Metric" H 1838 5300 50  0000 C CNN
-F 3 "" H 1800 5450 50  0000 C CNN
-	1    1800 5450
-	1    0    0    -1  
-$EndComp
-$Comp
 L Device:C C9
 U 1 1 5A137455
-P 1500 5450
-F 0 "C9" H 1525 5550 50  0000 L CNN
-F 1 "18pf" H 1525 5350 50  0000 L CNN
-F 2 "Capacitor_SMD:C_0603_1608Metric" H 1538 5300 50  0000 C CNN
-F 3 "" H 1500 5450 50  0000 C CNN
-	1    1500 5450
+P 1000 5650
+F 0 "C9" H 1025 5750 50  0000 L CNN
+F 1 "18pf" H 1025 5550 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 1038 5500 50  0000 C CNN
+F 3 "" H 1000 5650 50  0000 C CNN
+	1    1000 5650
 	1    0    0    -1  
 $EndComp
-$Comp
-L power:GND #PWR021
-U 1 1 5A137592
-P 1650 5800
-F 0 "#PWR021" H 1650 5550 50  0001 C CNN
-F 1 "GND" H 1650 5650 50  0000 C CNN
-F 2 "" H 1650 5800 50  0000 C CNN
-F 3 "" H 1650 5800 50  0000 C CNN
-	1    1650 5800
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	1650 5800 1650 5600
-Wire Wire Line
-	1500 5600 1650 5600
-Connection ~ 1650 5600
 NoConn ~ 12500 2100
 Text Notes 12300 2150 0    60   ~ 0
 5V
@@ -735,110 +651,64 @@ F 3 "" H 5000 2350 50  0001 C CNN
 $EndComp
 Text Notes 4550 2700 0    60   ~ 0
 Probe points, for\nbus tracing USB
-Wire Wire Line
-	2600 4600 2250 4600
-Wire Wire Line
-	1500 4900 1500 5100
-Wire Wire Line
-	1500 5100 1550 5100
-Wire Wire Line
-	2600 5000 2400 5000
-Wire Wire Line
-	2400 5000 2400 4900
-Wire Wire Line
-	2400 4900 1500 4900
-Connection ~ 1500 5100
-Wire Wire Line
-	1800 5300 1800 5100
-Connection ~ 1800 5100
 $Comp
 L power:GND #PWR022
 U 1 1 5A43A55C
-P 2250 4600
-F 0 "#PWR022" H 2250 4350 50  0001 C CNN
-F 1 "GND" H 2250 4450 50  0000 C CNN
-F 2 "" H 2250 4600 50  0000 C CNN
-F 3 "" H 2250 4600 50  0000 C CNN
-	1    2250 4600
+P 2200 4800
+F 0 "#PWR022" H 2200 4550 50  0001 C CNN
+F 1 "GND" H 2200 4650 50  0000 C CNN
+F 2 "" H 2200 4800 50  0000 C CNN
+F 3 "" H 2200 4800 50  0000 C CNN
+	1    2200 4800
 	1    0    0    -1  
 $EndComp
 $Comp
 L Connector:TestPoint PB0
 U 1 1 5A43D04F
-P 2550 5700
-F 0 "PB0" H 2550 5970 50  0000 C CNN
-F 1 "TEST_1P" H 2550 5900 50  0000 C CNN
-F 2 "TestPoint:TestPoint_THTPad_1.5x1.5mm_Drill0.7mm" H 2750 5700 50  0001 C CNN
-F 3 "" H 2750 5700 50  0001 C CNN
-	1    2550 5700
+P 2500 5700
+F 0 "PB0" H 2500 5970 50  0000 C CNN
+F 1 "TEST_1P" H 2500 5900 50  0000 C CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 2700 5700 50  0001 C CNN
+F 3 "" H 2700 5700 50  0001 C CNN
+	1    2500 5700
 	0    -1   -1   0   
-$EndComp
-$Comp
-L Connector:TestPoint PB1
-U 1 1 5A43D328
-P 2350 5800
-F 0 "PB1" H 2350 6070 50  0000 C CNN
-F 1 "TEST_1P" H 2350 6000 50  0000 C CNN
-F 2 "TestPoint:TestPoint_THTPad_1.5x1.5mm_Drill0.7mm" H 2550 5800 50  0001 C CNN
-F 3 "" H 2550 5800 50  0001 C CNN
-	1    2350 5800
-	0    -1   -1   0   
-$EndComp
-$Comp
-L Connector:TestPoint PB10
-U 1 1 5A43D40B
-P 2300 6700
-F 0 "PB10" H 2300 6970 50  0000 C CNN
-F 1 "TEST_1P" H 2300 6900 50  0000 C CNN
-F 2 "TestPoint:TestPoint_THTPad_1.5x1.5mm_Drill0.7mm" H 2500 6700 50  0001 C CNN
-F 3 "" H 2500 6700 50  0001 C CNN
-	1    2300 6700
-	0    -1   -1   0   
-$EndComp
-$Comp
-L Connector:TestPoint PB11
-U 1 1 5A43D49D
-P 2150 6800
-F 0 "PB11" H 2150 7070 50  0000 C CNN
-F 1 "TEST_1P" H 2150 7000 50  0000 C CNN
-F 2 "TestPoint:TestPoint_THTPad_1.5x1.5mm_Drill0.7mm" H 2350 6800 50  0001 C CNN
-F 3 "" H 2350 6800 50  0001 C CNN
-	1    2150 6800
-	0    -1   -1   0   
-$EndComp
-Wire Wire Line
-	3800 6500 4075 6500
-Wire Wire Line
-	3800 6600 4075 6600
-Wire Wire Line
-	3800 6700 4075 6700
-$Comp
-L Connector:TestPoint PA0
-U 1 1 5A43FB1F
-P 4350 5700
-F 0 "PA0" H 4350 5970 50  0000 C CNN
-F 1 "TEST_1P" H 4350 5900 50  0000 C CNN
-F 2 "TestPoint:TestPoint_THTPad_1.5x1.5mm_Drill0.7mm" H 4550 5700 50  0001 C CNN
-F 3 "" H 4550 5700 50  0001 C CNN
-	1    4350 5700
-	0    1    1    0   
 $EndComp
 $Comp
 L Connector:TestPoint PA1
+U 1 1 5A43D49D
+P 4700 5700
+F 0 "PA1" H 4700 5970 50  0000 C CNN
+F 1 "TEST_1P" H 4700 5900 50  0000 C CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 4900 5700 50  0001 C CNN
+F 3 "" H 4900 5700 50  0001 C CNN
+	1    4700 5700
+	0    1    1    0   
+$EndComp
+$Comp
+L Connector:TestPoint PA2
+U 1 1 5A43FB1F
+P 4400 5800
+F 0 "PA2" H 4400 6070 50  0000 C CNN
+F 1 "TEST_1P" H 4400 6000 50  0000 C CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 4600 5800 50  0001 C CNN
+F 3 "" H 4600 5800 50  0001 C CNN
+	1    4400 5800
+	0    1    1    0   
+$EndComp
+$Comp
+L Connector:TestPoint PA3
 U 1 1 5A43FBC5
-P 4550 5800
-F 0 "PA1" H 4550 6070 50  0000 C CNN
-F 1 "TEST_1P" H 4550 6000 50  0000 C CNN
-F 2 "TestPoint:TestPoint_THTPad_1.5x1.5mm_Drill0.7mm" H 4750 5800 50  0001 C CNN
-F 3 "" H 4750 5800 50  0001 C CNN
-	1    4550 5800
+P 4500 6000
+F 0 "PA3" H 4500 6270 50  0000 C CNN
+F 1 "TEST_1P" H 4500 6200 50  0000 C CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 4700 6000 50  0001 C CNN
+F 3 "" H 4700 6000 50  0001 C CNN
+	1    4500 6000
 	0    1    1    0   
 $EndComp
 Text Notes 3000 5450 0    60   ~ 0
 no need for rtc\nthis is the host board
-Wire Wire Line
-	2600 4800 1400 4800
-NoConn ~ 2600 5900
+NoConn ~ 2600 6700
 Text Notes 8900 7100 0    60   ~ 0
 TODO Jumper RTS/CTS over to I2C on fx2 port?
 Wire Wire Line
@@ -871,45 +741,39 @@ Wire Wire Line
 	8900 9950 8950 9950
 Wire Wire Line
 	10750 9500 10900 9500
-Wire Wire Line
-	1650 5600 1800 5600
-Wire Wire Line
-	1500 5100 1500 5300
-Wire Wire Line
-	1800 5100 2600 5100
 Connection ~ 7700 10150
 Wire Wire Line
-	3300 4100 3400 4100
+	3400 4300 3500 4300
 Wire Wire Line
-	3400 4100 3400 4200
+	3500 4300 3500 4400
 Wire Wire Line
-	3300 4100 3300 4200
+	3400 4300 3400 4400
 Wire Wire Line
-	3200 4200 3200 4100
+	3300 4400 3300 4300
 Wire Wire Line
-	3100 4100 3100 4200
-Connection ~ 3250 4100
+	3200 4300 3200 4400
+Connection ~ 3350 4300
 $Comp
 L power:+3V3 #PWR04
 U 1 1 58CF063D
-P 3250 4000
-F 0 "#PWR04" H 3250 3850 50  0001 C CNN
-F 1 "+3V3" H 3250 4140 50  0000 C CNN
-F 2 "" H 3250 4000 50  0000 C CNN
-F 3 "" H 3250 4000 50  0000 C CNN
-	1    3250 4000
+P 3350 4200
+F 0 "#PWR04" H 3350 4050 50  0001 C CNN
+F 1 "+3V3" H 3350 4340 50  0000 C CNN
+F 2 "" H 3350 4200 50  0000 C CNN
+F 3 "" H 3350 4200 50  0000 C CNN
+	1    3350 4200
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	3200 4100 3250 4100
-Connection ~ 3300 4100
+	3300 4300 3350 4300
+Connection ~ 3400 4300
 Wire Wire Line
-	3100 4100 3200 4100
+	3200 4300 3300 4300
 Wire Wire Line
-	3250 4100 3250 4000
+	3350 4300 3350 4200
 Wire Wire Line
-	3250 4100 3300 4100
-Connection ~ 3200 4100
+	3350 4300 3400 4300
+Connection ~ 3300 4300
 $Comp
 L Connector:USB_OTG P10
 U 1 1 58CF10AD
@@ -927,44 +791,33 @@ Wire Wire Line
 Wire Wire Line
 	5350 1400 5350 1500
 $Comp
-L Connector_Generic:Conn_01x10 J4
+L Connector_Generic:Conn_01x10 CN5
 U 1 1 5D5815FB
 P 13100 1800
-F 0 "J4" H 13018 1075 50  0000 C CNN
-F 1 "Conn_01x10" H 13018 1166 50  0000 C CNN
+F 0 "CN5" H 13100 1200 50  0000 C CNN
+F 1 "Conn_01x10" V 13200 1800 50  0000 C CNN
 F 2 "Connector_PinHeader_2.54mm:PinHeader_1x10_P2.54mm_Vertical" H 13100 1800 50  0001 C CNN
 F 3 "~" H 13100 1800 50  0001 C CNN
 	1    13100 1800
 	-1   0    0    1   
 $EndComp
 $Comp
-L Connector_Generic:Conn_01x08 J5
+L Connector_Generic:Conn_01x08 CN9
 U 1 1 5D585E14
 P 13100 2800
-F 0 "J5" H 13018 2175 50  0000 C CNN
-F 1 "Conn_01x08" H 13018 2266 50  0000 C CNN
+F 0 "CN9" H 13100 3200 50  0000 C CNN
+F 1 "Conn_01x08" V 13200 2800 50  0000 C CNN
 F 2 "Connector_PinHeader_2.54mm:PinHeader_1x08_P2.54mm_Vertical" H 13100 2800 50  0001 C CNN
 F 3 "~" H 13100 2800 50  0001 C CNN
 	1    13100 2800
 	-1   0    0    1   
 $EndComp
 $Comp
-L Connector_Generic:Conn_01x08 J2
-U 1 1 5D58A16D
-P 12700 2000
-F 0 "J2" H 12618 1375 50  0000 C CNN
-F 1 "Conn_01x08" H 12618 1466 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x08_P2.54mm_Vertical" H 12700 2000 50  0001 C CNN
-F 3 "~" H 12700 2000 50  0001 C CNN
-	1    12700 2000
-	1    0    0    -1  
-$EndComp
-$Comp
-L Connector_Generic:Conn_01x06 J3
+L Connector_Generic:Conn_01x06 CN8
 U 1 1 5D58C12A
 P 12700 2800
-F 0 "J3" H 12618 2275 50  0000 C CNN
-F 1 "Conn_01x06" H 12618 2366 50  0000 C CNN
+F 0 "CN8" H 12700 2400 50  0000 C CNN
+F 1 "Conn_01x06" V 12800 2800 50  0000 C CNN
 F 2 "Connector_PinHeader_2.54mm:PinHeader_1x06_P2.54mm_Vertical" H 12700 2800 50  0001 C CNN
 F 3 "~" H 12700 2800 50  0001 C CNN
 	1    12700 2800
@@ -986,8 +839,8 @@ Text Notes 11350 2800 0    50   ~ 0
 PA4 - spi1-nss
 Text Notes 575  7025 0    50   ~ 0
 SPI_CS is also adc18, so fine for\ndac from target as well as CS
-NoConn ~ 3800 6300
-NoConn ~ 3800 6400
+NoConn ~ 3900 6300
+NoConn ~ 3900 6400
 NoConn ~ 12500 2900
 Text Notes 14250 1400 0    50   ~ 0
 PB8 - i2c1-scl\nPB9 - i2c1-sda
@@ -997,8 +850,6 @@ Text Notes 13400 2800 0    61   ~ 0
 PB10 isc2-scl / tim2ch3 / usart3-tx\nPB4 spi1-miso / tim3ch1\nPB5 spi1-mosi / i2c1-smba / tim3ch2\nPB3 (unusable, SWO to stlink)
 Text Notes 13600 3075 0    61   ~ 0
 Unusable, jumpered to stlink by default
-Text Label 4075 6500 0    61   ~ 0
-UART_CK_OUT
 Text Notes 4750 6600 0    61   ~ 0
 usart1 on host
 Wire Wire Line
@@ -1062,9 +913,9 @@ Wire Wire Line
 Wire Wire Line
 	6300 5800 6300 5700
 Wire Wire Line
-	6300 5700 6100 5700
-Text Label 6100 5700 2    61   ~ 0
-LED_CONTROL
+	6300 5700 6200 5700
+Text Label 6200 5700 2    61   ~ 0
+LED
 $Comp
 L power:GND #PWR0102
 U 1 1 5D5F306A
@@ -1077,20 +928,18 @@ F 3 "" H 7900 6500 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Connector:TestPoint PA2
+L Connector:TestPoint GND1
 U 1 1 5D5F3358
 P 7900 6400
-F 0 "PA2" H 7900 6670 50  0000 C CNN
+F 0 "GND1" H 7900 6670 50  0000 C CNN
 F 1 "TEST_1P" H 7900 6600 50  0000 C CNN
-F 2 "TestPoint:TestPoint_THTPad_1.5x1.5mm_Drill0.7mm" H 8100 6400 50  0001 C CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 8100 6400 50  0001 C CNN
 F 3 "" H 8100 6400 50  0001 C CNN
 	1    7900 6400
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
 	7900 6500 7900 6400
-NoConn ~ 3800 5900
-NoConn ~ 3800 6000
 Text Notes 12200 1800 0    61   ~ 0
 IOREF
 Text Notes 12200 1900 0    61   ~ 0
@@ -1108,4 +957,185 @@ UART_RX_OUT
 Wire Wire Line
 	2200 1600 2200 1700
 NoConn ~ 1600 1600
+$Comp
+L MCU_ST_STM32F3:STM32F303CCTx U1
+U 1 1 5D614AB6
+P 3300 5900
+F 0 "U1" H 3250 4311 50  0000 C CNN
+F 1 "STM32F303CCTx" H 3250 4220 50  0000 C CNN
+F 2 "Package_QFP:LQFP-48_7x7mm_P0.5mm" H 2700 4500 50  0001 R CNN
+F 3 "http://www.st.com/st-web-ui/static/active/en/resource/technical/document/datasheet/DM00058181.pdf" H 3300 5900 50  0001 C CNN
+	1    3300 5900
+	1    0    0    -1  
+$EndComp
+Text Notes 6300 8800 0    50   ~ 0
+stm32f303 in q48 has 15 external analog channels too! nice
+Text Notes 2800 3600 0    60   ~ 0
+Not needed on L1, but needed for L4/F3
+Wire Wire Line
+	1000 5300 1000 5500
+Wire Wire Line
+	1150 5800 1300 5800
+Wire Wire Line
+	1300 5500 1300 5300
+Wire Wire Line
+	1000 5300 1050 5300
+Connection ~ 1150 5800
+Wire Wire Line
+	1000 5800 1150 5800
+Wire Wire Line
+	1150 6000 1150 5800
+$Comp
+L power:GND #PWR021
+U 1 1 5A137592
+P 1150 6000
+F 0 "#PWR021" H 1150 5750 50  0001 C CNN
+F 1 "GND" H 1150 5850 50  0000 C CNN
+F 2 "" H 1150 6000 50  0000 C CNN
+F 3 "" H 1150 6000 50  0000 C CNN
+	1    1150 6000
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C10
+U 1 1 5A1373B8
+P 1300 5650
+F 0 "C10" H 1325 5750 50  0000 L CNN
+F 1 "18pf" H 1325 5550 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 1338 5500 50  0000 C CNN
+F 3 "" H 1300 5650 50  0000 C CNN
+	1    1300 5650
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1250 5300 1300 5300
+$Comp
+L Device:Crystal_GND24_Small Y1
+U 1 1 5A137095
+P 1150 5300
+F 0 "Y1" H 1200 5475 50  0000 L CNN
+F 1 "Crystal_GND24_Small" H 1200 5400 50  0000 L CNN
+F 2 "Crystals:Crystal_SMD_SeikoEpson_FA238-4pin_3.2x2.5mm" H 1150 5300 50  0001 C CNN
+F 3 "" H 1150 5300 50  0001 C CNN
+	1    1150 5300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1000 5000 2600 5000
+Wire Wire Line
+	1000 5000 1000 5300
+Connection ~ 1000 5300
+Wire Wire Line
+	2600 5100 1300 5100
+Wire Wire Line
+	1300 5100 1300 5300
+Connection ~ 1300 5300
+Text Notes 1500 6600 0    50   ~ 0
+i2c1 on host
+$Comp
+L Device:R_Small R4
+U 1 1 5D63147D
+P 4600 7100
+F 0 "R4" H 4659 7146 50  0000 L CNN
+F 1 "1,5k" H 4659 7055 50  0000 L CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" H 4600 7100 50  0001 C CNN
+F 3 "~" H 4600 7100 50  0001 C CNN
+	1    4600 7100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4600 7000 4600 6900
+Wire Wire Line
+	3900 6900 4600 6900
+Wire Wire Line
+	4600 7200 3900 7200
+Text Notes 8000 9700 0    50   ~ 0
+Alternates: AP7365-33W
+Wire Wire Line
+	3100 4400 3100 4300
+Wire Wire Line
+	3100 4300 3200 4300
+Connection ~ 3200 4300
+Wire Wire Line
+	2600 4800 2200 4800
+Wire Wire Line
+	2600 6800 2200 6800
+Text Label 2200 6800 0    50   ~ 0
+LED
+Text Label 4100 6500 0    61   ~ 0
+UART_CK_OUT
+Wire Wire Line
+	3900 6500 4100 6500
+Wire Wire Line
+	3900 6600 4100 6600
+Text Label 4100 6700 0    60   ~ 0
+UART_RX_OUT
+Wire Wire Line
+	3900 6700 4100 6700
+Wire Wire Line
+	3900 6000 4500 6000
+Wire Wire Line
+	3900 5900 4400 5900
+Wire Wire Line
+	4400 5900 4400 5800
+Wire Wire Line
+	3900 5800 4300 5800
+Wire Wire Line
+	4300 5800 4300 5700
+Wire Wire Line
+	4300 5700 4700 5700
+NoConn ~ 3900 5700
+$Comp
+L Connector:TestPoint PB1
+U 1 1 5A43D328
+P 2300 5800
+F 0 "PB1" H 2300 6070 50  0000 C CNN
+F 1 "TEST_1P" H 2300 6000 50  0000 C CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 2500 5800 50  0001 C CNN
+F 3 "" H 2500 5800 50  0001 C CNN
+	1    2300 5800
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Connector:TestPoint PB2
+U 1 1 5A43D40B
+P 2200 5900
+F 0 "PB2" H 2200 6170 50  0000 C CNN
+F 1 "TEST_1P" H 2200 6100 50  0000 C CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 2400 5900 50  0001 C CNN
+F 3 "" H 2400 5900 50  0001 C CNN
+	1    2200 5900
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	2600 5700 2500 5700
+Wire Wire Line
+	2600 5800 2300 5800
+Wire Wire Line
+	2600 5900 2200 5900
+$Comp
+L Connector_Generic:Conn_01x08 CN6
+U 1 1 5D58A16D
+P 12700 2000
+F 0 "CN6" H 12700 2400 50  0000 C CNN
+F 1 "Conn_01x08" V 12800 2000 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x08_P2.54mm_Vertical" H 12700 2000 50  0001 C CNN
+F 3 "~" H 12700 2000 50  0001 C CNN
+	1    12700 2000
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:TestPoint GND2
+U 1 1 5D6DBECB
+P 8200 6400
+F 0 "GND2" H 8200 6670 50  0000 C CNN
+F 1 "TEST_1P" H 8200 6600 50  0000 C CNN
+F 2 "TestPoint:TestPoint_THTPad_D1.0mm_Drill0.5mm" H 8400 6400 50  0001 C CNN
+F 3 "" H 8400 6400 50  0001 C CNN
+	1    8200 6400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8200 6400 7900 6400
+Connection ~ 7900 6400
 $EndSCHEMATC
