@@ -639,7 +639,7 @@ Wire Wire Line
 Connection ~ 8900 9950
 Connection ~ 10750 9500
 Text Notes 2450 3500 0    60   ~ 0
-L1/F303/L4 in qfp48 are all compatible with this layout\n(but f3 needs external pullup on USB-DP)
+L1/F303/L4 in qfp48 are all compatible with this layout\n(but f3 requires the USB-DP pullup to be placed external pullup on USB-DP)
 $Comp
 L Device:C C9
 U 1 1 5A137455
@@ -796,7 +796,7 @@ U 1 1 58CF10AD
 P 4900 1400
 F 0 "P10" V 4650 1650 50  0000 C CNN
 F 1 "CONTROL" V 4650 1300 50  0000 C CNN
-F 2 "OPL_Connector:MICRO-USB5+6P-SMD-0.65-AB" V 4850 1300 50  0001 C CNN
+F 2 "Connector_USB:USB_Micro-B_Amphenol_10103594-0001LF_Horizontal" V 4850 1300 50  0001 C CNN
 F 3 "" V 4850 1300 50  0000 C CNN
 F 4 "320010005" V 4900 1400 50  0001 C CNN "SKU"
 	1    4900 1400
@@ -990,8 +990,8 @@ F 4 "STM32F303CCT6" H 3300 5900 50  0001 C CNN "MPN"
 $EndComp
 Text Notes 6300 8800 0    50   ~ 0
 stm32f303 in q48 has 15 external analog channels too! nice
-Text Notes 2800 3600 0    60   ~ 0
-Not needed on L1, but needed for L4/F3
+Text Notes 2500 3600 0    60   ~ 0
+L1 _woud like_ a cap on pin1 for lcd, but no lcd, so... yolo
 Wire Wire Line
 	1000 5300 1000 5500
 Wire Wire Line
@@ -1036,7 +1036,7 @@ U 1 1 5A137095
 P 1150 5300
 F 0 "Y1" H 1200 5475 50  0000 L CNN
 F 1 "Crystal_GND24_Small" H 1200 5400 50  0000 L CNN
-F 2 "Crystal:Crystal_SMD_2520-4Pin_2.5x2.0mm" H 1150 5300 50  0001 C CNN
+F 2 "Crystal:Crystal_SMD_SeikoEpson_FA238-4Pin_3.2x2.5mm" H 1150 5300 50  0001 C CNN
 F 3 "" H 1150 5300 50  0001 C CNN
 F 4 "306010127" H 1150 5300 50  0001 C CNN "SKU"
 F 5 "epson fa-20h in 20x" H 1150 5300 50  0001 C CNN "karl"
