@@ -4,13 +4,13 @@ EELAYER END
 $Descr A3 16535 11693
 encoding utf-8
 Sheet 1 1
-Title ""
-Date ""
+Title "Cascading per port controllable USB hub"
+Date "2019-12-03"
 Rev ""
 Comp ""
-Comment1 ""
-Comment2 ""
-Comment3 ""
+Comment1 "intended for controlling libopencm3 regression test boards"
+Comment2 "three double ports for discos w/ user usb"
+Comment3 "one up, one down"
 Comment4 ""
 Comment5 ""
 Comment6 ""
