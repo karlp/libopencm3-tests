@@ -1,0 +1,555 @@
+EESchema Schematic File Version 5
+EELAYER 30 0
+EELAYER END
+$Descr A3 16535 11693
+encoding utf-8
+Sheet 3 3
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+Comment5 ""
+Comment6 ""
+Comment7 ""
+Comment8 ""
+Comment9 ""
+$EndDescr
+Text Notes 9700 3600 0    50   ~ 0
+Dual Leds, power port controllers for each one too please\nAP2142/52  or 46/56 for duals\n(duals are cheaper than two singles)\n
+Text Notes 12300 4700 0    50   ~ 0
+Each pair a Double stack USB port\nC12049 on lcsc or similar
+$Comp
+L Interface_USB:USB2517 U?
+U 2 1 5E1DBEB5
+P 3900 5500
+F 0 "U?" H 3957 7366 50  0000 C CNN
+F 1 "USB2517" H 3957 7275 50  0000 C CNN
+F 2 "Package_DFN_QFN:QFN-64-1EP_9x9mm_P0.5mm_EP4.7x4.7mm_ThermalVias" H 4200 5100 50  0001 C CNN
+F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/USB2517-USB2517i-Data-Sheet-00001598C.pdf" H 4200 5100 50  0001 C CNN
+	2    3900 5500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:USB_A J4
+U 1 1 5DE73E78
+P 5700 8200
+F 0 "J4" H 5470 8189 50  0000 R CNN
+F 1 "USB_A (female down)" H 5470 8098 50  0000 R CNN
+F 2 "Connector_USB:USB_A_Receptacle_GENERIC" H 5850 8150 50  0001 C CNN
+F 3 " ~" H 5850 8150 50  0001 C CNN
+	1    5700 8200
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	7400 8200 7400 6700
+Wire Wire Line
+	8000 7100 8800 7100
+Wire Wire Line
+	9900 5500 9500 5500
+Wire Wire Line
+	4700 6600 7500 6600
+Wire Wire Line
+	7500 6600 7500 8100
+Wire Wire Line
+	8800 8200 7400 8200
+$Comp
+L Power_Management:APL3511C U7
+U 1 1 5DE8BE31
+P 9100 5600
+F 0 "U7" H 9150 5965 50  0000 C CNN
+F 1 "APL3511C" H 9150 5874 50  0000 C CNN
+F 2 "Package_TO_SOT_SMD:SOT-23-5" H 9200 5900 50  0001 C CNN
+F 3 "http://www.anpec.com.tw/ashx_prod_file.ashx?prod_id=458&file_path=20180420152940150.pdf&original_name=APL3511A.pdf" H 9300 5100 50  0001 C CNN
+	1    9100 5600
+	1    0    0    -1  
+$EndComp
+$Comp
+L Power_Management:APL3511C U6
+U 1 1 5DE75921
+P 9100 4500
+F 0 "U6" H 9150 4865 50  0000 C CNN
+F 1 "APL3511C" H 9150 4774 50  0000 C CNN
+F 2 "Package_TO_SOT_SMD:SOT-23-5" H 9200 4800 50  0001 C CNN
+F 3 "http://www.anpec.com.tw/ashx_prod_file.ashx?prod_id=458&file_path=20180420152940150.pdf&original_name=APL3511A.pdf" H 9300 4000 50  0001 C CNN
+	1    9100 4500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Power_Management:APL3511C U8
+U 1 1 5DE7743F
+P 9100 7100
+F 0 "U8" H 9150 7465 50  0000 C CNN
+F 1 "APL3511C" H 9150 7374 50  0000 C CNN
+F 2 "Package_TO_SOT_SMD:SOT-23-5" H 9200 7400 50  0001 C CNN
+F 3 "http://www.anpec.com.tw/ashx_prod_file.ashx?prod_id=458&file_path=20180420152940150.pdf&original_name=APL3511A.pdf" H 9300 6600 50  0001 C CNN
+	1    9100 7100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6300 5600 8000 5600
+Wire Wire Line
+	7900 5500 6400 5500
+Wire Wire Line
+	8300 5900 6000 5900
+Text Label 10400 4500 2    50   ~ 0
+U3-
+Text Label 10400 4600 2    50   ~ 0
+U3+
+$Comp
+L power:GND #PWR025
+U 1 1 5DE82188
+P 9200 8400
+F 0 "#PWR025" H 9200 8150 50  0001 C CNN
+F 1 "GND" H 9205 8227 50  0000 C CNN
+F 2 "" H 9200 8400 50  0001 C CNN
+F 3 "" H 9200 8400 50  0001 C CNN
+	1    9200 8400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7900 6200 4700 6200
+Wire Wire Line
+	4700 6100 8000 6100
+Wire Wire Line
+	5000 6900 4700 6900
+Wire Wire Line
+	10000 8000 9500 8000
+Wire Wire Line
+	8000 6100 8000 7100
+$Comp
+L power:+5V #PWR019
+U 1 1 5DE7EC19
+P 8700 4300
+F 0 "#PWR019" H 8700 4150 50  0001 C CNN
+F 1 "+5V" H 8715 4473 50  0000 C CNN
+F 2 "" H 8700 4300 50  0001 C CNN
+F 3 "" H 8700 4300 50  0001 C CNN
+	1    8700 4300
+	1    0    0    -1  
+$EndComp
+Connection ~ 10700 5700
+Wire Wire Line
+	10800 5700 10700 5700
+Wire Wire Line
+	10800 5500 10800 5700
+Wire Wire Line
+	7400 6700 4700 6700
+Wire Wire Line
+	7500 8100 8800 8100
+Wire Wire Line
+	8800 7200 7900 7200
+Wire Wire Line
+	9200 4800 9200 4900
+Wire Wire Line
+	9200 6000 9200 5900
+Wire Wire Line
+	10700 5700 10700 5500
+$Comp
+L power:+5V #PWR020
+U 1 1 5DE7E9FA
+P 8700 5400
+F 0 "#PWR020" H 8700 5250 50  0001 C CNN
+F 1 "+5V" H 8715 5573 50  0000 C CNN
+F 2 "" H 8700 5400 50  0001 C CNN
+F 3 "" H 8700 5400 50  0001 C CNN
+	1    8700 5400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8800 7000 8700 7000
+Wire Wire Line
+	8700 8000 8700 7900
+Wire Wire Line
+	8800 8000 8700 8000
+Wire Wire Line
+	6400 5100 4700 5100
+Wire Wire Line
+	4700 5200 6300 5200
+$Comp
+L power:GND #PWR026
+U 1 1 5DE82A6A
+P 9200 7400
+F 0 "#PWR026" H 9200 7150 50  0001 C CNN
+F 1 "GND" H 9205 7227 50  0000 C CNN
+F 2 "" H 9200 7400 50  0001 C CNN
+F 3 "" H 9200 7400 50  0001 C CNN
+	1    9200 7400
+	1    0    0    -1  
+$EndComp
+Text Label 10400 4900 2    50   ~ 0
+U4-
+Text Label 10400 5000 2    50   ~ 0
+U4+
+$Comp
+L power:+5V #PWR022
+U 1 1 5DE7E643
+P 8700 7900
+F 0 "#PWR022" H 8700 7750 50  0001 C CNN
+F 1 "+5V" H 8715 8073 50  0000 C CNN
+F 2 "" H 8700 7900 50  0001 C CNN
+F 3 "" H 8700 7900 50  0001 C CNN
+	1    8700 7900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	10800 8100 10800 8400
+$Comp
+L power:GND #PWR028
+U 1 1 5DE82455
+P 10700 8500
+F 0 "#PWR028" H 10700 8250 50  0001 C CNN
+F 1 "GND" H 10705 8327 50  0000 C CNN
+F 2 "" H 10700 8500 50  0001 C CNN
+F 3 "" H 10700 8500 50  0001 C CNN
+	1    10700 8500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:USB_A_DUAL J6
+U 1 1 5DE90D5F
+P 10900 4600
+F 0 "J6" H 10670 4339 50  0000 R CNN
+F 1 "USB_A_DUAL" H 10670 4248 50  0000 R CNN
+F 2 "Connector_USB:USB_A_Wuerth_61400826021_Horizontal_Stacked" H 11050 4550 50  0001 C CNN
+F 3 " ~" H 11050 4550 50  0001 C CNN
+	1    10900 4600
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	8700 5500 8700 5400
+Wire Wire Line
+	8800 5500 8700 5500
+Wire Wire Line
+	8700 7000 8700 6900
+$Comp
+L power:GND #PWR024
+U 1 1 5DE82917
+P 9200 6000
+F 0 "#PWR024" H 9200 5750 50  0001 C CNN
+F 1 "GND" H 9205 5827 50  0000 C CNN
+F 2 "" H 9200 6000 50  0001 C CNN
+F 3 "" H 9200 6000 50  0001 C CNN
+	1    9200 6000
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5000 8300 5000 6900
+Wire Wire Line
+	5100 7000 4700 7000
+Wire Wire Line
+	5100 8200 5100 7000
+Wire Wire Line
+	7900 7200 7900 6200
+Wire Wire Line
+	8000 5600 8000 4600
+Wire Wire Line
+	6100 5600 6100 5800
+$Comp
+L Connector:USB_A_DUAL J7
+U 1 1 5DE8FE6F
+P 10900 7200
+F 0 "J7" H 10670 6939 50  0000 R CNN
+F 1 "USB_A_DUAL" H 10670 6848 50  0000 R CNN
+F 2 "Connector_USB:USB_A_Wuerth_61400826021_Horizontal_Stacked" H 11050 7150 50  0001 C CNN
+F 3 " ~" H 11050 7150 50  0001 C CNN
+	1    10900 7200
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	8300 5700 8300 5900
+Wire Wire Line
+	10400 4800 9900 4800
+Wire Wire Line
+	5000 8300 5400 8300
+Wire Wire Line
+	5400 8200 5100 8200
+Wire Wire Line
+	9900 4800 9900 5500
+Wire Wire Line
+	8000 4600 8800 4600
+Wire Wire Line
+	6000 5700 4700 5700
+Wire Wire Line
+	10000 7400 10000 8000
+Wire Wire Line
+	6000 5900 6000 5700
+Wire Wire Line
+	6100 5800 8200 5800
+$Comp
+L power:+5V #PWR021
+U 1 1 5DE7DF56
+P 8700 6900
+F 0 "#PWR021" H 8700 6750 50  0001 C CNN
+F 1 "+5V" H 8715 7073 50  0000 C CNN
+F 2 "" H 8700 6900 50  0001 C CNN
+F 3 "" H 8700 6900 50  0001 C CNN
+	1    8700 6900
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR027
+U 1 1 5DE82710
+P 10700 5800
+F 0 "#PWR027" H 10700 5550 50  0001 C CNN
+F 1 "GND" H 10705 5627 50  0000 C CNN
+F 2 "" H 10700 5800 50  0001 C CNN
+F 3 "" H 10700 5800 50  0001 C CNN
+	1    10700 5800
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7900 4500 7900 5500
+Wire Wire Line
+	6300 5200 6300 5600
+Wire Wire Line
+	9500 4400 10400 4400
+Wire Wire Line
+	4700 5600 6100 5600
+Text Label 10400 7500 2    50   ~ 0
+U6-
+Text Label 10400 7600 2    50   ~ 0
+U6+
+$Comp
+L Power_Management:APL3511C U9
+U 1 1 5DE77654
+P 9100 8100
+F 0 "U9" H 9150 8465 50  0000 C CNN
+F 1 "APL3511C" H 9150 8374 50  0000 C CNN
+F 2 "Package_TO_SOT_SMD:SOT-23-5" H 9200 8400 50  0001 C CNN
+F 3 "http://www.anpec.com.tw/ashx_prod_file.ashx?prod_id=458&file_path=20180420152940150.pdf&original_name=APL3511A.pdf" H 9300 7600 50  0001 C CNN
+	1    9100 8100
+	1    0    0    -1  
+$EndComp
+Text Label 10400 7200 2    50   ~ 0
+U5+
+Text Label 10400 7100 2    50   ~ 0
+U5-
+Wire Wire Line
+	8300 5700 8800 5700
+Wire Wire Line
+	10400 7400 10000 7400
+$Comp
+L power:GND #PWR023
+U 1 1 5DE82B99
+P 9200 4900
+F 0 "#PWR023" H 9200 4650 50  0001 C CNN
+F 1 "GND" H 9205 4727 50  0000 C CNN
+F 2 "" H 9200 4900 50  0001 C CNN
+F 3 "" H 9200 4900 50  0001 C CNN
+	1    9200 4900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8800 4500 7900 4500
+Wire Wire Line
+	6400 5500 6400 5100
+Wire Wire Line
+	9500 7000 10400 7000
+Wire Wire Line
+	10700 8500 10700 8400
+Wire Wire Line
+	8700 4400 8700 4300
+Wire Wire Line
+	8800 4400 8700 4400
+$Comp
+L power:GND #PWR012
+U 1 1 5DE82FFE
+P 5700 8700
+F 0 "#PWR012" H 5700 8450 50  0001 C CNN
+F 1 "GND" H 5705 8527 50  0000 C CNN
+F 2 "" H 5700 8700 50  0001 C CNN
+F 3 "" H 5700 8700 50  0001 C CNN
+	1    5700 8700
+	1    0    0    -1  
+$EndComp
+Connection ~ 10700 8400
+Wire Wire Line
+	8200 5600 8200 5800
+Wire Wire Line
+	8800 5600 8200 5600
+Wire Wire Line
+	10700 5800 10700 5700
+Wire Wire Line
+	10700 8400 10700 8100
+Wire Wire Line
+	10800 8400 10700 8400
+Wire Wire Line
+	5700 3800 5300 3800
+Wire Wire Line
+	5300 3800 5300 4200
+$Comp
+L power:+5V #PWR011
+U 1 1 5DE7F6D8
+P 5600 4200
+F 0 "#PWR011" H 5600 4050 50  0001 C CNN
+F 1 "+5V" H 5615 4373 50  0000 C CNN
+F 2 "" H 5600 4200 50  0001 C CNN
+F 3 "" H 5600 4200 50  0001 C CNN
+	1    5600 4200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6800 3600 6800 3900
+Wire Wire Line
+	6400 3600 6800 3600
+Wire Wire Line
+	5600 3600 5600 3500
+Wire Wire Line
+	7200 5000 7200 5100
+$Comp
+L power:GND #PWR015
+U 1 1 5DE837FA
+P 7100 5200
+F 0 "#PWR015" H 7100 4950 50  0001 C CNN
+F 1 "GND" H 7105 5027 50  0000 C CNN
+F 2 "" H 7100 5200 50  0001 C CNN
+F 3 "" H 7100 5200 50  0001 C CNN
+	1    7100 5200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5700 3700 5200 3700
+Wire Wire Line
+	7100 5000 7100 5100
+Wire Wire Line
+	6100 4000 6200 4000
+Wire Wire Line
+	6100 4700 6200 4700
+$Comp
+L Power_Management:APL3511C U5
+U 1 1 5DE79008
+P 6000 4400
+F 0 "U5" H 6050 4765 50  0000 C CNN
+F 1 "APL3511C" H 6050 4674 50  0000 C CNN
+F 2 "Package_TO_SOT_SMD:SOT-23-5" H 6100 4700 50  0001 C CNN
+F 3 "http://www.anpec.com.tw/ashx_prod_file.ashx?prod_id=458&file_path=20180420152940150.pdf&original_name=APL3511A.pdf" H 6200 3900 50  0001 C CNN
+	1    6000 4400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7100 5100 7100 5200
+Connection ~ 7100 5100
+Wire Wire Line
+	7200 5100 7100 5100
+$Comp
+L Power_Management:APL3511C U4
+U 1 1 5DE78C43
+P 6000 3700
+F 0 "U4" H 6050 4065 50  0000 C CNN
+F 1 "APL3511C" H 6050 3974 50  0000 C CNN
+F 2 "Package_TO_SOT_SMD:SOT-23-5" H 6100 4000 50  0001 C CNN
+F 3 "http://www.anpec.com.tw/ashx_prod_file.ashx?prod_id=458&file_path=20180420152940150.pdf&original_name=APL3511A.pdf" H 6200 3200 50  0001 C CNN
+	1    6000 3700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5600 4300 5600 4200
+Wire Wire Line
+	5700 4300 5600 4300
+Wire Wire Line
+	5300 4500 5700 4500
+$Comp
+L power:GND #PWR013
+U 1 1 5DE82F3B
+P 6200 4000
+F 0 "#PWR013" H 6200 3750 50  0001 C CNN
+F 1 "GND" H 6205 3827 50  0000 C CNN
+F 2 "" H 6200 4000 50  0001 C CNN
+F 3 "" H 6200 4000 50  0001 C CNN
+	1    6200 4000
+	1    0    0    -1  
+$EndComp
+Text Label 6800 4000 2    50   ~ 0
+U1-
+Text Label 6800 4100 2    50   ~ 0
+U1+
+Wire Wire Line
+	5300 4700 5300 4500
+Wire Wire Line
+	4700 4700 5300 4700
+Wire Wire Line
+	5200 4600 4700 4600
+$Comp
+L Connector:USB_A_DUAL J5
+U 1 1 5DE8C1BA
+P 7300 4100
+F 0 "J5" H 7070 3839 50  0000 R CNN
+F 1 "USB_A_DUAL" H 7070 3748 50  0000 R CNN
+F 2 "Connector_USB:USB_A_Wuerth_61400826021_Horizontal_Stacked" H 7450 4050 50  0001 C CNN
+F 3 " ~" H 7450 4050 50  0001 C CNN
+	1    7300 4100
+	-1   0    0    -1  
+$EndComp
+$Comp
+L power:+5V #PWR010
+U 1 1 5DE7F93F
+P 5600 3500
+F 0 "#PWR010" H 5600 3350 50  0001 C CNN
+F 1 "+5V" H 5615 3673 50  0000 C CNN
+F 2 "" H 5600 3500 50  0001 C CNN
+F 3 "" H 5600 3500 50  0001 C CNN
+	1    5600 3500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5200 4400 5200 4600
+Wire Wire Line
+	5700 4400 5200 4400
+Wire Wire Line
+	6800 4300 6400 4300
+Text Label 6800 4400 2    50   ~ 0
+U2-
+Text Label 6800 4500 2    50   ~ 0
+U2+
+Wire Wire Line
+	5300 4200 4700 4200
+Wire Wire Line
+	5200 3700 5200 4100
+Wire Wire Line
+	5700 3600 5600 3600
+Wire Wire Line
+	5200 4100 4700 4100
+$Comp
+L power:GND #PWR014
+U 1 1 5DE82CEC
+P 6200 4700
+F 0 "#PWR014" H 6200 4450 50  0001 C CNN
+F 1 "GND" H 6205 4527 50  0000 C CNN
+F 2 "" H 6200 4700 50  0001 C CNN
+F 3 "" H 6200 4700 50  0001 C CNN
+	1    6200 4700
+	1    0    0    -1  
+$EndComp
+Text Label 4700 3900 0    50   ~ 0
+U1-
+Text Label 4700 4000 0    50   ~ 0
+U1+
+Text Label 4700 4400 0    50   ~ 0
+U2-
+Text Label 4700 4500 0    50   ~ 0
+U2+
+Text Label 4700 4900 0    50   ~ 0
+U3-
+Text Label 4700 5000 0    50   ~ 0
+U3+
+Text Label 4700 5400 0    50   ~ 0
+U4+
+Text Label 4700 5500 0    50   ~ 0
+U4+
+Text Label 4700 5900 0    50   ~ 0
+U5-
+Text Label 4700 6000 0    50   ~ 0
+U5+
+Text Label 4700 6400 0    50   ~ 0
+U6-
+Text Label 4700 6500 0    50   ~ 0
+U6+
+Wire Wire Line
+	5700 8600 5700 8700
+Text Notes 8500 1900 2    50   ~ 0
+Remember: Some nice big bulk caps per port!
+$EndSCHEMATC
