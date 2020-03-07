@@ -18,85 +18,85 @@ Comment7 ""
 Comment8 ""
 Comment9 ""
 $EndDescr
-Connection ~ 6000 3700
-Connection ~ 11800 4800
-Connection ~ 8300 2100
-Connection ~ 5900 5000
-Connection ~ 6400 4400
-Connection ~ 5300 3700
-Connection ~ 10100 1600
-Connection ~ 5200 3300
-Connection ~ 11900 3400
-Connection ~ 8500 2100
-Connection ~ 5300 3300
-Connection ~ 8900 1200
-Connection ~ 11900 4200
-Connection ~ 11900 4800
-Connection ~ 8400 2100
-Connection ~ 5400 3300
-Connection ~ 8900 1600
-Connection ~ 11700 4000
-Connection ~ 9800 1600
-Connection ~ 5200 3800
-Connection ~ 11600 4800
-Connection ~ 3900 1900
-Connection ~ 1800 9400
-Connection ~ 9200 1600
-Connection ~ 6400 2500
-Connection ~ 9800 1200
-Connection ~ 8100 2100
-Connection ~ 11600 3400
-Connection ~ 12100 4400
-Connection ~ 2900 6400
-Connection ~ 2900 5500
-Connection ~ 7500 1600
-Connection ~ 12000 4800
-Connection ~ 6300 5000
-Connection ~ 4100 2100
+Connection ~ 1800 9800
 Connection ~ 12000 3400
-Connection ~ 2400 6100
-Connection ~ 4200 2200
-Connection ~ 6800 4500
-Connection ~ 11500 3800
-Connection ~ 8600 2100
-Connection ~ 2400 6400
-Connection ~ 5300 4200
-Connection ~ 9200 1200
-Connection ~ 11800 4100
+Connection ~ 1800 9400
+Connection ~ 9800 1600
+Connection ~ 7500 1600
+Connection ~ 8300 2100
+Connection ~ 5200 4200
+Connection ~ 8900 1200
+Connection ~ 7100 2800
+Connection ~ 8900 1600
+Connection ~ 12000 4800
 Connection ~ 6800 4300
+Connection ~ 5400 4200
+Connection ~ 11700 3400
+Connection ~ 9500 1600
+Connection ~ 2900 6400
+Connection ~ 8600 2100
+Connection ~ 6400 2500
+Connection ~ 5300 3300
+Connection ~ 8400 2100
+Connection ~ 9800 1200
+Connection ~ 5200 3300
+Connection ~ 4200 2200
+Connection ~ 11700 4800
+Connection ~ 6400 4400
+Connection ~ 6800 4500
+Connection ~ 11800 3900
+Connection ~ 9700 4700
+Connection ~ 11900 4800
 Connection ~ 2400 6000
 Connection ~ 10100 1200
-Connection ~ 10300 4600
-Connection ~ 1800 9800
-Connection ~ 5200 4200
-Connection ~ 7100 2800
-Connection ~ 5400 4200
-Connection ~ 11600 3900
-Connection ~ 12000 4300
-Connection ~ 11700 4800
-Connection ~ 9500 1200
-Connection ~ 3700 6000
-Connection ~ 9500 1600
-Connection ~ 10000 5000
-Connection ~ 11800 3400
-Connection ~ 11700 3400
-Connection ~ 6400 2800
-Connection ~ 6300 5300
-Connection ~ 7500 1200
-Connection ~ 9700 4700
-Connection ~ 5400 3600
-Connection ~ 3500 5500
+Connection ~ 2400 6400
 Connection ~ 3500 5900
+Connection ~ 9500 1200
+Connection ~ 8100 2100
+Connection ~ 11500 4000
+Connection ~ 10100 1600
+Connection ~ 4100 2100
+Connection ~ 6000 3700
+Connection ~ 9200 1200
+Connection ~ 2900 5500
+Connection ~ 3900 1900
+Connection ~ 5300 4200
+Connection ~ 8500 2100
+Connection ~ 5900 5000
+Connection ~ 6400 2800
+Connection ~ 10000 5000
+Connection ~ 11900 3400
 Connection ~ 10300 5000
-NoConn ~ 9200 2900
+Connection ~ 11600 4800
+Connection ~ 5400 3300
+Connection ~ 5400 3600
+Connection ~ 6300 5300
+Connection ~ 3700 6000
+Connection ~ 7500 1200
+Connection ~ 6300 5000
+Connection ~ 11600 3400
+Connection ~ 5200 3800
+Connection ~ 11900 4400
+Connection ~ 11700 3800
+Connection ~ 2400 6100
+Connection ~ 9200 1600
+Connection ~ 10300 4600
+Connection ~ 3500 5500
+Connection ~ 11800 3400
+Connection ~ 5300 3700
+Connection ~ 11800 4800
+Connection ~ 11600 4100
+Connection ~ 12000 4200
+Connection ~ 12100 4300
 NoConn ~ 9200 3400
 NoConn ~ 9200 3100
 NoConn ~ 9200 2800
-NoConn ~ 9200 3200
-NoConn ~ 9200 3300
 NoConn ~ 3700 3300
 NoConn ~ 9200 3000
+NoConn ~ 9200 3200
 NoConn ~ 7300 3400
+NoConn ~ 9200 3300
+NoConn ~ 9200 2900
 Wire Wire Line
 	1600 9500 1800 9500
 Wire Wire Line
@@ -472,27 +472,27 @@ Wire Wire Line
 Wire Wire Line
 	10600 5000 10600 4900
 Wire Wire Line
-	11300 3800 11500 3800
+	11300 3800 11700 3800
 Wire Wire Line
-	11300 3900 11600 3900
+	11300 3900 11800 3900
 Wire Wire Line
-	11300 4000 11700 4000
+	11300 4000 11500 4000
 Wire Wire Line
-	11300 4100 11800 4100
+	11300 4100 11600 4100
 Wire Wire Line
-	11300 4200 11900 4200
+	11300 4200 12000 4200
 Wire Wire Line
-	11300 4300 12000 4300
+	11300 4300 12100 4300
 Wire Wire Line
-	11300 4400 12100 4400
+	11300 4400 11900 4400
 Wire Wire Line
 	11500 3400 11600 3400
 Wire Wire Line
 	11500 3500 11500 3400
 Wire Wire Line
-	11500 3800 11500 3700
+	11500 3700 11500 4000
 Wire Wire Line
-	11500 3800 11500 4500
+	11500 4000 11500 4500
 Wire Wire Line
 	11500 4700 11500 4800
 Wire Wire Line
@@ -502,9 +502,9 @@ Wire Wire Line
 Wire Wire Line
 	11600 3400 11700 3400
 Wire Wire Line
-	11600 3700 11600 3900
+	11600 3700 11600 4100
 Wire Wire Line
-	11600 3900 11600 4500
+	11600 4100 11600 4500
 Wire Wire Line
 	11600 4700 11600 4800
 Wire Wire Line
@@ -514,9 +514,9 @@ Wire Wire Line
 Wire Wire Line
 	11700 3400 11800 3400
 Wire Wire Line
-	11700 3700 11700 4000
+	11700 3700 11700 3800
 Wire Wire Line
-	11700 4000 11700 4500
+	11700 3800 11700 4500
 Wire Wire Line
 	11700 4700 11700 4800
 Wire Wire Line
@@ -528,9 +528,9 @@ Wire Wire Line
 Wire Wire Line
 	11800 3400 11800 3500
 Wire Wire Line
-	11800 3700 11800 4100
+	11800 3700 11800 3900
 Wire Wire Line
-	11800 4100 11800 4500
+	11800 3900 11800 4500
 Wire Wire Line
 	11800 4700 11800 4800
 Wire Wire Line
@@ -540,9 +540,9 @@ Wire Wire Line
 Wire Wire Line
 	11900 3500 11900 3400
 Wire Wire Line
-	11900 3700 11900 4200
+	11900 3700 11900 4400
 Wire Wire Line
-	11900 4200 11900 4500
+	11900 4400 11900 4500
 Wire Wire Line
 	11900 4700 11900 4800
 Wire Wire Line
@@ -552,9 +552,9 @@ Wire Wire Line
 Wire Wire Line
 	12000 3500 12000 3400
 Wire Wire Line
-	12000 3700 12000 4300
+	12000 3700 12000 4200
 Wire Wire Line
-	12000 4300 12000 4500
+	12000 4200 12000 4500
 Wire Wire Line
 	12000 4700 12000 4800
 Wire Wire Line
@@ -564,9 +564,9 @@ Wire Wire Line
 Wire Wire Line
 	12100 3500 12100 3400
 Wire Wire Line
-	12100 3700 12100 4400
+	12100 3700 12100 4300
 Wire Wire Line
-	12100 4400 12100 4500
+	12100 4300 12100 4500
 Wire Wire Line
 	12100 4700 12100 4800
 Wire Wire Line
@@ -602,15 +602,17 @@ CFG straps\n011: EEPROM\n101: defaults+dyn+led=usb\n100: defaults+dyn ?
 Text Notes 4700 5300 0    50   ~ 0
 Connect for EEP programming\n(holds hub in reset)
 Text Notes 5900 8500 0    236  ~ 0
-TODO\n* shields/ground connections for all\n* 460mA@3.3V for hub. (buck from 5v?)
+NOT TODO\n* 24V->5V on board, too much work\n
 Text Notes 6000 3400 0    31   ~ 0
 If EEPROM
 Text Notes 6000 4000 0    31   ~ 0
 If default
+Text Notes 6000 7300 0    236  ~ 0
+TODO\n* shields/ground connections for all\n* exact packages for leds and top diode\n
 Text Notes 8200 1100 2    39   ~ 0
 Near CDD33CR (24)
 Text Notes 12300 4000 0    59   ~ 0
-USB Speed indication leds _only_\n(They seem more useful than USB\nstandard leds)
+USB Speed indication leds _only_\n(They seem more useful than USB\nstandard leds)\nNote, remapped here to match port layout!
 Text Label 2400 5100 0    50   ~ 0
 EE_SDA
 Text Label 2400 5200 0    50   ~ 0
@@ -643,6 +645,8 @@ Text Label 7000 3500 2    50   ~ 0
 EE_SDA
 Text Label 7000 3600 2    50   ~ 0
 EE_SCL
+Text Label 7100 2500 0    50   ~ 0
+VBUS_DET
 Text Label 7300 3000 2    50   ~ 0
 UP-
 Text Label 7300 3100 2    50   ~ 0
@@ -667,6 +671,22 @@ Text Label 10100 4300 0    59   ~ 0
 LED_A6
 Text Label 10100 4400 0    59   ~ 0
 LED_A7
+Text Label 11500 4000 0    50   ~ 0
+LA_3-1
+Text Label 11600 4100 0    50   ~ 0
+LA_4-2
+Text Label 11700 3800 0    50   ~ 0
+LA_1-3
+Text Label 11800 3300 2    50   ~ 0
+LED_DRIVE
+Text Label 11800 3900 0    50   ~ 0
+LA_2-4
+Text Label 11900 4400 0    50   ~ 0
+LA7-5
+Text Label 12000 4200 0    50   ~ 0
+LA5-DS
+Text Label 12100 4300 0    50   ~ 0
+LA_6-6
 $Comp
 L Device:Jumper_NO_Small JP1
 U 1 1 5E1AEE14
@@ -702,7 +722,7 @@ F 3 "" H 2900 5500 50  0001 C CNN
 $EndComp
 $Comp
 L power:+5V #PWR0109
-U 1 1 00000000
+U 1 1 5E61ABD8
 P 3700 9200
 F 0 "#PWR0109" H 3700 9050 50  0001 C CNN
 F 1 "+5V" H 3715 9373 50  0000 C CNN
@@ -1376,7 +1396,7 @@ L Device:LED_Small D16
 U 1 1 5E1BE7CA
 P 12100 3600
 F 0 "D16" H 12200 3600 50  0000 C CNN
-F 1 "G7" H 12100 3743 50  0001 C CNN
+F 1 "G7_DS" H 12100 3743 50  0001 C CNN
 F 2 "LED_SMD:LED_0603_1608Metric" V 12100 3600 50  0001 C CNN
 F 3 "~" V 12100 3600 50  0001 C CNN
 	1    12100 3600
@@ -1387,7 +1407,7 @@ L Device:LED_Small D17
 U 1 1 5E1BAF41
 P 12100 4600
 F 0 "D17" H 12200 4600 50  0000 C CNN
-F 1 "R7" H 12100 4743 50  0001 C CNN
+F 1 "R7_DS" H 12100 4743 50  0001 C CNN
 F 2 "LED_SMD:LED_0603_1608Metric" V 12100 4600 50  0001 C CNN
 F 3 "~" V 12100 4600 50  0001 C CNN
 	1    12100 4600
@@ -1673,7 +1693,7 @@ L Connector:USB_A J8
 U 1 1 5E1AEA41
 P 3400 2100
 F 0 "J8" H 3457 2567 50  0000 C CNN
-F 1 "USB_A (male up)" H 3457 2476 50  0000 C CNN
+F 1 "USB_A SOFNG USB-05" H 3457 2476 50  0000 C CNN
 F 2 "Connector_USB:USB_A_Plug_SOFNG_USB-05" H 3550 2050 50  0001 C CNN
 F 3 " ~" H 3550 2050 50  0001 C CNN
 	1    3400 2100

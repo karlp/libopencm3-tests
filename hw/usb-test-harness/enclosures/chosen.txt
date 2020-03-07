@@ -1,0 +1,7 @@
+ABS-35 Enclosure: with panel; X: 91mm; Y: 111mm; Z: 35mm; ABS; grey | INFO | PDF
+Manufacturer: MASZCZYK Manufacturer part number: KM-35 GY
+
+$2.11 in singles, pcb just under 100x100, so space, but also cheap still
+
+98.7 absolute internal, set pcb to 98 width
+85.4 set pcb high to 85

@@ -1,4 +1,4 @@
-update=Fri 28 Feb 2020 01:04:57 AM GMT
+update=Sat 07 Mar 2020 01:50:31 PM GMT
 version=1
 last_client=kicad
 [general]
@@ -28,6 +28,8 @@ ERC_CheckBusDriverConflicts=1
 ERC_CheckBusEntryConflicts=1
 ERC_CheckBusToBusConflicts=1
 ERC_CheckBusToNetConflicts=1
+[ModEditFrame]
+version=1
 [pcbnew]
 version=1
 PageLayoutDescrFile=
@@ -41,14 +43,14 @@ CopperLayerCount=4
 BoardThickness=1.6
 AllowMicroVias=0
 AllowBlindVias=0
-RequireCourtyardDefinitions=0
-ProhibitOverlappingCourtyards=1
-MinTrackWidth=0.2
+MinTrackWidth=0.09999999999999999
 MinViaDiameter=0.4
 MinViaDrill=0.3
 MinMicroViaDiameter=0.2
 MinMicroViaDrill=0.09999999999999999
 MinHoleToHole=0.25
+RequireCourtyardDefinitions=0
+ProhibitOverlappingCourtyards=1
 CopperEdgeClearance=0.01
 TrackWidth1=0.25
 TrackWidth2=0.5
@@ -263,21 +265,19 @@ dPairWidth=0.2
 dPairGap=0.25
 dPairViaGap=0.25
 [pcbnew/Netclasses/1]
-Name=usb-traces-4l
-Clearance=1.27
-TrackWidth=0.4064
-ViaDiameter=0.8
-ViaDrill=0.4
+Name=usb-4l-2313
+Clearance=0.15
+TrackWidth=0.15
+ViaDiameter=0.6
+ViaDrill=0.3
 uViaDiameter=0.3
 uViaDrill=0.1
-dPairWidth=0.4064
-dPairGap=0.1778
+dPairWidth=0.15
+dPairGap=0.15
 dPairViaGap=0.25
 [SchematicFrame]
 version=1
 [sheetnames]
-1=9bf4cb79-3d09-4167-9049-889d278bf04d:Sheet9bf4cb79-3d09-4167-9049-889d278bf04d
-2=00000000-0000-0000-0000-00005e1ad41f:downstream-port-power
-3=00000000-0000-0000-0000-00005e1ad3c1:upstream-config-leds
-[ModEditFrame]
-version=1
+1=00000000-0000-0000-0000-00005e61a6dc:Sheet00000000-0000-0000-0000-00005e61a6dc
+2=00000000-0000-0000-0000-00005e1ad3c1:upstream-config-leds
+3=00000000-0000-0000-0000-00005e1ad41f:downstream-port-power

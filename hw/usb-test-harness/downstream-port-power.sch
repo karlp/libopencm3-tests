@@ -19,21 +19,21 @@ Comment8 ""
 Comment9 ""
 $EndDescr
 Connection ~ 7900 7200
-Connection ~ 9400 7200
-Connection ~ 9400 9700
-Connection ~ 7900 6100
-Connection ~ 7900 3500
-Connection ~ 9400 3500
-Connection ~ 7900 9700
-Connection ~ 7900 4600
-Connection ~ 9400 6100
-Connection ~ 7900 8700
-Connection ~ 9400 8700
-Connection ~ 10400 7400
 Connection ~ 9400 4600
 Connection ~ 2400 9500
-Connection ~ 10400 4800
 Connection ~ 10400 10100
+Connection ~ 7900 4600
+Connection ~ 9400 3500
+Connection ~ 7900 6100
+Connection ~ 9400 7200
+Connection ~ 10400 7400
+Connection ~ 7900 8700
+Connection ~ 7900 9700
+Connection ~ 7900 3500
+Connection ~ 9400 8700
+Connection ~ 9400 6100
+Connection ~ 9400 9700
+Connection ~ 10400 4800
 NoConn ~ 4700 6100
 NoConn ~ 4700 6200
 Wire Wire Line
@@ -215,21 +215,21 @@ DS-
 Text Label 4700 6000 0    59   ~ 0
 DS+
 Text Label 4700 6400 0    50   ~ 0
-U6-
-Text Label 4700 6500 0    50   ~ 0
-U6+
-Text Label 4700 6600 0    59   ~ 0
-EN6
-Text Label 4700 6700 0    59   ~ 0
-OC6
-Text Label 4700 6900 0    50   ~ 0
 U5-
-Text Label 4700 7000 0    50   ~ 0
+Text Label 4700 6500 0    50   ~ 0
 U5+
-Text Label 4700 7100 0    59   ~ 0
+Text Label 4700 6600 0    59   ~ 0
 EN5
-Text Label 4700 7200 0    59   ~ 0
+Text Label 4700 6700 0    59   ~ 0
 OC5
+Text Label 4700 6900 0    50   ~ 0
+U6-
+Text Label 4700 7000 0    50   ~ 0
+U6+
+Text Label 4700 7100 0    59   ~ 0
+EN6
+Text Label 4700 7200 0    59   ~ 0
+OC6
 Text Label 8500 3600 2    59   ~ 0
 EN1
 Text Label 8500 3700 2    59   ~ 0
@@ -314,7 +314,7 @@ F 3 "" H 7900 3400 50  0001 C CNN
 $EndComp
 $Comp
 L power:+5V #PWR0108
-U 1 1 00000000
+U 1 1 5E61A796
 P 7900 4500
 F 0 "#PWR0108" H 7900 4350 50  0001 C CNN
 F 1 "+5V" H 7915 4673 50  0000 C CNN
@@ -769,7 +769,7 @@ U 1 1 5DE73E78
 P 3300 9700
 F 0 "J4" H 3070 9689 50  0000 R CNN
 F 1 "USB_A (female down)" H 3070 9598 50  0000 R CNN
-F 2 "OPL_Connector:USB4+2P-2.0-90D" H 3450 9650 50  0001 C CNN
+F 2 "Connector_USB:USB_A_Stewart_SS-52100-001_Horizontal" H 3450 9650 50  0001 C CNN
 F 3 " ~" H 3450 9650 50  0001 C CNN
 	1    3300 9700
 	-1   0    0    -1  
@@ -787,7 +787,7 @@ F 3 "http://www.anpec.com.tw/ashx_prod_file.ashx?prod_id=458&file_path=201804201
 $EndComp
 $Comp
 L Power_Management:APL3511C U5
-U 1 1 00000000
+U 1 1 5E61A9C5
 P 8800 4700
 F 0 "U5" H 8850 5065 50  0000 C CNN
 F 1 "APL3511C" H 8850 4974 50  0000 C CNN
@@ -798,7 +798,7 @@ F 3 "http://www.anpec.com.tw/ashx_prod_file.ashx?prod_id=458&file_path=201804201
 $EndComp
 $Comp
 L Power_Management:APL3511C U6
-U 1 1 00000000
+U 1 1 5E61A9D2
 P 8800 6200
 F 0 "U6" H 8850 6565 50  0000 C CNN
 F 1 "APL3511C" H 8850 6474 50  0000 C CNN
