@@ -1,4 +1,4 @@
-update=Sat 07 Mar 2020 01:50:31 PM GMT
+update=Sun 08 Mar 2020 11:21:39 PM GMT
 version=1
 last_client=kicad
 [general]
@@ -28,8 +28,6 @@ ERC_CheckBusDriverConflicts=1
 ERC_CheckBusEntryConflicts=1
 ERC_CheckBusToBusConflicts=1
 ERC_CheckBusToNetConflicts=1
-[ModEditFrame]
-version=1
 [pcbnew]
 version=1
 PageLayoutDescrFile=
@@ -281,3 +279,5 @@ version=1
 1=00000000-0000-0000-0000-00005e61a6dc:Sheet00000000-0000-0000-0000-00005e61a6dc
 2=00000000-0000-0000-0000-00005e1ad3c1:upstream-config-leds
 3=00000000-0000-0000-0000-00005e1ad41f:downstream-port-power
+[ModEditFrame]
+version=1
