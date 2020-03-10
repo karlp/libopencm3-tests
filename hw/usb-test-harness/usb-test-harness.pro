@@ -1,4 +1,4 @@
-update=Sun 08 Mar 2020 11:21:39 PM GMT
+update=Mon 09 Mar 2020 11:28:28 PM GMT
 version=1
 last_client=kicad
 [general]
@@ -28,6 +28,10 @@ ERC_CheckBusDriverConflicts=1
 ERC_CheckBusEntryConflicts=1
 ERC_CheckBusToBusConflicts=1
 ERC_CheckBusToNetConflicts=1
+[SchematicFrame]
+version=1
+[ModEditFrame]
+version=1
 [pcbnew]
 version=1
 PageLayoutDescrFile=
@@ -273,11 +277,7 @@ uViaDrill=0.1
 dPairWidth=0.15
 dPairGap=0.15
 dPairViaGap=0.25
-[SchematicFrame]
-version=1
 [sheetnames]
-1=00000000-0000-0000-0000-00005e61a6dc:Sheet00000000-0000-0000-0000-00005e61a6dc
-2=00000000-0000-0000-0000-00005e1ad3c1:upstream-config-leds
-3=00000000-0000-0000-0000-00005e1ad41f:downstream-port-power
-[ModEditFrame]
-version=1
+1=00000000-0000-0000-0000-00005e66d501:Sheet00000000-0000-0000-0000-00005e66d501
+2=00000000-0000-0000-0000-00005e1ad41f:downstream-port-power
+3=00000000-0000-0000-0000-00005e1ad3c1:upstream-config-leds
