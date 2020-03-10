@@ -638,7 +638,7 @@ If EEPROM
 Text Notes 6000 4000 0    31   ~ 0
 If default
 Text Notes 6000 7300 0    236  ~ 0
-TODO\n* shields/ground connections for all\n* exact packages for leds and top diode\n
+TODO\n* shields/ground connections for all\n* exact packages for top diode (SMA super easy, but big. SOD123F cheap and smaller?)\n
 Text Notes 8200 1100 2    39   ~ 0
 Near CDD33CR (24)
 Text Label 2400 5100 0    50   ~ 0
@@ -1274,7 +1274,7 @@ U 1 1 5E1C596D
 P 12600 1900
 F 0 "D9" V 12645 1830 50  0000 R CNN
 F 1 "D_Small" V 12555 1830 50  0000 R CNN
-F 2 "" V 12600 1900 50  0001 C CNN
+F 2 "Diode_SMD:D_SOD-123F" V 12600 1900 50  0001 C CNN
 F 3 "~" V 12600 1900 50  0001 C CNN
 	1    12600 1900
 	0    -1   -1   0   
