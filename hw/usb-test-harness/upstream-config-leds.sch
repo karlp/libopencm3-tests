@@ -3,7 +3,7 @@ EELAYER 31 0
 EELAYER END
 $Descr A3 16535 11693
 encoding utf-8
-Sheet 2 3
+Sheet 3 3
 Title ""
 Date ""
 Rev ""
@@ -1670,7 +1670,7 @@ U 1 1 5E1AE64C
 P 3400 3100
 F 0 "J9" H 3457 3567 50  0000 C CNN
 F 1 "USB_B_Micro (up)" H 3457 3476 50  0000 C CNN
-F 2 "Connector_USB:USB_Micro-B_Amphenol_10103594-0001LF_Horizontal" H 3550 3050 50  0001 C CNN
+F 2 "Connector_USB:USB_Micro-B_Amphenol_10118194-0001LF_Horizontal" H 3550 3050 50  0001 C CNN
 F 3 "~" H 3550 3050 50  0001 C CNN
 	1    3400 3100
 	1    0    0    -1  
