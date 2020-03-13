@@ -1,4 +1,4 @@
-update=Fri 13 Mar 2020 10:34:39 PM GMT
+update=Fri 13 Mar 2020 11:35:01 PM GMT
 version=1
 last_client=kicad
 [general]
@@ -30,6 +30,14 @@ ERC_CheckBusToBusConflicts=1
 ERC_CheckBusToNetConflicts=1
 [SchematicFrame]
 version=1
+[ModEditFrame]
+version=1
+[LibeditFrame]
+version=1
+[sheetnames]
+1=00000000-0000-0000-0000-00005e74cdda:
+2=00000000-0000-0000-0000-00005e1ad41f:downstream-port-power
+3=00000000-0000-0000-0000-00005e1ad3c1:upstream-config-leds
 [pcbnew]
 version=1
 PageLayoutDescrFile=
@@ -49,7 +57,7 @@ MinViaDrill=0.3
 MinMicroViaDiameter=0.2
 MinMicroViaDrill=0.09999999999999999
 MinHoleToHole=0.25
-RequireCourtyardDefinitions=0
+RequireCourtyardDefinitions=1
 ProhibitOverlappingCourtyards=1
 CopperEdgeClearance=0.01
 TrackWidth1=0.25
@@ -80,12 +88,12 @@ OthersTextSizeH=1
 OthersTextSizeThickness=0.15
 OthersTextItalic=0
 OthersTextUpright=0
-DimensionUnits=0
+DimensionUnits=2
 DimensionPrecision=1
 SolderMaskClearance=0.051
 SolderMaskMinWidth=0.25
 SolderPasteClearance=0
-SolderPasteRatio=0
+SolderPasteRatio=-0
 [pcbnew/Layer.F.Cu]
 Name=F.Cu
 Type=0
@@ -275,11 +283,3 @@ uViaDrill=0.1
 dPairWidth=0.15
 dPairGap=0.15
 dPairViaGap=0.25
-[ModEditFrame]
-version=1
-[LibeditFrame]
-version=1
-[sheetnames]
-1=00000000-0000-0000-0000-00005e74cdda:
-2=00000000-0000-0000-0000-00005e1ad41f:downstream-port-power
-3=00000000-0000-0000-0000-00005e1ad3c1:upstream-config-leds
