@@ -1,4 +1,4 @@
-update=Thu 12 Mar 2020 10:39:43 PM GMT
+update=Fri 13 Mar 2020 10:34:39 PM GMT
 version=1
 last_client=kicad
 [general]
@@ -85,7 +85,7 @@ DimensionPrecision=1
 SolderMaskClearance=0.051
 SolderMaskMinWidth=0.25
 SolderPasteClearance=0
-SolderPasteRatio=-0
+SolderPasteRatio=0
 [pcbnew/Layer.F.Cu]
 Name=F.Cu
 Type=0
@@ -275,9 +275,11 @@ uViaDrill=0.1
 dPairWidth=0.15
 dPairGap=0.15
 dPairViaGap=0.25
-[sheetnames]
-1=00000000-0000-0000-0000-00005e66d501:Sheet00000000-0000-0000-0000-00005e66d501
-2=00000000-0000-0000-0000-00005e1ad41f:downstream-port-power
-3=00000000-0000-0000-0000-00005e1ad3c1:upstream-config-leds
 [ModEditFrame]
 version=1
+[LibeditFrame]
+version=1
+[sheetnames]
+1=00000000-0000-0000-0000-00005e74cdda:
+2=00000000-0000-0000-0000-00005e1ad41f:downstream-port-power
+3=00000000-0000-0000-0000-00005e1ad3c1:upstream-config-leds

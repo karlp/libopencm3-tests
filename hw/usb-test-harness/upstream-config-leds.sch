@@ -1,9 +1,9 @@
 EESchema Schematic File Version 5
-EELAYER 31 0
+EELAYER 32 0
 EELAYER END
 $Descr A3 16535 11693
 encoding utf-8
-Sheet 3 3
+Sheet 2 3
 Title ""
 Date ""
 Rev ""
@@ -96,7 +96,6 @@ NoConn ~ 9200 2800
 NoConn ~ 3700 3300
 NoConn ~ 9200 3000
 NoConn ~ 9200 3200
-NoConn ~ 7300 3400
 NoConn ~ 9200 3300
 NoConn ~ 9200 2900
 Wire Wire Line
@@ -295,6 +294,10 @@ Wire Wire Line
 	6500 3700 7300 3700
 Wire Wire Line
 	6500 4300 6400 4300
+Wire Wire Line
+	6600 3100 6600 3200
+Wire Wire Line
+	6600 3400 7300 3400
 Wire Wire Line
 	6700 4300 6800 4300
 Wire Wire Line
@@ -669,6 +672,8 @@ Text Label 6900 4300 0    59   ~ 0
 XTAL1
 Text Label 6900 4800 0    59   ~ 0
 XTAL2
+Text Label 7000 3400 2    50   ~ 0
+LOCAL_PWR
 Text Label 7000 3500 2    50   ~ 0
 EE_SDA
 Text Label 7000 3600 2    50   ~ 0
@@ -804,6 +809,17 @@ F 1 "+3V3" H 5915 4873 50  0000 C CNN
 F 2 "" H 5900 4700 50  0001 C CNN
 F 3 "" H 5900 4700 50  0001 C CNN
 	1    5900 4700
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+3V3 #PWR036
+U 1 1 5E754E86
+P 6600 3100
+F 0 "#PWR036" H 6600 2950 50  0001 C CNN
+F 1 "+3V3" H 6615 3273 50  0000 C CNN
+F 2 "" H 6600 3100 50  0001 C CNN
+F 3 "" H 6600 3100 50  0001 C CNN
+	1    6600 3100
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -1157,6 +1173,17 @@ F 2 "Resistor_SMD:R_0603_1608Metric" H 6400 3700 50  0001 C CNN
 F 3 "~" H 6400 3700 50  0001 C CNN
 	1    6400 3700
 	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:R_Small R2
+U 1 1 5E752A31
+P 6600 3300
+F 0 "R2" V 6500 3300 50  0000 C CNN
+F 1 "10k" V 6600 3300 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" H 6600 3300 50  0001 C CNN
+F 3 "~" H 6600 3300 50  0001 C CNN
+	1    6600 3300
+	1    0    0    -1  
 $EndComp
 $Comp
 L Device:R_Small R11
