@@ -1,4 +1,4 @@
-update=Mon 09 Mar 2020 11:28:28 PM GMT
+update=Thu 12 Mar 2020 10:39:43 PM GMT
 version=1
 last_client=kicad
 [general]
@@ -29,8 +29,6 @@ ERC_CheckBusEntryConflicts=1
 ERC_CheckBusToBusConflicts=1
 ERC_CheckBusToNetConflicts=1
 [SchematicFrame]
-version=1
-[ModEditFrame]
 version=1
 [pcbnew]
 version=1
@@ -281,3 +279,5 @@ dPairViaGap=0.25
 1=00000000-0000-0000-0000-00005e66d501:Sheet00000000-0000-0000-0000-00005e66d501
 2=00000000-0000-0000-0000-00005e1ad41f:downstream-port-power
 3=00000000-0000-0000-0000-00005e1ad3c1:upstream-config-leds
+[ModEditFrame]
+version=1
