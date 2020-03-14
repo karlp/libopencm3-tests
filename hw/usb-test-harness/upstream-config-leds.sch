@@ -90,6 +90,9 @@ Connection ~ 13100 4500
 Connection ~ 13100 5200
 Connection ~ 13100 5900
 Connection ~ 13100 6600
+Connection ~ 3100 2500
+Connection ~ 2900 2500
+Connection ~ 2700 2700
 NoConn ~ 9200 3400
 NoConn ~ 9200 3100
 NoConn ~ 9200 2800
@@ -147,9 +150,23 @@ Wire Wire Line
 Wire Wire Line
 	2500 5900 2400 5900
 Wire Wire Line
+	2600 2700 2600 2800
+Wire Wire Line
+	2700 2500 2700 2700
+Wire Wire Line
+	2700 2700 2600 2700
+Wire Wire Line
+	2900 2500 2900 2700
+Wire Wire Line
+	2900 2500 3100 2500
+Wire Wire Line
 	2900 5500 2900 5700
 Wire Wire Line
 	2900 6300 2900 6400
+Wire Wire Line
+	3100 2500 3300 2500
+Wire Wire Line
+	3300 3500 3300 3600
 Wire Wire Line
 	3300 5900 3500 5900
 Wire Wire Line
@@ -618,12 +635,12 @@ Text Notes 1100 5200 0    50   ~ 0
 Programming header\nfor EEPROM
 Text Notes 1100 6800 0    50   ~ 0
 Optional, pin straps cover everything but usb device serial!
+Text Notes 1300 2700 0    50   ~ 0
+As a HUB, all shields together,\nand grounded at one point.\nAs per SMSC AN 15.17 
 Text Notes 1400 7600 0    59   ~ 0
 TPS54820 or\nMP9477 or\nSC6001 with external fets (fuck no!)\n(6 DS ports * 1A * 5V minimum)
 Text Notes 2600 1400 0    50   ~ 0
 usb A MALE for plugging directly into an upstream\n+\nusb b micro for cable connecting as top level
-Text Notes 2800 3800 0    50   ~ 0
-sheeet, could even use on of those new \nusb-c with only usb2 pins on it here\noption ALLLLL the things
 Text Notes 3500 8900 0    50   ~ 0
 Need as much as 460mA at 3.3V for 7xHS ports enabled!
 Text Notes 3700 5800 0    59   ~ 0
@@ -640,10 +657,10 @@ Text Notes 6000 3400 0    31   ~ 0
 If EEPROM
 Text Notes 6000 4000 0    31   ~ 0
 If default
-Text Notes 6000 7300 0    236  ~ 0
-TODO\n* shields/ground connections for all\n* exact packages for top diode (SMA super easy, but big. SOD123F cheap and smaller?)\n
 Text Notes 8200 1100 2    39   ~ 0
 Near CDD33CR (24)
+Text Notes 11200 3500 0    50   ~ 0
+Speed indicator leds,\n_not_ usb standard
 Text Label 2400 5100 0    50   ~ 0
 EE_SDA
 Text Label 2400 5200 0    50   ~ 0
@@ -867,6 +884,28 @@ F 3 "" H 12600 1600 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
+L power:GNDPWR #PWR054
+U 1 1 5E747112
+P 3100 2500
+F 0 "#PWR054" H 3100 2300 50  0001 C CNN
+F 1 "GNDPWR" H 3104 2654 50  0000 C CNN
+F 2 "" H 3100 2450 50  0001 C CNN
+F 3 "" H 3100 2450 50  0001 C CNN
+	1    3100 2500
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GNDPWR #PWR055
+U 1 1 5E74FDE8
+P 3300 3600
+F 0 "#PWR055" H 3300 3400 50  0001 C CNN
+F 1 "GNDPWR" H 3304 3754 50  0000 C CNN
+F 2 "" H 3300 3550 50  0001 C CNN
+F 3 "" H 3300 3550 50  0001 C CNN
+	1    3300 3600
+	1    0    0    -1  
+$EndComp
+$Comp
 L power:GND #PWR02
 U 1 1 5E1AE7A5
 P 1800 9900
@@ -898,6 +937,17 @@ F 2 "" H 2400 5300 50  0001 C CNN
 F 3 "" H 2400 5300 50  0001 C CNN
 	1    2400 5300
 	0    -1   -1   0   
+$EndComp
+$Comp
+L power:GND #PWR041
+U 1 1 5E74D4AB
+P 2600 2800
+F 0 "#PWR041" H 2600 2550 50  0001 C CNN
+F 1 "GND" H 2605 2627 50  0000 C CNN
+F 2 "" H 2600 2800 50  0001 C CNN
+F 3 "" H 2600 2800 50  0001 C CNN
+	1    2600 2800
+	1    0    0    -1  
 $EndComp
 $Comp
 L power:GND #PWR07
@@ -1074,6 +1124,17 @@ F 2 "" H 13800 6700 50  0001 C CNN
 F 3 "" H 13800 6700 50  0001 C CNN
 	1    13800 6700
 	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R_Small R21
+U 1 1 5E752031
+P 2800 2500
+F 0 "R21" V 2900 2700 50  0000 C CNN
+F 1 "330" V 2900 2500 50  0000 C CNN
+F 2 "Resistor_SMD:R_0603_1608Metric" H 2800 2500 50  0001 C CNN
+F 3 "~" H 2800 2500 50  0001 C CNN
+	1    2800 2500
+	0    -1   -1   0   
 $EndComp
 $Comp
 L Device:R_Small R1
@@ -1338,6 +1399,17 @@ F 2 "Capacitor_SMD:C_0603_1608Metric" H 2000 6000 50  0001 C CNN
 F 3 "~" H 2000 6000 50  0001 C CNN
 	1    2000 6000
 	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C_Small C32
+U 1 1 5E753F5D
+P 2800 2700
+F 0 "C32" V 2637 2737 50  0000 L CNN
+F 1 ".1uF" V 2646 2546 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 2800 2700 50  0001 C CNN
+F 3 "~" H 2800 2700 50  0001 C CNN
+	1    2800 2700
+	0    -1   -1   0   
 $EndComp
 $Comp
 L Device:C_Small C2

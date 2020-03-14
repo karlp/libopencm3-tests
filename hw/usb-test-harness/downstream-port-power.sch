@@ -3,7 +3,7 @@ EELAYER 32 0
 EELAYER END
 $Descr A3 16535 11693
 encoding utf-8
-Sheet 2 3
+Sheet 3 3
 Title ""
 Date ""
 Rev ""
@@ -46,6 +46,8 @@ Wire Wire Line
 	2400 9800 2400 9900
 Wire Wire Line
 	3300 10100 3300 10200
+Wire Wire Line
+	3400 10100 3400 10200
 Wire Wire Line
 	7900 3400 7900 3500
 Wire Wire Line
@@ -162,14 +164,18 @@ Wire Wire Line
 	10500 9800 10500 10100
 Wire Wire Line
 	10500 10100 10400 10100
+Wire Wire Line
+	10700 4600 10700 4900
+Wire Wire Line
+	10700 7200 10700 7500
+Wire Wire Line
+	10700 9800 10700 10200
 Text Notes 1400 1700 0    59   ~ 0
 APL3511C is 1A, if you want more power, APL3511A is 2A limited
 Text Notes 2200 8900 0    59   ~ 0
 Downstream port for cascading to another hub
-Text Notes 6600 7100 2    50   ~ 0
-this needs to be port 5/6
-Text Notes 6700 5500 2    50   ~ 0
-this can be port 1/2\n
+Text Notes 5700 4800 0    50   ~ 0
+Unfortunately, port numbering won't\nmake much sense.
 Text Notes 8500 1900 2    50   ~ 0
 Remember: Some nice big bulk caps per port!
 Text Notes 12300 4700 0    50   ~ 0
@@ -365,6 +371,50 @@ F 1 "+5V" H 7915 9773 50  0000 C CNN
 F 2 "" H 7900 9600 50  0001 C CNN
 F 3 "" H 7900 9600 50  0001 C CNN
 	1    7900 9600
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GNDPWR #PWR0110
+U 1 1 5E7766B0
+P 3400 10200
+F 0 "#PWR0110" H 3400 10000 50  0001 C CNN
+F 1 "GNDPWR" H 3400 10008 50  0000 C CNN
+F 2 "" H 3400 10150 50  0001 C CNN
+F 3 "" H 3400 10150 50  0001 C CNN
+	1    3400 10200
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GNDPWR #PWR056
+U 1 1 5E770034
+P 10700 4900
+F 0 "#PWR056" H 10700 4700 50  0001 C CNN
+F 1 "GNDPWR" H 10700 4708 50  0000 C CNN
+F 2 "" H 10700 4850 50  0001 C CNN
+F 3 "" H 10700 4850 50  0001 C CNN
+	1    10700 4900
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GNDPWR #PWR057
+U 1 1 5E76A093
+P 10700 7500
+F 0 "#PWR057" H 10700 7300 50  0001 C CNN
+F 1 "GNDPWR" H 10700 7308 50  0000 C CNN
+F 2 "" H 10700 7450 50  0001 C CNN
+F 3 "" H 10700 7450 50  0001 C CNN
+	1    10700 7500
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GNDPWR #PWR058
+U 1 1 5E76CC04
+P 10700 10200
+F 0 "#PWR058" H 10700 10000 50  0001 C CNN
+F 1 "GNDPWR" H 10700 10008 50  0000 C CNN
+F 2 "" H 10700 10150 50  0001 C CNN
+F 3 "" H 10700 10150 50  0001 C CNN
+	1    10700 10200
 	1    0    0    -1  
 $EndComp
 $Comp
