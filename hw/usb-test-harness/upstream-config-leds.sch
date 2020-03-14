@@ -3,7 +3,7 @@ EELAYER 32 0
 EELAYER END
 $Descr A3 16535 11693
 encoding utf-8
-Sheet 2 3
+Sheet 3 3
 Title ""
 Date ""
 Rev ""
@@ -651,6 +651,8 @@ Text Notes 4700 3100 0    39   ~ 0
 CFG straps\n011: EEPROM\n101: defaults+dyn+led=usb\n100: defaults+dyn ?
 Text Notes 4700 5300 0    50   ~ 0
 Connect for EEP programming\n(holds hub in reset)
+Text Notes 5800 7300 0    197  ~ 0
+Missing:\n* ESD protection on input terminals?\n* lots of stuff?
 Text Notes 5900 8500 0    236  ~ 0
 NOT TODO\n* 24V->5V on board, too much work\n
 Text Notes 6000 3400 0    31   ~ 0
