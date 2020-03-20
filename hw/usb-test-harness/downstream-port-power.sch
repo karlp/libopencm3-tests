@@ -170,16 +170,18 @@ Wire Wire Line
 	10700 7200 10700 7500
 Wire Wire Line
 	10700 9800 10700 10200
-Text Notes 1400 1700 0    59   ~ 0
-APL3511C is 1A, if you want more power, APL3511A is 2A limited
 Text Notes 2200 8900 0    59   ~ 0
 Downstream port for cascading to another hub
 Text Notes 5700 4800 0    50   ~ 0
 Unfortunately, port numbering won't\nmake much sense.
-Text Notes 8500 1900 2    50   ~ 0
-Remember: Some nice big bulk caps per port!
-Text Notes 12300 4700 0    50   ~ 0
+Text Notes 8000 2900 0    59   ~ 0
+APL3511C is 1A, if you want more power, APL3511A is 2A limited
+Text Notes 9000 5700 0    50   ~ 0
+usb 2.0 7.2.4 (inrush limiting)\nsays ds facing hub ports to provide 120uF minimum.\ncan get 220uF cheap in a slightly bigger footprint\nif really desired but fuck that, yolo\napl3511 app note is 100nF + 150uF
+Text Notes 10100 3200 0    50   ~ 0
 Each pair a Double stack USB port\nC12049 on lcsc or similar
+Text Notes 13900 5700 2    50   ~ 0
+NUP4202 or USBLC6-4xx or ??
 Text Label 3000 9700 2    59   ~ 0
 DS+
 Text Label 3000 9800 2    59   ~ 0
@@ -814,6 +816,39 @@ F 3 "~" H 7900 9800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
+L Power_Protection:NUP4202 U10
+U 1 1 5E7858C0
+P 11700 4200
+F 0 "U10" H 11930 4155 50  0000 L CNN
+F 1 "NUP4202" H 11930 4245 50  0000 L CNN
+F 2 "Package_TO_SOT_SMD:SOT-363_SC-70-6" H 11750 4275 50  0001 C CNN
+F 3 "http://www.onsemi.com/pub_link/Collateral/NUP4202W1-D.PDF" H 11750 4275 50  0001 C CNN
+	1    11700 4200
+	1    0    0    -1  
+$EndComp
+$Comp
+L Power_Protection:NUP4202 U11
+U 1 1 5E78DE26
+P 11900 5700
+F 0 "U11" H 12130 5655 50  0000 L CNN
+F 1 "NUP4202" H 12130 5745 50  0000 L CNN
+F 2 "Package_TO_SOT_SMD:SOT-363_SC-70-6" H 11950 5775 50  0001 C CNN
+F 3 "http://www.onsemi.com/pub_link/Collateral/NUP4202W1-D.PDF" H 11950 5775 50  0001 C CNN
+	1    11900 5700
+	1    0    0    -1  
+$EndComp
+$Comp
+L Power_Protection:NUP4202 U12
+U 1 1 5E79089E
+P 12000 8600
+F 0 "U12" H 12230 8555 50  0000 L CNN
+F 1 "NUP4202" H 12230 8645 50  0000 L CNN
+F 2 "Package_TO_SOT_SMD:SOT-363_SC-70-6" H 12050 8675 50  0001 C CNN
+F 3 "http://www.onsemi.com/pub_link/Collateral/NUP4202W1-D.PDF" H 12050 8675 50  0001 C CNN
+	1    12000 8600
+	1    0    0    -1  
+$EndComp
+$Comp
 L Connector:USB_A J4
 U 1 1 5DE73E78
 P 3300 9700
@@ -821,6 +856,7 @@ F 0 "J4" H 3070 9689 50  0000 R CNN
 F 1 "USB_A (female down)" H 3070 9598 50  0000 R CNN
 F 2 "Connector_USB:USB_A_Stewart_SS-52100-001_Horizontal" H 3450 9650 50  0001 C CNN
 F 3 " ~" H 3450 9650 50  0001 C CNN
+F 4 "C42643 or SS-52100 compatible" H 3300 9700 50  0001 C CNN "MPN"
 	1    3300 9700
 	-1   0    0    -1  
 $EndComp

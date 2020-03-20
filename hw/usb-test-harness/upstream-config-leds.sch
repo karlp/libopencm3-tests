@@ -3,7 +3,7 @@ EELAYER 32 0
 EELAYER END
 $Descr A3 16535 11693
 encoding utf-8
-Sheet 3 3
+Sheet 2 3
 Title ""
 Date ""
 Rev ""
@@ -652,7 +652,7 @@ CFG straps\n011: EEPROM\n101: defaults+dyn+led=usb\n100: defaults+dyn ?
 Text Notes 4700 5300 0    50   ~ 0
 Connect for EEP programming\n(holds hub in reset)
 Text Notes 5800 7300 0    197  ~ 0
-Missing:\n* ESD protection on input terminals?\n* lots of stuff?
+Missing:\n* ESD protection on input terminals?\n* lots of stuff?\n* switch connectors to cheap 5mm pitch\n* input caps on 5V?!
 Text Notes 5900 8500 0    236  ~ 0
 NOT TODO\n* 24V->5V on board, too much work\n
 Text Notes 6000 3400 0    31   ~ 0
@@ -1674,6 +1674,7 @@ F 0 "U2" H 4100 9541 50  0000 C CNN
 F 1 "SE5120ST33" H 4100 9450 50  0000 C CNN
 F 2 "Package_TO_SOT_SMD:SOT-223-3_TabPin2" H 4100 9500 50  0001 C CNN
 F 3 "http://www.advanced-monolithic.com/pdf/ds1117.pdf" H 4200 9050 50  0001 C CNN
+F 4 "SE5120ST33" H 4100 9300 50  0001 C CNN "MPN"
 	1    4100 9300
 	1    0    0    -1  
 $EndComp
@@ -1759,9 +1760,10 @@ L Connector:USB_A J8
 U 1 1 5E1AEA41
 P 3400 2100
 F 0 "J8" H 3457 2567 50  0000 C CNN
-F 1 "USB_A SOFNG USB-05" H 3457 2476 50  0000 C CNN
+F 1 "USB_A male UP" H 3457 2476 50  0000 C CNN
 F 2 "Connector_USB:USB_A_Plug_SOFNG_USB-05" H 3550 2050 50  0001 C CNN
 F 3 " ~" H 3550 2050 50  0001 C CNN
+F 4 "SOFNG USB-05" H 3400 2100 50  0001 C CNN "MPN"
 	1    3400 2100
 	1    0    0    -1  
 $EndComp
@@ -1773,6 +1775,7 @@ F 0 "J9" H 3457 3567 50  0000 C CNN
 F 1 "USB_B_Micro (up)" H 3457 3476 50  0000 C CNN
 F 2 "Connector_USB:USB_Micro-B_Amphenol_10118194-0001LF_Horizontal" H 3550 3050 50  0001 C CNN
 F 3 "~" H 3550 3050 50  0001 C CNN
+F 4 "U254-051T-4BH23-S2B" H 3400 3100 50  0001 C CNN "MPN"
 	1    3400 3100
 	1    0    0    -1  
 $EndComp
@@ -1781,9 +1784,10 @@ L Memory_EEPROM:24LC02 U1
 U 1 1 5E1AEAC8
 P 2900 6000
 F 0 "U1" H 2600 6300 50  0000 C CNN
-F 1 "FT24C02A" H 3100 5700 50  0000 C CNN
+F 1 "2k i2c eeprom" H 3100 5700 50  0000 C CNN
 F 2 "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm" H 2900 6000 50  0001 C CNN
 F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/21709c.pdf" H 2900 6000 50  0001 C CNN
+F 4 "FT24C02A" H 2900 6000 50  0001 C CNN "MPN"
 	1    2900 6000
 	1    0    0    -1  
 $EndComp
