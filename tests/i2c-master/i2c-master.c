@@ -98,10 +98,10 @@ static void sht21_readid(void)
 
 	uint8_t req1[] = {0xfa, 0x0f};
 	uint8_t res[8];
-	i2c_transfer7(hw_details.periph, SENSOR_ADDRESS, req1, sizeof(req1), res, 8);
+	i2c_transfer7(hw_details.periph, SENSOR_ADDRESS, req1, sizeof(req1), res, sizeof(res));
 	uint8_t req2[] = {0xfc, 0xc9};
-	uint8_t res2[8];
-	i2c_transfer7(hw_details.periph, SENSOR_ADDRESS, req1, sizeof(req1), res2, 8);
+	uint8_t res2[6];
+	i2c_transfer7(hw_details.periph, SENSOR_ADDRESS, req2, sizeof(req2), res2, sizeof(res2));
 
 	printf("Serial = %02x%02x %02x%02x %02x%02x %02x%02x\n",
 		res2[3], res2[4], res[0], res[2], res[4], res[6], res2[0], res2[1]);
