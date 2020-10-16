@@ -29,6 +29,7 @@ struct hw_detail hw_details = {
 	.trigger_rcc = RCC_GPIOB,
 	.trigger_port = GPIOB,
 	.trigger_pin = GPIO13,
+	.i2c_clock_megahz = 42,
 };
 
 
