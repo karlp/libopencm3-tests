@@ -61,7 +61,7 @@ static void setup(void)
 
 int main(void)
 {
-	int i, j;
+	int i;
 	rcc_clock_setup_pll(&rcc_clock_config[RCC_CLOCK_VRANGE1_HSI_PLL_32MHZ]);
 	/* green led for ticking */
 	rcc_periph_clock_enable(RCC_GPIOB);
