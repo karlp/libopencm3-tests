@@ -62,7 +62,7 @@ static void setup(void)
 int main(void)
 {
 	int i, j;
-	rcc_clock_setup_hse_3v3(&rcc_hse_8mhz_3v3[RCC_CLOCK_3V3_168MHZ]);
+	rcc_clock_setup_pll(&rcc_hse_8mhz_3v3[RCC_CLOCK_3V3_168MHZ]);
 	/* green led for ticking */
 	rcc_periph_clock_enable(RCC_GPIOD);
 	gpio_mode_setup(LED_DISCO_GREEN_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
