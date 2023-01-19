@@ -1,0 +1,25 @@
+## spi test module....
+
+master mode to start with, as that's what I need to test with, but likely switchable.
+
+Targets the libopencm3 "hw1" test board, for now at least.  implements enough USB to support rebooting into DFU
+Expected to become a bit of a "insert your test payload here" type of thing...
+
+Includes freertos too, because moah better moah testing.
+
+
+## Bootloader
+This project is built assuming there is a 
+[https://github.com/devanlai/dapboot/]("dapboot") usb dfu bootloader.
+It can be another one, but the command passing via backup registers
+relies on magic numbers shared with that bootloader.  Bootloader communication
+is via a single routine though, so could be switched relatively easily (as was 
+done in testing)
+
+The application presents the DFU app level interface, which supports rebooting
+to the bootloader, so you can just use plain old dfu-util like so:
+
+```dfu-util -D bar-faker1.bin```
+
+This will work regardless of whether the board is in bootloader or app mode.
+
