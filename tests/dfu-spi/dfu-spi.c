@@ -2,7 +2,7 @@
  * usb to spi master bridge, using freertos
  * Consider to be BSD2 Clause, Apache 2.0, MIT, or ISC licensed, at your
  * pleasure.
- * karl Palsson <karlp@tweak.net.au>
+ * karl Palsson <karlp@tweak.au>
  */
 
 #include <assert.h>
@@ -17,6 +17,7 @@
 #include <libopencm3/cm3/systick.h>
 #include <libopencm3/usb/dfu.h>
 #include <libopencm3/usb/usbd.h>
+#include <libopencm3/stm32/desig.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/iwdg.h>
 #include <libopencm3/stm32/pwr.h>
@@ -31,10 +32,6 @@
 #include "queue.h"
 
 #include "syscfg.h"
-#include "funcgen.h"
-#include "modbus.h"
-//#include "serial_support.h"
-//#include "sync.h"
 #include "usb_desc.h"
 
 #define ER_DEBUG
@@ -47,7 +44,12 @@
 #endif
 
 TaskHandle_t taskHandleUSBD;
-static struct bar_faker_app_state app_state;
+
+struct _app_state {
+	// TODO - insert what you need
+};
+
+static struct _app_state app_state;
 
 /**
  * Communicate with (potentially) different bootloaders
@@ -69,15 +71,14 @@ static void bl_request_boot(bool boot_user)
 
 static void task_app(void *pvParameters)
 {
-	struct bar_faker_app_state *st = pvParameters;
+	struct _app_state *st = pvParameters;
 	int i = 0;
-	funcgen_init(st);
-	//struct sync_state_info sync = {0};
-	//sync_setup(&sync);
 
 	while (1) {
 		i++;
-		printf("dac thread still alive %d\n", i);
+
+		// TODO - fill this in with your payload
+		printf("app thread still alive %d\n", i);
 		vTaskDelay(portTICK_PERIOD_MS * 5000);
 	}
 }
@@ -86,7 +87,7 @@ static void task_app(void *pvParameters)
 static uint8_t usbd_control_buffer[3*BULK_EP_MAXPACKET];
 
 
-static void usb_funcgen_out_cb(usbd_device *usbd_dev, uint8_t ep)
+static void usb_app_out_cb(usbd_device *usbd_dev, uint8_t ep)
 {
 	(void) usbd_dev;
 	(void) ep;
@@ -94,7 +95,7 @@ static void usb_funcgen_out_cb(usbd_device *usbd_dev, uint8_t ep)
 	//x = usbd_ep_read_packet(usbd_dev, ep, dest, BULK_EP_MAXPACKET);
 }
 
-static void usb_funcgen_in_cb(usbd_device *usbd_dev, uint8_t ep)
+static void usb_app_in_cb(usbd_device *usbd_dev, uint8_t ep)
 {
 	(void) usbd_dev;
 	(void) ep;
@@ -102,7 +103,7 @@ static void usb_funcgen_in_cb(usbd_device *usbd_dev, uint8_t ep)
 }
 
 
-static enum usbd_request_return_codes usb_funcgen_control_request(usbd_device *usbd_dev,
+static enum usbd_request_return_codes usb_app_control_request(usbd_device *usbd_dev,
 	struct usb_setup_data *req,
 	uint8_t **buf,
 	uint16_t *len,
@@ -117,27 +118,13 @@ static enum usbd_request_return_codes usb_funcgen_control_request(usbd_device *u
 	uint8_t *real = *buf;
 	/* TODO - what do the return values mean again? */
 	/* remember, we're only taking vendor interface reqs here, no need to recheck! */
-	float freq;
-	float amp;
-	float offset;
 	uint32_t val;
 	switch (req->bRequest) {
 	case 1:
-		val = *(uint32_t *)&real[0];
-		freq = val / 1000.0f;
-		val = *(uint32_t *)&real[4];
-		amp = val / 1000.0f;
-		val = *(uint32_t *)&real[8];
-		offset = val / 1000.0f;
-		ER_DPRINTF("do sine: freq: %f, amp: %f, offset: %f\n", freq, amp, offset);
-		funcgen_sin(req->wValue, freq, amp, offset);
+		// Do things....
 		*len = 0;
 		return USBD_REQ_HANDLED;
 
-	case 2:
-		funcgen_sin(req->wValue, 50, 0.5f, 0.5f);
-		*len = 0;
-		return USBD_REQ_HANDLED;
 
 	case 3:
 		if (req->wValue) {
@@ -147,28 +134,8 @@ static enum usbd_request_return_codes usb_funcgen_control_request(usbd_device *u
 		}
 		*len = 0;
 		return USBD_REQ_HANDLED;
-	case 4:
-		// TODO - could handle these in one req? would it save anything meaningful?
-		funcgen_output(req->wValue, req->wIndex == 1);
-		*len = 0;
-		return USBD_REQ_HANDLED;
-	case 5:
-		// Buffer enable
-		funcgen_buffer(req->wValue, req->wIndex == 1);
-		*len = 0;
-		return USBD_REQ_HANDLED;
-	case 6:
-		for (int i = 0; i < 3; i++) {
-			val = *(int32_t *)&real[i*4];
-			app_state.zx_phase_adjust[i] = val;
-		}
-		*len = 0;
-		return USBD_REQ_HANDLED;
-	case 7:
-		val = *(int32_t *)&real[0];
-		app_state.base_offset = val;
-		*len = 0;
-		return USBD_REQ_HANDLED;
+
+	// This is kinda redundant, you should also be able to use the DFU interface directly.
 	case 100:
 		if (req->wValue == 1) {
 			bl_request_boot(false);
@@ -238,14 +205,14 @@ static void usb_cb_set_config(usbd_device *usbd_dev, uint16_t wValue)
 	switch (wValue) {
 	case MY_USB_CFG:
 		usbd_ep_setup(usbd_dev, 0x01, USB_ENDPOINT_ATTR_BULK, BULK_EP_MAXPACKET,
-			usb_funcgen_out_cb);
+			usb_app_out_cb);
 		usbd_ep_setup(usbd_dev, 0x81, USB_ENDPOINT_ATTR_BULK, BULK_EP_MAXPACKET,
-			usb_funcgen_in_cb);
+			usb_app_in_cb);
 		usbd_register_control_callback(
 			usbd_dev,
 			USB_REQ_TYPE_VENDOR | USB_REQ_TYPE_INTERFACE,
 			USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
-			usb_funcgen_control_request);
+			usb_app_control_request);
 		usbd_register_control_callback(usbd_dev,
 			USB_REQ_TYPE_CLASS | USB_REQ_TYPE_INTERFACE,
 			USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
@@ -261,9 +228,6 @@ static void prvTaskUSBD(void *pvParameters)
 {
 	(void)pvParameters;
 
-	/* the original purple bar faker had a hard pullup, the lcom3 hw1 board uses the internal controls. */
-#define BETTER_USB_HARDWARE
-#if defined(BETTER_USB_HARDWARE)
 	/* turn off the usb pull up right now, helps us re-enumerate */
 	SYSCFG_PMC &= ~SYSCFG_PMC_USB_PU;
 	vTaskDelay(portTICK_PERIOD_MS * 10);
@@ -271,17 +235,15 @@ static void prvTaskUSBD(void *pvParameters)
 	/* Enable built in USB pullup on L1 */
         rcc_periph_clock_enable(RCC_SYSCFG);
         SYSCFG_PMC |= SYSCFG_PMC_USB_PU;
-#endif
 
 #ifdef ER_DEBUG
 	setbuf(stdout, NULL);
 #endif
-	uint16_t mb_compat_serial[3];
-	char mb_serial_str[13];
+	char my_serial_str[13];
 	//setup_serial_number(mb_compat_serial);
-	sprintf(mb_serial_str, "%04X%04X%04X", mb_compat_serial[0], mb_compat_serial[1], mb_compat_serial[2]);
+	desig_get_unique_id_as_dfu(my_serial_str);
 
-	usbd_device *our_dev = usb_start(&st_usbfs_v1_usb_driver, mb_serial_str, usbd_control_buffer, sizeof(usbd_control_buffer));
+	usbd_device *our_dev = usb_start(&st_usbfs_v1_usb_driver, my_serial_str, usbd_control_buffer, sizeof(usbd_control_buffer));
 
 	usbd_register_set_config_callback(our_dev, usb_cb_set_config);
 
@@ -317,7 +279,7 @@ int main(void)
 {
 	bl_request_boot(true);
 	hw_setup();
-	printf("starting bar-faker1...\n");
+	printf("starting app...\n");
 
 	xTaskCreate(task_app, "app-main", configMINIMAL_STACK_SIZE, &app_state, tskIDLE_PRIORITY + 1, NULL);
 	xTaskCreate(prvTaskUSBD, "USBD", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + 2, &taskHandleUSBD);

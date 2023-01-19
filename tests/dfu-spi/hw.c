@@ -15,15 +15,6 @@
 
 /* !!! a global struct hw_detail hw_details is expected to exist! */
 
-const struct hw_uart hw_uart_mb_em3x = {
-	.gpio_port = GPIOA,
-	.pin_rx = GPIO3,
-	.pin_tx = GPIO2,
-	.rcc_usart = RCC_USART2,
-	.usart = USART2,
-	.nvic_usart = NVIC_USART2_IRQ,
-};
-
 
 void hw_setup(void)
 {
@@ -53,14 +44,3 @@ void hw_set_status_led(bool val)
 	}
 }
 
-void hw_set_rs485de(bool val)
-{
-	if (!hw_details.rs485de_pin) {
-		return;
-	}
-	if (val) {
-		gpio_set(hw_details.rs485de_port, hw_details.rs485de_pin);
-	} else {
-		gpio_clear(hw_details.rs485de_port, hw_details.rs485de_pin);
-	}
-}

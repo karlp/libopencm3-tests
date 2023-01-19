@@ -28,11 +28,10 @@ LDLIBS += -lm
 
 CFILES = $(PROJECT).c
 CFILES += $(FREERTOS_SRCS)
-CFILES += funcgen.c funcgen-plat.c funcgen-plat-arch-l1.c
 CFILES += trace.c trace_stdio.c
 CFILES += usb_desc.c
 
-CFILES += hw.c hw/hw-em3-proto.c
+CFILES += hw.c hw/hw-libopencm3-hw1.c
 
 OPENCM3_DIR=../../libopencm3
 DEVICE=stm32l151x8x_a

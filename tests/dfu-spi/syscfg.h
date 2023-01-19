@@ -16,16 +16,6 @@
 #endif
 
 
-struct bar_faker_app_state {
-	/* this is the internal timestamp of the last DAC window start */
-	uint32_t last_zx;
-	/* this is experimentally determined to give us pf 1.0 as a starting point */
-	int32_t base_offset;
-	/* This is added to the last_zx to generate the "reported" zero crossing */
-	int32_t zx_phase_adjust[3];
-};
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif
