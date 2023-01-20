@@ -20,10 +20,18 @@ struct hw_spi {
 };
 
 struct hw_detail {
-        const struct rcc_clock_scale *clock_config;
-        uint32_t led_port;
-        uint16_t led_pin;
-        const struct hw_spi *dut_spi;
+	const struct rcc_clock_scale *clock_config;
+	uint32_t led_port;
+	uint16_t led_pin;
+
+	uint32_t periph;
+	uint32_t periph_rcc;
+	uint32_t periph_rst;
+	uint8_t periph_nvic;
+	uint32_t periph_pins;
+	uint32_t periph_port;
+	uint32_t periph_port_rcc;
+
 };
 
 

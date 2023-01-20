@@ -68,24 +68,50 @@ static void bl_request_boot(bool boot_user)
 	pwr_enable_backup_domain_write_protect();
 }
 
-
 static void task_app(void *pvParameters)
 {
 	struct _app_state *st = pvParameters;
 	int i = 0;
+
+
+	/* gpios for spi */
+	rcc_periph_clock_enable(hw_details.periph_port_rcc);
+	gpio_mode_setup(hw_details.periph_port, GPIO_MODE_AF, GPIO_PUPD_NONE, hw_details.periph_pins);
+	gpio_set_output_options(hw_details.periph_port, GPIO_OTYPE_PP, GPIO_OSPEED_2MHZ, hw_details.periph_pins);
+	gpio_set_af(hw_details.periph_port, GPIO_AF0, hw_details.periph_pins);
+
+	/* Setup SPI parameters. */
+	rcc_periph_clock_enable(hw_details.periph_rcc);
+	spi_init_master(hw_details.periph, SPI_CR1_BAUDRATE_FPCLK_DIV_32, SPI_CR1_CPOL_CLK_TO_0_WHEN_IDLE,
+		SPI_CR1_CPHA_CLK_TRANSITION_1, SPI_CR1_DFF_8BIT, SPI_CR1_MSBFIRST);
+	/* Ignore the stupid NSS pin. */
+	spi_enable_software_slave_management(hw_details.periph);
+	spi_set_nss_high(hw_details.periph);
+
+	/* Finally enable the SPI. */
+	spi_enable(hw_details.periph);
+
+
 
 	while (1) {
 		i++;
 
 		// TODO - fill this in with your payload
 		printf("app thread still alive %d\n", i);
-		vTaskDelay(portTICK_PERIOD_MS * 5000);
+		hw_set_status_led(true);
+		// um, probably need CS in hw details here right...
+		spi_xfer(hw_details.periph, 0xaa);
+		spi_xfer(hw_details.periph, 0x42);
+		spi_xfer(hw_details.periph, 0x69);
+		hw_set_status_led(false);
+
+
+		vTaskDelay(portTICK_PERIOD_MS * 100);
 	}
 }
 
 /* Buffer to be used for control requests. */
-static uint8_t usbd_control_buffer[3*BULK_EP_MAXPACKET];
-
+static uint8_t usbd_control_buffer[3 * BULK_EP_MAXPACKET];
 
 static void usb_app_out_cb(usbd_device *usbd_dev, uint8_t ep)
 {
@@ -102,15 +128,14 @@ static void usb_app_in_cb(usbd_device *usbd_dev, uint8_t ep)
 	//uint16_t x = usbd_ep_write_packet(usbd_dev, ep, src, BULK_EP_MAXPACKET);
 }
 
-
 static enum usbd_request_return_codes usb_app_control_request(usbd_device *usbd_dev,
 	struct usb_setup_data *req,
 	uint8_t **buf,
 	uint16_t *len,
 	usbd_control_complete_callback *complete)
 {
-	(void)usbd_dev;
-	(void)complete;
+	(void) usbd_dev;
+	(void) complete;
 	ER_DPRINTF("ctrl breq: %x, bmRT: %x, windex :%x, wlen: %x, wval :%x\n",
 		req->bRequest, req->bmRequestType, req->wIndex, req->wLength,
 		req->wValue);
@@ -135,7 +160,7 @@ static enum usbd_request_return_codes usb_app_control_request(usbd_device *usbd_
 		*len = 0;
 		return USBD_REQ_HANDLED;
 
-	// This is kinda redundant, you should also be able to use the DFU interface directly.
+		// This is kinda redundant, you should also be able to use the DFU interface directly.
 	case 100:
 		if (req->wValue == 1) {
 			bl_request_boot(false);
@@ -156,8 +181,8 @@ static enum usbd_request_return_codes usb_app_control_request(usbd_device *usbd_
 
 static void usb_dfu_detach_complete(usbd_device *dev, struct usb_setup_data *req)
 {
-	(void)dev;
-	(void)req;
+	(void) dev;
+	(void) req;
 	bl_request_boot(false);
 	scb_reset_system();
 }
@@ -198,7 +223,6 @@ static enum usbd_request_return_codes usb_dfu_control_request(usbd_device *usbd_
 	return USBD_REQ_NEXT_CALLBACK;
 }
 
-
 static void usb_cb_set_config(usbd_device *usbd_dev, uint16_t wValue)
 {
 	ER_DPRINTF("set cfg %d\n", wValue);
@@ -223,18 +247,17 @@ static void usb_cb_set_config(usbd_device *usbd_dev, uint16_t wValue)
 	}
 }
 
-
 static void prvTaskUSBD(void *pvParameters)
 {
-	(void)pvParameters;
+	(void) pvParameters;
 
 	/* turn off the usb pull up right now, helps us re-enumerate */
 	SYSCFG_PMC &= ~SYSCFG_PMC_USB_PU;
 	vTaskDelay(portTICK_PERIOD_MS * 10);
 
 	/* Enable built in USB pullup on L1 */
-        rcc_periph_clock_enable(RCC_SYSCFG);
-        SYSCFG_PMC |= SYSCFG_PMC_USB_PU;
+	rcc_periph_clock_enable(RCC_SYSCFG);
+	SYSCFG_PMC |= SYSCFG_PMC_USB_PU;
 
 #ifdef ER_DEBUG
 	setbuf(stdout, NULL);
@@ -251,7 +274,7 @@ static void prvTaskUSBD(void *pvParameters)
 	nvic_set_priority(NVIC_USB_LP_IRQ, IRQ2NVIC_PRIOR(6));
 	nvic_enable_irq(NVIC_USB_LP_IRQ);
 
-	const TickType_t xBlockTime = pdMS_TO_TICKS( 500 );
+	const TickType_t xBlockTime = pdMS_TO_TICKS(500);
 	uint32_t ulNotifiedValue;
 
 	ER_DPRINTF("USBD: loop start\n");
@@ -273,7 +296,6 @@ static void prvTaskUSBD(void *pvParameters)
 		}
 	}
 }
-
 
 int main(void)
 {
@@ -319,9 +341,10 @@ void vAssertCalled(const char * const pcFileName, unsigned long ulLine)
 	taskEXIT_CRITICAL();
 }
 
-void vApplicationStackOverflowHook(TaskHandle_t xTask,  signed char *pcTaskName);
-void vApplicationStackOverflowHook( TaskHandle_t xTask,
-                                    signed char *pcTaskName )
+void vApplicationStackOverflowHook(TaskHandle_t xTask, signed char *pcTaskName);
+
+void vApplicationStackOverflowHook(TaskHandle_t xTask,
+	signed char *pcTaskName)
 {
 	volatile unsigned long ulSetToNonZeroInDebuggerToContinue = 0;
 	(void) xTask;

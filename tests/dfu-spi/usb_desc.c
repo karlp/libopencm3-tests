@@ -122,12 +122,11 @@ static const char *usb_strings[] = {
 	"DFU interface",
 };
 
-
 usbd_device * usb_start(const usbd_driver *driver, const char *userserial, uint8_t *ctrl_buf, size_t ctrl_buf_len)
 {
 	if (userserial) {
 		strncpy(serial, userserial, sizeof(serial) - 1);
-		serial[sizeof(serial)-1] = 0;
+		serial[sizeof(serial) - 1] = 0;
 	} else {
 		sprintf(serial, "fake serial");
 	}

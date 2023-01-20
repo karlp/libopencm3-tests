@@ -28,20 +28,16 @@ static const struct rcc_clock_scale clock_16m_hse = {
 	.apb2_frequency = 32000000,
 };
 
-const struct hw_spi hw_spi_hw1 = {
-	.gpio_port = GPIOB,
-	.pin_cs = GPIO12,
-	.pin_miso = GPIO14,
-	.pin_mosi = GPIO15,
-	.pin_sck = GPIO13,
-	.rcc_spi = RCC_SPI2,
-	.spi = SPI2,
-	.nvic_spi = NVIC_SPI2_IRQ,
-};
 
 struct hw_detail hw_details = {
 	.clock_config = &clock_16m_hse,
 	.led_port = GPIOB,
 	.led_pin = GPIO8,
-	.dut_spi = &hw_spi_hw1,
+	.periph = SPI2,
+	.periph_rcc = RCC_SPI2,
+	.periph_rst = RST_SPI2,
+	.periph_nvic = NVIC_SPI2_IRQ,
+	.periph_pins = GPIO12 | GPIO13 | GPIO14 | GPIO15,
+	.periph_port = GPIOB,
+	.periph_port_rcc = RCC_GPIOB,
 };
