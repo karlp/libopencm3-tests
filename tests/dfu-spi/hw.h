@@ -29,7 +29,9 @@ struct hw_detail {
 	uint32_t periph_rst;
 	uint8_t periph_nvic;
 	uint32_t periph_pins;
+	uint32_t spi_cs;
 	uint32_t periph_port;
+	uint8_t periph_pins_afio;
 	uint32_t periph_port_rcc;
 
 };

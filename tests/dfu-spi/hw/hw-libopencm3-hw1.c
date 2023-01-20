@@ -37,7 +37,9 @@ struct hw_detail hw_details = {
 	.periph_rcc = RCC_SPI2,
 	.periph_rst = RST_SPI2,
 	.periph_nvic = NVIC_SPI2_IRQ,
-	.periph_pins = GPIO12 | GPIO13 | GPIO14 | GPIO15,
+	.periph_pins = GPIO13 | GPIO14 | GPIO15,
+	.spi_cs = GPIO12,
+	.periph_pins_afio = GPIO_AF5,
 	.periph_port = GPIOB,
 	.periph_port_rcc = RCC_GPIOB,
 };

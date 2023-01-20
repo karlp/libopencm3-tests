@@ -77,8 +77,11 @@ static void task_app(void *pvParameters)
 	/* gpios for spi */
 	rcc_periph_clock_enable(hw_details.periph_port_rcc);
 	gpio_mode_setup(hw_details.periph_port, GPIO_MODE_AF, GPIO_PUPD_NONE, hw_details.periph_pins);
-	gpio_set_output_options(hw_details.periph_port, GPIO_OTYPE_PP, GPIO_OSPEED_2MHZ, hw_details.periph_pins);
-	gpio_set_af(hw_details.periph_port, GPIO_AF0, hw_details.periph_pins);
+	gpio_set_output_options(hw_details.periph_port, GPIO_OTYPE_PP, GPIO_OSPEED_10MHZ, hw_details.periph_pins);
+	gpio_set_af(hw_details.periph_port, hw_details.periph_pins_afio, hw_details.periph_pins);
+
+	gpio_mode_setup(hw_details.periph_port, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, hw_details.spi_cs);
+	gpio_set_output_options(hw_details.periph_port, GPIO_OTYPE_PP, GPIO_OSPEED_10MHZ, hw_details.spi_cs);
 
 	/* Setup SPI parameters. */
 	rcc_periph_clock_enable(hw_details.periph_rcc);
@@ -99,10 +102,11 @@ static void task_app(void *pvParameters)
 		// TODO - fill this in with your payload
 		printf("app thread still alive %d\n", i);
 		hw_set_status_led(true);
-		// um, probably need CS in hw details here right...
+		gpio_clear(hw_details.periph_port, hw_details.spi_cs);
 		spi_xfer(hw_details.periph, 0xaa);
 		spi_xfer(hw_details.periph, 0x42);
 		spi_xfer(hw_details.periph, 0x69);
+		gpio_set(hw_details.periph_port, hw_details.spi_cs);
 		hw_set_status_led(false);
 
 
