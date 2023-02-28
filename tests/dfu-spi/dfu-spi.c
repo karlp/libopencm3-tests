@@ -47,6 +47,7 @@ TaskHandle_t taskHandleUSBD;
 
 struct _app_state {
 	// TODO - insert what you need
+	uint8_t spi_xbuf[3];
 };
 
 static struct _app_state app_state;
@@ -101,16 +102,18 @@ static void task_app(void *pvParameters)
 
 		// TODO - fill this in with your payload
 		printf("app thread still alive %d\n", i);
-		hw_set_status_led(true);
-		gpio_clear(hw_details.periph_port, hw_details.spi_cs);
-		spi_xfer(hw_details.periph, 0xaa);
-		spi_xfer(hw_details.periph, 0x42);
-		spi_xfer(hw_details.periph, 0x69);
-		gpio_set(hw_details.periph_port, hw_details.spi_cs);
-		hw_set_status_led(false);
+//		for (int q = 2; q < 8; q+=2) {
+//			hw_set_status_led(true);
+//			gpio_clear(hw_details.periph_port, hw_details.spi_cs);
+//			spi_xfer(hw_details.periph, q);
+//			spi_xfer(hw_details.periph, 0xaa);
+//			spi_xfer(hw_details.periph, 0x55);
+//			gpio_set(hw_details.periph_port, hw_details.spi_cs);
+//			hw_set_status_led(false);
+//		}
 
 
-		vTaskDelay(portTICK_PERIOD_MS * 100);
+		vTaskDelay(portTICK_PERIOD_MS * 1000);
 	}
 }
 
@@ -153,6 +156,24 @@ static enum usbd_request_return_codes usb_app_control_request(usbd_device *usbd_
 		// Do things....
 		*len = 0;
 		return USBD_REQ_HANDLED;
+
+	case 2: {
+		// FIXME - this is a trash api.  you want to rip
+		// of something more generic....
+		// Two byte spi reads...
+		if (req->wValue) {
+			gpio_clear(hw_details.periph_port, hw_details.spi_cs);
+			for (int i = 0; i < 3; i++) {
+				app_state.spi_xbuf[i] = spi_xfer(hw_details.periph, real[i]);
+			}
+			gpio_set(hw_details.periph_port, hw_details.spi_cs);
+			*len = 0;
+		} else {
+			memcpy(real, app_state.spi_xbuf, 3);
+			*len = 3;
+		}
+		return USBD_REQ_HANDLED;
+	}
 
 
 	case 3:
