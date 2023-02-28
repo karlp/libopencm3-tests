@@ -17,7 +17,7 @@ void vAssertCalled( const char * const pcFileName, unsigned long ulLine );
 #define configUSE_16_BIT_TICKS		0
 #define configIDLE_SHOULD_YIELD		0
 #define configUSE_CO_ROUTINES 		0
-
+#define configUSE_MALLOC_FAILED_HOOK	0
 
 #define configUSE_TIMERS                        1
 #define configTIMER_TASK_PRIORITY               3
