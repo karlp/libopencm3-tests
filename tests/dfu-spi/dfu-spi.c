@@ -61,9 +61,9 @@ static void bl_request_boot(bool boot_user)
 	static const uint32_t CMD_BOOT = 0x544F4F42UL;
 	pwr_disable_backup_domain_write_protect();
 	if (boot_user) {
-		RTC_BKPXR(0) = 0;
+		RTC_BKPXR(1) = 0;
 	} else {
-		RTC_BKPXR(0) = CMD_BOOT;
+		RTC_BKPXR(1) = CMD_BOOT;
 	}
 	pwr_enable_backup_domain_write_protect();
 }

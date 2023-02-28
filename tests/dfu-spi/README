@@ -1,4 +1,9 @@
 ## spi test module....
+KARL - this is the most recent one.  This is _just_ master mode, plain and boring.
+Meant to be proper DFU
+
+Ummmm, FIXME - you should really just add DFU to the freertos-spi-slave/host project!
+This is really just that, cut down again, and made dumber.
 
 master mode to start with, as that's what I need to test with, but likely switchable.
 
