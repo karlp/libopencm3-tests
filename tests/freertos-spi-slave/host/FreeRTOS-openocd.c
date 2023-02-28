@@ -3,6 +3,9 @@
  * present in the kernel, so it has to be supplied by other means for
  * OpenOCD's threads awareness.
  *
+ * This was re-introduced in freertos v10.4.2 and should _not_ be included
+ * if you are using newer versions!
+ *
  * Add this file to your project, and, if you're using --gc-sections,
  * ``--undefined=uxTopUsedPriority'' (or
  * ``-Wl,--undefined=uxTopUsedPriority'' when using gcc for final
@@ -17,4 +20,4 @@
 #define USED
 #endif
 
-const int USED uxTopUsedPriority = configMAX_PRIORITIES;
+const int USED uxTopUsedPriority = configMAX_PRIORITIES - 1;
