@@ -120,7 +120,7 @@ LDLIBS += -specs=nosys.specs
 %: s.%
 %: SCCS/s.%
 
-all: $(PROJECT).elf #$(PROJECT).bin
+all: $(PROJECT).elf $(PROJECT).bin
 flash: $(PROJECT).flash
 
 # Need a special rule to have a bin dir
@@ -169,7 +169,7 @@ else
 endif
 
 clean:
-	rm -rf $(BUILD_DIR) $(PROJECT).{elf,bin} $(PROJECT).{list,lss,map} $(LDSCRIPT)
+	rm -rf $(BUILD_DIR) $(PROJECT).{elf,bin} $(PROJECT).{list,lss,map} generated.*.ld
 
 include $(OPENCM3_DIR)/mk/genlink-rules.mk
 
