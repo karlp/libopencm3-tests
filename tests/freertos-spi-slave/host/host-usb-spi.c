@@ -16,6 +16,7 @@
 #include <libopencm3/cm3/scb.h>
 #include <libopencm3/cm3/systick.h>
 #include <libopencm3/usb/usbd.h>
+#include <libopencm3/stm32/desig.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/spi.h>
@@ -24,6 +25,8 @@
 #include "hw.h"
 #include "trace.h"
 #include "queue.h"
+
+#include "dfu-impl.h"
 
 #define ER_DEBUG
 #ifdef ER_DEBUG
@@ -153,6 +156,7 @@ static void prvTaskSpiMaster(void *pvParameters)
 
 #define BULK_EP_MAXPACKET	64
 
+
 static const struct usb_device_descriptor dev = {
 	.bLength = USB_DT_DEVICE_SIZE,
 	.bDescriptorType = USB_DT_DEVICE,
@@ -162,7 +166,7 @@ static const struct usb_device_descriptor dev = {
 	.bDeviceProtocol = 0,
 	.bMaxPacketSize0 = BULK_EP_MAXPACKET,
 	.idVendor = 0xcafe,
-	.idProduct = 0xcafe,
+	.idProduct = 0xcaff,
 	.bcdDevice = 0x0001,
 	.iManufacturer = 1,
 	.iProduct = 2,
@@ -197,15 +201,19 @@ static const struct usb_interface_descriptor iface_sourcesink[] = {
 		.bAlternateSetting = 0,
 		.bNumEndpoints = 2,
 		.bInterfaceClass = USB_CLASS_VENDOR,
-		.iInterface = 0,
+		.iInterface = 4,
 		.endpoint = endp_bulk,
 	}
 };
 
-static const struct usb_interface ifaces_sourcesink[] = {
+static const struct usb_interface my_interfaces[] = {
 	{
 		.num_altsetting = 1,
 		.altsetting = iface_sourcesink,
+	},
+	{
+		.num_altsetting = 1,
+		.altsetting = &dfu_rt_iface,
 	}
 };
 
@@ -214,21 +222,22 @@ static const struct usb_config_descriptor config[] = {
 		.bLength = USB_DT_CONFIGURATION_SIZE,
 		.bDescriptorType = USB_DT_CONFIGURATION,
 		.wTotalLength = 0,
-		.bNumInterfaces = 1,
+		.bNumInterfaces = 2,
 		.bConfigurationValue = GZ_CFG_SOURCESINK,
-		.iConfiguration = 4, /* string index */
+		.iConfiguration = 0, /* no-one cares about config name with only 1 */
 		.bmAttributes = 0x80,
 		.bMaxPower = 0x32,
-		.interface = ifaces_sourcesink,
+		.interface = my_interfaces,
 	},
 };
 
-static char serial[] = "0123456789.0123456789.0123456789";
+/* This is big enough for the st dfu serial */
+static char serial[13];
 static const char *usb_strings[] = {
 	"libopencm3",
-	"spi-host-freertos",
+	"spi-host-freertos-dfu",
 	serial,
-	"source and sink data",
+	"SPI interface",
 };
 
 /* Buffer to be used for control requests. */
@@ -426,6 +435,10 @@ static void hostspi_set_config(usbd_device *usbd_dev, uint16_t wValue)
 			USB_REQ_TYPE_VENDOR | USB_REQ_TYPE_INTERFACE,
 			USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
 			hostspit_control_request);
+		usbd_register_control_callback(usbd_dev,
+			USB_REQ_TYPE_CLASS | USB_REQ_TYPE_INTERFACE,
+			USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
+			dfu_handle_control_request);
 		break;
 	default:
 		ER_DPRINTF("set configuration unknown: %d\n", wValue);
@@ -444,10 +457,9 @@ static void prvTaskUSBD(void *pvParameters)
 #ifdef ER_DEBUG
 	setbuf(stdout, NULL);
 #endif
-	static const char *userserial = "myserial";
-	if (userserial) {
-		usb_strings[2] = userserial;
-	}
+	//setup_serial_number(mb_compat_serial);
+	desig_get_unique_id_as_dfu(serial);
+
 	usbd_device *our_dev = usbd_init(&st_usbfs_v1_usb_driver, &dev, config,
 		usb_strings, 5,
 		usbd_control_buffer, sizeof(usbd_control_buffer));

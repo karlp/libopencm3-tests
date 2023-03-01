@@ -1,7 +1,7 @@
 
 PROJECT	    = host-usb-spi-freertos
 SHARED_DIR = ../../../shared ../
-CFILES = host-usb-spi.c
+CFILES = host-usb-spi.c dfu-impl.c
 CFILES += trace.c trace_stdio.c
 
 VPATH += $(SHARED_DIR)
@@ -15,4 +15,5 @@ DEVICE=stm32l151xb
 OOCD_FILE = ../../../openocd/openocd.host-stm32l1.cfg
 include ../../../rules.mk
 
+LDSCRIPT=app.ld
 
