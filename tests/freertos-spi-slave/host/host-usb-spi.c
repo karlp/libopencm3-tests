@@ -364,7 +364,7 @@ static enum usbd_request_return_codes hostspit_control_request(usbd_device *usbd
 		}
 		xQueueReset(spiQ_rx);
 		gpio_clear(hw_details.cs_port, hw_details.cs_pin);
-		for (uint32_t i = 0; i < ((uint32_t)req->wValue << 16); i++) {
+		for (uint32_t i = 0; i < ((uint32_t)req->wValue << 5); i++) {
 			__asm volatile( "NOP");
 		}
 		for (int i = 0; i < req->wLength; i++) {

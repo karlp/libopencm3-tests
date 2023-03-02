@@ -9,13 +9,13 @@ import sys
 import unittest
 
 VENDOR_ID=0xcafe
-PRODUCT_ID=0xcafe
+PRODUCT_ID=0xcaff
 
 DUT_SERIAL = "myserial"
 
 # Control requests to do stuff....
-SS_INIT = 1
-SS_INIT2 = 2
+SS_INIT_M_SW_SS = 1
+SS_INIT_M_HW_SS = 2
 SS_TRIGGER = 3
 SS_XFER = 10
 SS_XFER2 = 12
@@ -44,7 +44,7 @@ class TestSpiBasic(unittest.TestCase):
     def test_spi_software_nss_output(self):
         # type, request, value, index, length/data (baud divider, cpol, cpha, 8/16, msb/lsb first
         # init master mode, baud = div32 = 1Mhz
-        x = self.dev.ctrl_transfer(uu.CTRL_OUT | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_INIT, 0, 0, [5<<3, 0, 0, 0, 0])
+        x = self.dev.ctrl_transfer(uu.CTRL_OUT | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_INIT_M_SW_SS, 0, 0, [5<<3, 0, 0, 0, 0])
         self.assertEqual(x, 5)
 
         # now write some shit...
@@ -61,7 +61,7 @@ class TestSpiBasic(unittest.TestCase):
     def test_spi_hardware_nss_output(self):
         # type, request, value, index, length/data (baud divider, cpol, cpha, 8/16, msb/lsb first
         # init master mode, baud = div32 = 1Mhz
-        x = self.dev.ctrl_transfer(uu.CTRL_OUT | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_INIT2, 0, 0, [5<<3, 0, 0, 0, 0])
+        x = self.dev.ctrl_transfer(uu.CTRL_OUT | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_INIT_M_HW_SS, 0, 0, [5<<3, 0, 0, 0, 0])
         self.assertEqual(x, 5)
 
         # now write some shit...
@@ -75,16 +75,21 @@ class TestSpiBasic(unittest.TestCase):
         print("ok, read, and got x", x)
 
     def test_reg_read_write(self):
-        self.dev.ctrl_transfer(uu.CTRL_OUT | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_INIT, 0, 0, [6 << 3, 0, 0, 0, 0])
+        self.dev.ctrl_transfer(uu.CTRL_OUT | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_INIT_M_SW_SS, 0, 0, [6 << 3, 0, 0, 0, 0])
 
         def read_reg(reg, delay=0):
-            x = self.dev.ctrl_transfer(uu.CTRL_OUT | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_XFER, 0, delay, [reg, 0])
+            x = self.dev.ctrl_transfer(uu.CTRL_OUT | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_XFER, delay, 0, [reg, 0])
             x = self.dev.ctrl_transfer(uu.CTRL_IN | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_READ, 0, 0, x)
             return x
 
-        print(read_reg(3,1))
-        print(read_reg(3,1))
-        print(read_reg(3,1))
+        print(read_reg(3,10))
+        print(read_reg(4,10))
+        print(read_reg(5,10))
+        print(read_reg(6,10))
+
+        #print(read_reg(3,1))
+        #print(read_reg(3,1))
+        #print(read_reg(3,1))
 
         # issue a read of register 2
         #x = self.dev.ctrl_transfer(uu.CTRL_OUT | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_XFER, 0, 0, [0x2, 0])

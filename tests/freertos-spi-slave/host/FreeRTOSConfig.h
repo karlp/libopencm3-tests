@@ -25,7 +25,7 @@ void vAssertCalled( const char * const pcFileName, unsigned long ulLine );
 #define configTIMER_TASK_STACK_DEPTH            configMINIMAL_STACK_SIZE
 
 
-#define configMAX_PRIORITIES		( 2 )
+#define configMAX_PRIORITIES		( 5 )
 #define configMAX_CO_ROUTINE_PRIORITIES ( 2 )
 
 /* Set the following definitions to 1 to include the API function, or zero
