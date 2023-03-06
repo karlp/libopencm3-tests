@@ -367,6 +367,7 @@ static enum usbd_request_return_codes hostspit_control_request(usbd_device *usbd
 		for (uint32_t i = 0; i < ((uint32_t)req->wValue << 5); i++) {
 			__asm volatile( "NOP");
 		}
+		// LOL, this is... _not_ indicative of what a spi transaction would look like really!
 		for (int i = 0; i < req->wLength; i++) {
 			uint8_t x = spi_xfer(hw_details.periph, real[i]);
 			BaseType_t rv = xQueueSendToBack(spiQ_rx, &x, 0);
