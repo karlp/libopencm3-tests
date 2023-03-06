@@ -21,7 +21,7 @@ SS_XFER = 10
 SS_XFER2 = 12
 SS_READ = 11
 
-class find_by_serial(object):
+class find_by_serial:
     def __init__(self, serial):
         self._serial = serial
 
@@ -32,7 +32,7 @@ class find_by_serial(object):
 class TestSpiBasic(unittest.TestCase):
     def setUp(self):
         self.dev = usb.core.find(idVendor=VENDOR_ID, idProduct=PRODUCT_ID, custom_match=find_by_serial(DUT_SERIAL))
-        self.assertIsNotNone(self.dev, "Couldn't find locm3 gadget0 device")
+        self.assertIsNotNone(self.dev, "Couldn't find locm3 test device")
         self.longMessage = True
         self.dev.set_configuration()  # iirc, this will set to the first/only config
         self.dev.ctrl_transfer(uu.CTRL_OUT | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_TRIGGER, 0, 0, [1])
@@ -78,14 +78,14 @@ class TestSpiBasic(unittest.TestCase):
         self.dev.ctrl_transfer(uu.CTRL_OUT | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_INIT_M_SW_SS, 0, 0, [6 << 3, 0, 0, 0, 0])
 
         def read_reg(reg, delay=0):
-            x = self.dev.ctrl_transfer(uu.CTRL_OUT | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_XFER, delay, 0, [reg, 0])
+            x = self.dev.ctrl_transfer(uu.CTRL_OUT | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_XFER, delay, 0, [reg, 0x55, 0xaa])
             x = self.dev.ctrl_transfer(uu.CTRL_IN | uu.CTRL_RECIPIENT_INTERFACE | uu.CTRL_TYPE_VENDOR, SS_READ, 0, 0, x)
             return x
 
-        print(read_reg(3,10))
-        print(read_reg(4,10))
-        print(read_reg(5,10))
-        print(read_reg(6,10))
+        print([hex(a) for a in read_reg(3, 10)])
+        print([hex(a) for a in read_reg(8, 10)])
+        print([hex(a) for a in read_reg(4, 10)])
+        print([hex(a) for a in read_reg(1, 10)])
 
         #print(read_reg(3,1))
         #print(read_reg(3,1))
