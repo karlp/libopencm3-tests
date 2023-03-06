@@ -300,8 +300,8 @@ static enum usbd_request_return_codes hostspit_control_request(usbd_device *usbd
 		}
 		rcc_periph_reset_pulse(hw_details.periph_rst);
 		/* chip select as a regular GPIO for this mode. assume RCC already setup */
-		gpio_mode_setup(hw_details.cs_port, GPIO_MODE_OUTPUT, GPIO_PUPD_PULLUP, hw_details.cs_pin);
 		gpio_set(hw_details.cs_port, hw_details.cs_pin);
+		gpio_mode_setup(hw_details.cs_port, GPIO_MODE_OUTPUT, GPIO_PUPD_PULLUP, hw_details.cs_pin);
 
 		/* yes, there's enough bytes in the control request itself, but bandwidth optimization why?! */
 		spi_init_master(hw_details.periph, real[0], real[1], real[2], real[3], real[4]);
